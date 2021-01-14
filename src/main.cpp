@@ -14,12 +14,16 @@
 *
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
 */
 
+#include <iostream>
 #include <cstdlib>
+
+#include "packager/packager.hpp"
 
 int main(int argc, char * argv[]) {
 
+    std::vector<std::string> v = Packager::retrievePathsOfFilesFromXMLFile("D:\\git_dir\\lmms-pkg\\data\\demo-evasion.mmp");
+    std::cout << "Number of files: " << v.size() << " \n";
     return EXIT_SUCCESS;
 }
