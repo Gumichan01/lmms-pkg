@@ -26,13 +26,8 @@
 namespace fs
 {
 
-#if defined(__WIN32__) || defined(__WIN64__)
-const char * CURRENT_DIR = ".\\";
-const UTF8string UT8_SEPARATOR ( "\\" );
-#else
 const char * CURRENT_DIR = "./";
 const UTF8string UT8_SEPARATOR ( "/" );
-#endif
 
 const UTF8string CURRENT ( "." );
 const UTF8string PARENT ( ".." );
@@ -206,11 +201,11 @@ UTF8string utf8Dirname ( const UTF8string& path ) noexcept
 
 std::string basename( const std::string& path ) noexcept
 {
-    return utf8Basename(path).utf8_sstring();
+    return utf8Basename( path ).utf8_sstring();
 }
 std::string dirname( const std::string& path ) noexcept
 {
-    return utf8Dirname(path).utf8_sstring();
+    return utf8Dirname( path ).utf8_sstring();
 }
 
 }   // fs
