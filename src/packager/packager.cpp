@@ -19,12 +19,19 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_set>
+#include <fstream>
 
 #include "packager.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
+#include "../external/filesystem/filesystem.hpp"
 
 namespace Packager
 {
+
+// Pack
+
+bool contains( const std::vector<std::string> names, const std::string& s );
+const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
 
 bool contains( const std::vector<std::string> names, const std::string& s )
 {
@@ -79,4 +86,30 @@ const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::strin
 
     return std::vector<std::string>( unique_paths.cbegin(), unique_paths.cend() );
 }
+
+const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory )
+{
+    // For each path
+    // 1. if the file exists, copy it to the destination + save path to the copied paths
+    // 2. if is does not exists, print a warning message
+    std::for_each( paths.cbegin(), paths.cend(),
+                   [&directory]( const std::string & path )
+    {
+        std::ifstream input( path, std::ios_base::in | std::ios_base::binary );
+        if ( !input.is_open() )
+        {
+            std::cerr << "Warning: \"" << path << "\" cannot be open." << "\n";
+        }
+        else
+        {
+            const std::string destination_path = directory + fs::SEPARATOR + fs::basename( path );
+            std::cout << "Copying " << destination_path << "...";
+            std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
+            output << input.rdbuf();
+            std::cout << "DONE\n";
+        }
+    } );
+    return std::vector<std::string>();
+}
+
 }

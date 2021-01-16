@@ -25,6 +25,7 @@
 namespace Packager
 {
 const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::string& project_file );
+const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory );
 };
 
 #endif // PACKAGER_HPP_INCLUDED

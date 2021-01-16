@@ -23,7 +23,10 @@
 
 int main(int argc, char * argv[]) {
 
-    const std::vector<std::string>& v = Packager::retrievePathsOfFilesFromXMLFile("D:\\git_dir\\lmms-pkg\\data\\demo-evasion.mmp");
+    const std::string PACKAGE_PATH = "export";
+    const std::vector<std::string>& v = Packager::retrievePathsOfFilesFromXMLFile("D:/git_dir/lmms-pkg/data/demo-evasion.mmp");
     std::cout << "Number of files: " << v.size() << " \n";
+    const std::vector<std::string>& v2 = Packager::copyFilesTo(v, PACKAGE_PATH);
+    std::cout << "Copied files: " << v2.size() << " \n";
     return EXIT_SUCCESS;
 }
