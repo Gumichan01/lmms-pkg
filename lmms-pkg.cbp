@@ -27,8 +27,14 @@
 		<Compiler>
 			<Add option="-std=c++17" />
 		</Compiler>
+		<Unit filename="src/external/filesystem/filesystem.cpp" />
+		<Unit filename="src/external/filesystem/filesystem.hpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
+		<Unit filename="src/external/utf8/utf8_iterator.cpp" />
+		<Unit filename="src/external/utf8/utf8_iterator.hpp" />
+		<Unit filename="src/external/utf8/utf8_string.cpp" />
+		<Unit filename="src/external/utf8/utf8_string.hpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/packager/packager.cpp" />
 		<Unit filename="src/packager/packager.hpp" />
