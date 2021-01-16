@@ -31,10 +31,10 @@ bool contains( const std::vector<std::string> names, const std::string& s )
     return std::find( names.cbegin(), names.cend(), s ) != names.cend();
 }
 
-const std::vector<tinyxml2::XMLElement *> getAllElementsByNames( tinyxml2::XMLElement * root, const std::vector<std::string>& names )
+const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names )
 {
-    std::vector<tinyxml2::XMLElement *> retrieved_elements;
-    tinyxml2::XMLElement * element = root->FirstChildElement();
+    std::vector<const tinyxml2::XMLElement *> retrieved_elements;
+    const tinyxml2::XMLElement * element = root->FirstChildElement();
 
     while ( element != nullptr )
     {
@@ -42,7 +42,7 @@ const std::vector<tinyxml2::XMLElement *> getAllElementsByNames( tinyxml2::XMLEl
         {
             retrieved_elements.push_back( element );
         }
-        const std::vector<tinyxml2::XMLElement *> elements = getAllElementsByNames( element, names );
+        const std::vector<const tinyxml2::XMLElement *>& elements = getAllElementsByNames( element, names );
         retrieved_elements.insert( retrieved_elements.end(), elements.cbegin(), elements.cend() );
         element = element->NextSiblingElement();
     }
@@ -61,8 +61,7 @@ const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::strin
         return std::vector<std::string>();
     }
 
-    tinyxml2::XMLElement * root = doc.RootElement();
-
+    const tinyxml2::XMLElement * root = doc.RootElement();
     if ( root == nullptr )
     {
         std::cerr << "No root element. Are you sure this file contains an XML content?\n";
@@ -70,10 +69,10 @@ const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::strin
     }
 
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
-    const std::vector<tinyxml2::XMLElement *> elements = getAllElementsByNames( root, NAMES );
+    const std::vector<const tinyxml2::XMLElement *>& elements = getAllElementsByNames( root, NAMES );
 
     std::unordered_set<std::string> unique_paths;
-    std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( tinyxml2::XMLElement * e )
+    std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( const tinyxml2::XMLElement * e )
     {
         unique_paths.insert( e->Attribute( "src" ) );
     } );

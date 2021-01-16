@@ -23,7 +23,7 @@
 
 int main(int argc, char * argv[]) {
 
-    std::vector<std::string> v = Packager::retrievePathsOfFilesFromXMLFile("D:\\git_dir\\lmms-pkg\\data\\demo-evasion.mmp");
+    const std::vector<std::string>& v = Packager::retrievePathsOfFilesFromXMLFile("D:\\git_dir\\lmms-pkg\\data\\demo-evasion.mmp");
     std::cout << "Number of files: " << v.size() << " \n";
     return EXIT_SUCCESS;
 }
