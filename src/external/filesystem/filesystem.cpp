@@ -28,17 +28,17 @@ namespace fs
 
 #if defined(__WIN32__) || defined(__WIN64__)
 const char * CURRENT_DIR = ".\\";
-const UTF8string SEPARATOR ( "\\" );
+const UTF8string UT8_SEPARATOR ( "\\" );
 #else
 const char * CURRENT_DIR = "./";
-const UTF8string SEPARATOR ( "/" );
+const UTF8string UT8_SEPARATOR ( "/" );
 #endif
 
 const UTF8string CURRENT ( "." );
 const UTF8string PARENT ( ".." );
-const UTF8string ROOT ( SEPARATOR );
-const UTF8string SCURS ( SEPARATOR + CURRENT + SEPARATOR );
-const UTF8string SPARS ( SEPARATOR + PARENT  + SEPARATOR );
+const UTF8string ROOT ( UT8_SEPARATOR );
+const UTF8string SCURS ( UT8_SEPARATOR + CURRENT + UT8_SEPARATOR );
+const UTF8string SPARS ( UT8_SEPARATOR + PARENT  + UT8_SEPARATOR );
 
 UTF8string removeTrailingSep ( const UTF8string& u8str ) noexcept;
 size_t countSeparator ( const UTF8string& u8str ) noexcept;
@@ -58,10 +58,10 @@ UTF8string removeTrailingSep ( const UTF8string& u8str ) noexcept
     {
         u8s += *it;
 
-        if ( *it == SEPARATOR )
+        if ( *it == UT8_SEPARATOR )
         {
             UTF8iterator tmp_it = it + 1;
-            while ( tmp_it != u8end && *tmp_it == SEPARATOR )
+            while ( tmp_it != u8end && *tmp_it == UT8_SEPARATOR )
             {
                 ++tmp_it;
             }
@@ -77,7 +77,7 @@ UTF8string removeTrailingSep ( const UTF8string& u8str ) noexcept
 
 size_t countSeparator ( const UTF8string& u8str ) noexcept
 {
-    const char SEP = SEPARATOR.utf8_sstring()[0];
+    const char SEP = UT8_SEPARATOR.utf8_sstring()[0];
     const std::string& u8string = u8str.utf8_sstring();
     return static_cast<size_t>( std::count( u8string.begin(), u8string.end(), SEP ) );
 }
@@ -87,7 +87,7 @@ bool checkBasename ( const UTF8string& npath )
     // ".", ".." or root directory → return the path
     // No separator → the path itself
     return npath == CURRENT || npath == PARENT || npath == ROOT
-           || npath.utf8_find ( SEPARATOR ) == UTF8string::npos;
+           || npath.utf8_find ( UT8_SEPARATOR ) == UTF8string::npos;
 }
 
 bool checkDirname ( const UTF8string& npath )
@@ -96,7 +96,7 @@ bool checkDirname ( const UTF8string& npath )
     if ( npath.utf8_empty() )
         return true;
 
-    const size_t POS = npath.utf8_find ( SEPARATOR );
+    const size_t POS = npath.utf8_find ( UT8_SEPARATOR );
     const size_t U8LEN = npath.utf8_length();
 
     // Current directory or parent → current
@@ -129,7 +129,7 @@ UTF8string utf8Basename ( const UTF8string& path ) noexcept
     bool end_sep = false;
 
     // If the last character is a separator ('/', '\')
-    if ( *it == SEPARATOR )
+    if ( *it == UT8_SEPARATOR )
     {
         end_sep = true;
         spos = U8LEN - 1;
@@ -138,14 +138,14 @@ UTF8string utf8Basename ( const UTF8string& path ) noexcept
     else
         spos = U8LEN;
 
-    while ( *it != SEPARATOR && it != beg )
+    while ( *it != UT8_SEPARATOR && it != beg )
     {
         --it;
         --spos;
     }
 
     // If there is a separator at the beginning
-    if ( *it == SEPARATOR )
+    if ( *it == UT8_SEPARATOR )
     {
         if ( end_sep )
             return npath.utf8_substr ( spos, U8LEN - spos - 1 );
@@ -168,7 +168,7 @@ UTF8string utf8Dirname ( const UTF8string& path ) noexcept
     if ( checkDirname ( npath ) )
         return CURRENT;
 
-    const size_t POS = npath.utf8_find ( SEPARATOR );
+    const size_t POS = npath.utf8_find ( UT8_SEPARATOR );
     const size_t U8LEN = npath.utf8_length();
 
     // If a unique separator was found and is at position 0 → root
@@ -187,13 +187,13 @@ UTF8string utf8Dirname ( const UTF8string& path ) noexcept
     size_t spos = U8LEN - 1;
 
     // Last character == separator → do not count it
-    if ( *it == SEPARATOR )
+    if ( *it == UT8_SEPARATOR )
     {
         --it;
         --spos;
     }
 
-    while ( it != beg && *it != SEPARATOR )
+    while ( it != beg && *it != UT8_SEPARATOR )
     {
         --it;
         --spos;

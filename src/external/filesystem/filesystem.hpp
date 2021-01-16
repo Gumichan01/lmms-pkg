@@ -28,6 +28,12 @@
 namespace fs
 {
 
+#if defined(__WIN32__) || defined(__WIN64__)
+const std::string SEPARATOR ( "\\" );
+#else
+const std::string SEPARATOR ( "/" );
+#endif
+
 // Note: Trailing '\' (on Windows) or '/' (on Linux) are not counted as part of the path name.
 std::string basename( const std::string& path ) noexcept;
 std::string dirname( const std::string& path ) noexcept;
