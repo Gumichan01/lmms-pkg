@@ -24,6 +24,9 @@
 				<Option use_console_runner="0" />
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-std=c++17" />
+		</Compiler>
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
 		<Unit filename="src/main.cpp" />
