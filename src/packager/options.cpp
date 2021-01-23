@@ -22,27 +22,56 @@
 namespace options
 {
 
+std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
+{
+    if ( !path.empty() && path[path.size() - 1] != '/' )
+    {
+        return path + '/';
+    }
+    return path;
+}
+
 const Options retrieveArguments( int argc, char * argv[] ) noexcept
 {
     // Assuming there are at least 4 arguments
     const std::string& project_file = fs::normalize( argv[argc - 2] );
+    const std::string& destination_directory = addTrailingSlashIfNeeded(fs::normalize( argv[argc - 1] ));
 
-    std::string path = fs::normalize( argv[argc - 1] );
-    if ( !path.empty() && path[path.size() - 1] != '/' )
-    {
-        path += '/';
-    }
-
-    const std::string& destination_directory = path;
     bool sf2_export = false;
-    // Loop Between 2 and argc - 2 in order to get [--no-sf2] and [--lmms-data <path/to/lmms/data>]
+    std::string lmms_dir;
+
+    /*
+        argv[0]: program
+        argv[1]: --export | --import
+        argv[2 -> argc - 3]: optional parameters
+        argv[argc - 2]: project file
+        argv[argc - 1]: destination directory
+    */
     int i = 2;
     while ( i < argc - 2 )
     {
         const std::string& opt = argv[i];
         if ( opt == "--no-sf2" )
         {
+            std::cout << "-- Ignore Soundfont 2 files\n";
             sf2_export = true;
+        }
+        else if ( ( opt == "--lmms-dir" ) )
+        {
+            if ( lmms_dir.empty() )
+            {
+                lmms_dir = addTrailingSlashIfNeeded(fs::normalize( argv[i + 1] ));
+                std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
+                i++;
+            }
+            else
+            {
+                std::cerr << "Warning: LMMS directory already set. Igoring directories specified are ignored \n";
+            }
+        }
+        else
+        {
+            std::cerr << "Warning: Unkwown parameter: " << opt << ". It was ignored. \n";
         }
         i++;
     }
@@ -59,7 +88,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         op = OperationType::Export;
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export };
+    return Options{ op, project_file, destination_directory, sf2_export, lmms_dir };
 }
 
 }

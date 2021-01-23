@@ -34,6 +34,7 @@ struct Options
     const std::string destination_directory;
     // Optional
     const bool sf2_export;
+    const std::string lmms_directory;
 };
 
 const Options retrieveArguments( int argc, char * argv[] ) noexcept;
