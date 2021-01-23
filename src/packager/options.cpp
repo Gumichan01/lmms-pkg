@@ -37,7 +37,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
     const std::string& project_file = fs::normalize( argv[argc - 2] );
     const std::string& destination_directory = addTrailingSlashIfNeeded(fs::normalize( argv[argc - 1] ));
 
-    bool sf2_export = false;
+    bool sf2_export = true;
     std::string lmms_dir;
 
     /*
@@ -54,7 +54,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         if ( opt == "--no-sf2" )
         {
             std::cout << "-- Ignore Soundfont 2 files\n";
-            sf2_export = true;
+            sf2_export = false;
         }
         else if ( ( opt == "--lmms-dir" ) )
         {
