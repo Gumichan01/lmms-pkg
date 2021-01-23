@@ -92,8 +92,9 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
     // For each path
     // 1. if the file exists, copy it to the destination + save path to the copied paths
     // 2. if is does not exists, print a warning message
+    std::vector<std::string> copied_files;
     std::for_each( paths.cbegin(), paths.cend(),
-                   [&directory]( const std::string & path )
+                   [&directory, &copied_files]( const std::string & path )
     {
         std::ifstream input( path, std::ios_base::in | std::ios_base::binary );
         if ( !input.is_open() )
@@ -102,14 +103,15 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
         }
         else
         {
-            const std::string destination_path = directory + fs::SEPARATOR + fs::basename( path );
+            const std::string destination_path = directory + fs::basename( path );
             std::cout << "Copying " << destination_path << "...";
             std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
             output << input.rdbuf();
             std::cout << "DONE\n";
+            copied_files.push_back(path);
         }
     } );
-    return std::vector<std::string>();
+    return copied_files;
 }
 
 }
