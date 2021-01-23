@@ -42,10 +42,7 @@
 		<Unit filename="src/external/utf8/utf8_string.cpp" />
 		<Unit filename="src/external/utf8/utf8_string.hpp" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/packager/options.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
+		<Unit filename="src/packager/options.cpp" />
 		<Unit filename="src/packager/options.hpp" />
 		<Unit filename="src/packager/packager.cpp" />
 		<Unit filename="src/packager/packager.hpp" />
