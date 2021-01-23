@@ -53,7 +53,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         const std::string& opt = argv[i];
         if ( opt == "--no-sf2" )
         {
-            std::cout << "-- Ignore Soundfont 2 files\n";
+            std::cout << "-- Ignore Soundfont2 files\n";
             sf2_export = false;
         }
         else if ( ( opt == "--lmms-dir" ) )

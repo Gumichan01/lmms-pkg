@@ -130,7 +130,7 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
     {
         if ( isSoundFontFile( path ) && !options.sf2_export )
         {
-            std::cout << "This following file: \"" << path << "\" is a SoundFont file and is ignored.\n";
+            std::cout << "-- This following file: \"" << path << "\" is a SoundFont file and is ignored.\n";
         }
         else
         {
@@ -139,17 +139,16 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
             {
                 if ( !options.lmms_directory.empty() )
                 {
-                    std::cout << "-- " << path << "\" cannot be open, but an LMMS directory is set.\n";
+                    std::cout << "-- " << path << "\" does not exit.\n";
 
                     // Assuming the path is relative
                     const std::string& lmms_source_file = options.lmms_directory + path;
-
                     std::cout << "-- Trying \"" << lmms_source_file << "\"\n";
 
                     std::ifstream lmms_file( lmms_source_file, std::ios_base::in | std::ios_base::binary );
                     if ( !lmms_file.is_open() )
                     {
-                        std::cerr << "Warning: \"" << lmms_source_file << "\" cannot be open." << "\n";
+                        std::cerr << "-- Cannot get \"" << lmms_source_file << "\"\n";
                     }
                     else
                     {
@@ -163,7 +162,7 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
                 }
                 else
                 {
-                    std::cerr << "Warning: \"" << path << "\" cannot be open." << "\n";
+                    std::cerr << "-- Cannot get \"" << path << "\" \n";
                 }
             }
             else
