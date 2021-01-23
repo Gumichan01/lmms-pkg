@@ -22,10 +22,15 @@
 #include <vector>
 #include <string>
 
+namespace options
+{
+struct Options;
+}
+
 namespace Packager
 {
 const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::string& project_file );
-const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory );
+const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory, const options::Options& options );
 };
 
 #endif // PACKAGER_HPP_INCLUDED
