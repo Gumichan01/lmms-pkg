@@ -201,11 +201,29 @@ UTF8string utf8Dirname ( const UTF8string& path ) noexcept
 
 std::string basename( const std::string& path ) noexcept
 {
+#if defined(__WIN32__) || defined(__WIN64__)
+    const char WIN_SEP = '\\';
+    const char UNIX_SEP = '/';
+
+    std::string processed_path = path;
+    std::replace( processed_path.begin(), processed_path.end(), WIN_SEP, UNIX_SEP );
+    return utf8Basename( processed_path ).utf8_sstring();
+#else
     return utf8Basename( path ).utf8_sstring();
+#endif
 }
 std::string dirname( const std::string& path ) noexcept
 {
+#if defined(__WIN32__) || defined(__WIN64__)
+    const char WIN_SEP = '\\';
+    const char UNIX_SEP = '/';
+
+    std::string processed_path = path;
+    std::replace( processed_path.begin(), processed_path.end(), WIN_SEP, UNIX_SEP );
+    return utf8Dirname( processed_path ).utf8_sstring();
+#else
     return utf8Dirname( path ).utf8_sstring();
+#endif
 }
 
 }   // fs
