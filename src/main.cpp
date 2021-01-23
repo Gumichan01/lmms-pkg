@@ -32,7 +32,7 @@ int main( int argc, char * argv[] )
     {
         std::cerr << "Invalid number of arguments\n"
                   << "usage: " << fs::basename( argv[0] )
-                  << " --import|--export [--no-sf2] [--lmms-data <path/to/lmms/data>] <name>.mmp(z) <destination-path> \n"
+                  << " --import|--export [--no-sf2] [--lmms-dir <path/to/lmms/data>] <name>.mmp(z) <destination-path> \n"
                   << "/!\\ Some arguments are not active yet \n\n";
         return EXIT_FAILURE;
     }

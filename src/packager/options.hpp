@@ -32,6 +32,8 @@ struct Options
     const OperationType operation;
     const std::string project_file;
     const std::string destination_directory;
+    // Optional
+    const bool sf2_export;
 };
 
 const Options retrieveArguments( int argc, char * argv[] ) noexcept;

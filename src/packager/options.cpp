@@ -34,8 +34,18 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
     }
 
     const std::string& destination_directory = path;
-
+    bool sf2_export = false;
     // Loop Between 2 and argc - 2 in order to get [--no-sf2] and [--lmms-data <path/to/lmms/data>]
+    int i = 2;
+    while ( i < argc - 2 )
+    {
+        const std::string& opt = argv[i];
+        if ( opt == "--no-sf2" )
+        {
+            sf2_export = true;
+        }
+        i++;
+    }
 
     const std::string& operation_str = argv[1];
     OperationType op;
@@ -49,7 +59,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         op = OperationType::Export;
     }
 
-    return Options{ op, project_file, destination_directory };
+    return Options{ op, project_file, destination_directory, sf2_export };
 }
 
 }
