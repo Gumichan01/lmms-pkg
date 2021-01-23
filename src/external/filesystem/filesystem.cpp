@@ -201,16 +201,7 @@ UTF8string utf8Dirname ( const UTF8string& path ) noexcept
 
 std::string basename( const std::string& path ) noexcept
 {
-#if defined(__WIN32__) || defined(__WIN64__)
-    const char WIN_SEP = '\\';
-    const char UNIX_SEP = '/';
-
-    std::string processed_path = path;
-    std::replace( processed_path.begin(), processed_path.end(), WIN_SEP, UNIX_SEP );
-    return utf8Basename( processed_path ).utf8_sstring();
-#else
-    return utf8Basename( path ).utf8_sstring();
-#endif
+    return utf8Basename( normalize( path ) ).utf8_sstring();
 }
 std::string dirname( const std::string& path ) noexcept
 {
@@ -222,7 +213,21 @@ std::string dirname( const std::string& path ) noexcept
     std::replace( processed_path.begin(), processed_path.end(), WIN_SEP, UNIX_SEP );
     return utf8Dirname( processed_path ).utf8_sstring();
 #else
-    return utf8Dirname( path ).utf8_sstring();
+    return utf8Dirname( normalize( path ) ).utf8_sstring();
+#endif
+}
+
+std::string normalize( const std::string& path ) noexcept
+{
+#if defined(__WIN32__) || defined(__WIN64__)
+    const char WIN_SEP = '\\';
+    const char UNIX_SEP = '/';
+
+    std::string normalized_path = path;
+    std::replace( normalized_path.begin(), normalized_path.end(), WIN_SEP, UNIX_SEP );
+    return normalized_path;
+#else
+    return path;
 #endif
 }
 

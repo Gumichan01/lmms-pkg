@@ -33,6 +33,8 @@ const std::string SEPARATOR ( "/" );
 // Note: Trailing '\' (on Windows) or '/' (on Linux) are not counted as part of the path name.
 std::string basename( const std::string& path ) noexcept;
 std::string dirname( const std::string& path ) noexcept;
+// Normalize the path as a Unix-like path
+std::string normalize( const std::string& path ) noexcept;
 
 }
 
