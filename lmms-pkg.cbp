@@ -6,7 +6,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="debug">
-				<Option output="lmms-pkg" prefix_auto="1" extension_auto="1" />
+				<Option output="lmms-pkg-dbg" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -22,6 +22,12 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -36,6 +42,11 @@
 		<Unit filename="src/external/utf8/utf8_string.cpp" />
 		<Unit filename="src/external/utf8/utf8_string.hpp" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/packager/options.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="src/packager/options.hpp" />
 		<Unit filename="src/packager/packager.cpp" />
 		<Unit filename="src/packager/packager.hpp" />
 		<Extensions>
