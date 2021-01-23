@@ -40,7 +40,7 @@ int main( int argc, char * argv[] )
     const options::Options& options = options::retrieveArguments( argc, argv );
     const std::vector<std::string>& v = Packager::retrievePathsOfFilesFromXMLFile( options.project_file );
     std::cout << "Number of files: " << v.size() << " \n";
-    const std::vector<std::string>& v2 = Packager::copyFilesTo( v, options.destination_path );
+    const std::vector<std::string>& v2 = Packager::copyFilesTo( v, options.destination_directory );
     std::cout << "Copied files: " << v2.size() << " \n";
     return EXIT_SUCCESS;
 }

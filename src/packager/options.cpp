@@ -26,7 +26,16 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
 {
     // Assuming there are at least 4 arguments
     const std::string& project_file = fs::normalize( argv[argc - 2] );
-    const std::string& destination_path = fs::normalize( argv[argc - 1] );
+
+    std::string path = fs::normalize( argv[argc - 1] );
+    if ( !path.empty() && path[path.size() - 1] != '/' )
+    {
+        path += '/';
+    }
+
+    const std::string& destination_directory = path;
+
+    // Loop Between 2 and argc - 2 in order to get [--no-sf2] and [--lmms-data <path/to/lmms/data>]
 
     const std::string& operation_str = argv[1];
     OperationType op;
@@ -40,7 +49,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         op = OperationType::Export;
     }
 
-    return Options{ op, project_file, destination_path };
+    return Options{ op, project_file, destination_directory };
 }
 
 }
