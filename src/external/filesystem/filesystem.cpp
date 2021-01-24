@@ -21,6 +21,8 @@
 
 #include <fstream>
 #include <algorithm>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "filesystem.hpp"
 
@@ -238,6 +240,17 @@ std::string copyFile( const std::string& source_path, const std::string& destina
         std::cout << "DONE\n";
         return destination_path;
     }
+}
+
+bool createDir( const std::string& directory ) noexcept
+{
+    struct stat st;
+    const char * dir = directory.c_str();
+    if ( stat( dir, &st ) == 0 )
+    {
+        return true;
+    }
+    return mkdir( dir ) == 0;
 }
 
 }   // fs

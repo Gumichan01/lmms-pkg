@@ -38,6 +38,8 @@ std::string normalize( const std::string& path ) noexcept;
 
 std::string copyFile( const std::string& source_path, const std::string& destination_path );
 
+bool createDir( const std::string& directory ) noexcept;
+
 }
 
 #endif // FILESYSTEM_HPP_INCLUDED
