@@ -163,13 +163,18 @@ const std::string pack( const options::Options& options )
     const std::string& package_directory = options.destination_directory;
     const std::string& sample_directory = package_directory + "samples/";
 
+    if ( !fs::exists( lmms_file ) ) {
+        std::cerr << "-- \"" << lmms_file << "\" does not exist.\n";
+        return "";
+    }
+
     if ( !fs::createDir( package_directory ) )
     {
-        std::cerr << "-- \"" << package_directory << "\" cannot be created \n";
+        std::cerr << "-- \"" << package_directory << "\" cannot be created.\n";
     }
     else if ( !fs::createDir( sample_directory ) )
     {
-        std::cerr << "-- \"" << sample_directory << "\" cannot be created \n";
+        std::cerr << "-- \"" << sample_directory << "\" cannot be created.\n";
     }
 
     const std::string& project_file = package_directory + fs::basename( lmms_file );
