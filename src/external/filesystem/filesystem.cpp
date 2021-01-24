@@ -229,15 +229,13 @@ std::string copyFile( const std::string& source_path, const std::string& destina
     std::ifstream input( source_path, std::ios_base::in | std::ios_base::binary );
     if ( !input.is_open() )
     {
-        std::cout << "FAILED\n";
-        std::cerr << "Warning: \"" << source_path << "\" cannot be open." << "\n";
+        std::cerr << "\nERROR: \"" << source_path << "\" cannot be open." << "\n";
         return "";
     }
     else
     {
         std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
         output << input.rdbuf();
-        std::cout << "DONE\n";
         return destination_path;
     }
 }
