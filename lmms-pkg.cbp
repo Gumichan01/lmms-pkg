@@ -35,6 +35,8 @@
 		</Compiler>
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
+		<Unit filename="src/external/lmms-zip/mmpz.cpp" />
+		<Unit filename="src/external/lmms-zip/mmpz.hpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
 		<Unit filename="src/external/utf8/utf8_iterator.cpp" />
