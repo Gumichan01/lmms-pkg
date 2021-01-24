@@ -250,7 +250,15 @@ bool createDir( const std::string& directory ) noexcept
     {
         return true;
     }
-    return mkdir( dir ) == 0;
+    bool result = ( mkdir( dir ) == 0 );
+    int code = errno;
+
+    if ( !result )
+    {
+        std::cerr << "ERROR: Cannot create \"" << dir << "\": " << strerror( code ) << "\n";
+    }
+
+    return result;
 }
 
 }   // fs
