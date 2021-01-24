@@ -31,17 +31,8 @@ namespace Packager
 
 // Private functions
 
-bool isSoundFontFile( const std::string& path ) noexcept;
 bool contains( const std::vector<std::string> names, const std::string& s );
 const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
-
-// Yeah, I should check the internal structure of the file,
-// but that's not my problem if the user cheats
-bool isSoundFontFile( const std::string& path ) noexcept
-{
-    const std::string SF2 = ".sf2";
-    return fs::hasExtension( path, SF2 );
-}
 
 bool contains( const std::vector<std::string> names, const std::string& s )
 {
@@ -109,7 +100,7 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
     std::for_each( paths.cbegin(), paths.cend(),
                    [&directory, &copied_files, &options]( const std::string & path )
     {
-        if ( isSoundFontFile( path ) && !options.sf2_export )
+        if ( fs::hasExtension( path, ".sf2" ) && !options.sf2_export )
         {
             std::cout << "-- This following file: \"" << path << "\" is a SoundFont file and is ignored.\n";
         }
