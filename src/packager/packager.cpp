@@ -40,7 +40,7 @@ const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tin
 bool isSoundFontFile( const std::string& path ) noexcept
 {
     const std::string SF2 = ".sf2";
-    return path.substr( path.size() - SF2.size() ) == SF2;
+    return fs::hasExtension( path, SF2 );
 }
 
 bool contains( const std::vector<std::string> names, const std::string& s )
@@ -139,6 +139,7 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
                         const std::string& copied_file = fs::copyFile( lmms_source_file, destination_path );
                         if ( !copied_file.empty() )
                         {
+                            std::cout << "DONE\n";
                             copied_files.push_back( copied_file );
                         }
                     }
@@ -152,16 +153,58 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
             {
                 file.close();
                 const std::string& destination_path = directory + fs::basename( path );
-                std::cout << "Copying \"" << path << "\" -> \"" << destination_path << "\"...";
+                std::cout << "-- Copying \"" << path << "\" -> \"" << destination_path << "\"...";
                 const std::string& copied_file = fs::copyFile( path, destination_path );
                 if ( !copied_file.empty() )
                 {
+                    std::cout << "DONE\n";
                     copied_files.push_back( copied_file );
                 }
             }
         }
     } );
     return copied_files;
+}
+
+const std::string pack( const options::Options& options )
+{
+    const std::string& lmms_file = options.project_file;
+    const std::string& package_directory = options.destination_directory;
+    const std::string& sample_directory = package_directory + "samples/";
+
+    if ( !fs::createDir( package_directory ) )
+    {
+        std::cerr << "-- \"" << package_directory << "\" cannot be created \n";
+    }
+    else if ( !fs::createDir( sample_directory ) )
+    {
+        std::cerr << "-- \"" << sample_directory << "\" cannot be created \n";
+    }
+
+    const std::string& project_file = package_directory + fs::basename( lmms_file );
+    if ( fs::hasExtension ( lmms_file, ".mmpz" ) )
+    {
+        /// TODO (#1#): Unzip the project file if it is mmpz
+    }
+    else
+    {
+        std::cout << "-- Copying \"" << lmms_file << "\" -> \"" << project_file << "\"...";
+        if ( fs::copyFile( lmms_file, project_file ) == project_file )
+        {
+            std::cout << "DONE\n";
+        }
+    }
+
+    /// 1. Extract samples
+    const std::vector<std::string>& files = retrievePathsOfFilesFromXMLFile( project_file );
+    std::cout << "\n-- This project has " << files.size() << " files to copy.\n\n";
+    /// 2. copy samples to destination
+    const std::vector<std::string>& copied_files = Packager::copyFilesTo( files, sample_directory, options );
+    std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+
+    /// TODO (#1#) Compress
+
+    return package_directory;
 }
 
 }
