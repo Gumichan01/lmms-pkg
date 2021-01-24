@@ -18,26 +18,8 @@
 
 #include <string>
 
-namespace options
-{
+namespace lmms {
 
-enum class OperationType
-{
-    Import,
-    Export
-};
-
-struct Options
-{
-    const OperationType operation;
-    const std::string project_file;
-    const std::string destination_directory;
-    // Optional
-    const bool sf2_export;
-    const std::string lmms_directory;
-    const std::string lmms_command;     // Very useful if LMMS is not in the $PATH env
-};
-
-const Options retrieveArguments( int argc, char * argv[] ) noexcept;
+bool unzipProject(const std::string& project_file, const std::string& lmms_command = "lmms" ) noexcept;
 
 }

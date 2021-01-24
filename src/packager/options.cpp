@@ -41,6 +41,8 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
 
     bool sf2_export = true;
     std::string lmms_dir;
+    std::string lmms_exe = "lmms";
+    bool lmms_exe_set = false;
 
     /*
         argv[0]: program
@@ -68,7 +70,21 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
             }
             else
             {
-                std::cerr << "Warning: LMMS directory already set. Igoring directories specified are ignored \n";
+                std::cerr << "-- LMMS directory already set. Directory ignoed.\n";
+            }
+        }
+        else if ( ( opt == "--lmms-exe" ) )
+        {
+            if ( !lmms_exe_set )
+            {
+                lmms_exe = argv[i + 1];
+                std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
+                lmms_exe_set = true;
+                i++;
+            }
+            else
+            {
+                std::cerr << "LMMS custom executable already set. Executable ignored.\n";
             }
         }
         else
@@ -90,7 +106,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         op = OperationType::Export;
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, lmms_dir };
+    return Options{ op, project_file, destination_directory, sf2_export, lmms_dir, lmms_exe };
 }
 
 }

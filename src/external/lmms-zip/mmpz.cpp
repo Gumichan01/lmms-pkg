@@ -16,28 +16,30 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
-namespace options
+#include "mmpz.hpp"
+
+namespace lmms
 {
 
-enum class OperationType
+bool unzipProject( const std::string& project_file, const std::string& lmms_command ) noexcept
 {
-    Import,
-    Export
-};
+    const std::string& xml_file = project_file.substr( 0, project_file.size() - 1 );
+    const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
 
-struct Options
-{
-    const OperationType operation;
-    const std::string project_file;
-    const std::string destination_directory;
-    // Optional
-    const bool sf2_export;
-    const std::string lmms_directory;
-    const std::string lmms_command;     // Very useful if LMMS is not in the $PATH env
-};
-
-const Options retrieveArguments( int argc, char * argv[] ) noexcept;
+    std::cout << "-- " << command << "\n";
+    FILE * fpipe = ( FILE * )popen( lmms_command.c_str(), "r" );
+    if ( !fpipe )
+    {
+        // If fpipe is NULL
+        perror( "Something is wrong with LMMS" );
+        return false;
+    }
+    pclose( fpipe );
+    return true;
+}
 
 }
