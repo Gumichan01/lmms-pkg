@@ -19,6 +19,7 @@
 
 // This file was taken from LunatiX, and has been adapted for this project
 
+#include <fstream>
 #include <algorithm>
 
 #include "filesystem.hpp"
@@ -219,6 +220,24 @@ std::string normalize( const std::string& path ) noexcept
 #else
     return path;
 #endif
+}
+
+std::string copyFile( const std::string& source_path, const std::string& destination_path )
+{
+    std::ifstream input( source_path, std::ios_base::in | std::ios_base::binary );
+    if ( !input.is_open() )
+    {
+        std::cout << "FAILED\n";
+        std::cerr << "Warning: \"" << source_path << "\" cannot be open." << "\n";
+        return "";
+    }
+    else
+    {
+        std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
+        output << input.rdbuf();
+        std::cout << "DONE\n";
+        return destination_path;
+    }
 }
 
 }   // fs

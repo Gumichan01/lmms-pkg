@@ -34,7 +34,6 @@ namespace Packager
 bool isSoundFontFile( const std::string& path ) noexcept;
 bool contains( const std::vector<std::string> names, const std::string& s );
 const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
-std::string copyFile( const std::string& path, const std::string& directory );
 
 // Yeah, I should check the internal structure of the file,
 // but that's not my problem if the user cheats
@@ -68,24 +67,6 @@ const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tin
     return retrieved_elements;
 }
 
-std::string copyFile( const std::string& path, const std::string& directory )
-{
-    std::ifstream input( path, std::ios_base::in | std::ios_base::binary );
-    if ( !input.is_open() )
-    {
-        std::cerr << "Warning: \"" << path << "\" cannot be open." << "\n";
-        return "";
-    }
-    else
-    {
-        const std::string destination_path = directory + fs::basename( path );
-        std::cout << "Copying \"" << path << "\" -> \"" << destination_path << "\"...";
-        std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
-        output << input.rdbuf();
-        std::cout << "DONE\n";
-        return destination_path;
-    }
-}
 
 // Public
 
@@ -153,7 +134,9 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
                     else
                     {
                         lmms_file.close();
-                        const std::string& copied_file = copyFile( lmms_source_file, directory );
+                        const std::string& destination_path = directory + fs::basename( path );
+                        std::cout << "Copying \"" << lmms_source_file << "\" -> \"" << destination_path << "\"...";
+                        const std::string& copied_file = fs::copyFile( lmms_source_file, destination_path );
                         if ( !copied_file.empty() )
                         {
                             copied_files.push_back( copied_file );
@@ -168,7 +151,9 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
             else
             {
                 file.close();
-                const std::string& copied_file = copyFile( path, directory );
+                const std::string& destination_path = directory + fs::basename( path );
+                std::cout << "Copying \"" << path << "\" -> \"" << destination_path << "\"...";
+                const std::string& copied_file = fs::copyFile( path, destination_path );
                 if ( !copied_file.empty() )
                 {
                     copied_files.push_back( copied_file );

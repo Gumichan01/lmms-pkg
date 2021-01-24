@@ -36,6 +36,8 @@ std::string dirname( const std::string& path ) noexcept;
 // Normalize the path as a Unix-like path
 std::string normalize( const std::string& path ) noexcept;
 
+std::string copyFile( const std::string& source_path, const std::string& destination_path );
+
 }
 
 #endif // FILESYSTEM_HPP_INCLUDED
