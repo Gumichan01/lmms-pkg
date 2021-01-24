@@ -24,6 +24,7 @@
 #include "packager/options.hpp"
 #include "external/filesystem/filesystem.hpp"
 
+
 int main( int argc, char * argv[] )
 {
     const int MINIMUM_ARGC = 4;
@@ -38,9 +39,14 @@ int main( int argc, char * argv[] )
     }
 
     const options::Options& options = options::retrieveArguments( argc, argv );
-    const std::vector<std::string>& v = Packager::retrievePathsOfFilesFromXMLFile( options.project_file );
-    std::cout << "Number of files: " << v.size() << " \n";
-    const std::vector<std::string>& v2 = Packager::copyFilesTo( v, options.destination_directory, options );
-    std::cout << "Copied files: " << v2.size() << " \n";
+    if ( options.operation == options::OperationType::Export )
+    {
+        const std::string& package = Packager::pack( options );
+        std::cout << "-- LMMS Project packaged into \"" << package << "\"\n";
+    }
+    else    // Import
+    {
+        /// TODO Import project
+    }
     return EXIT_SUCCESS;
 }
