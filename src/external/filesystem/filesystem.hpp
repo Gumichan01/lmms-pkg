@@ -42,6 +42,8 @@ bool createDir( const std::string& directory ) noexcept;
 
 bool hasExtension( const std::string& path, const std::string& extension ) noexcept;
 
+bool exists( const std::string& path ) noexcept;
+
 }
 
 #endif // FILESYSTEM_HPP_INCLUDED

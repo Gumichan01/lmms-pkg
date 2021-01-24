@@ -264,5 +264,12 @@ bool hasExtension( const std::string& path, const std::string& extension ) noexc
     return path.substr( path.size() - extension.size() ) == extension;
 }
 
+bool exists( const std::string& path ) noexcept
+{
+    struct stat st;
+    const char * file = path.c_str();
+    return stat( file, &st ) == 0;
+}
+
 }   // fs
 
