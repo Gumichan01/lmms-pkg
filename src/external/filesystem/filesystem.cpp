@@ -261,5 +261,10 @@ bool createDir( const std::string& directory ) noexcept
     return result;
 }
 
+bool hasExtension( const std::string& path, const std::string& extension ) noexcept
+{
+    return path.substr( path.size() - extension.size() ) == extension;
+}
+
 }   // fs
 

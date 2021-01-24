@@ -40,6 +40,8 @@ std::string copyFile( const std::string& source_path, const std::string& destina
 
 bool createDir( const std::string& directory ) noexcept;
 
+bool hasExtension( const std::string& path, const std::string& extension ) noexcept;
+
 }
 
 #endif // FILESYSTEM_HPP_INCLUDED
