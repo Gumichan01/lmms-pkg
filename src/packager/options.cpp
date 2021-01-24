@@ -22,6 +22,8 @@
 namespace options
 {
 
+std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept;
+
 std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 {
     if ( !path.empty() && path[path.size() - 1] != '/' )
