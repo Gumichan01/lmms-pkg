@@ -25,6 +25,7 @@
 #include "options.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/filesystem/filesystem.hpp"
+#include "../external/lmms-zip/mmpz.hpp"
 
 namespace Packager
 {
@@ -163,7 +164,8 @@ const std::string pack( const options::Options& options )
     const std::string& package_directory = options.destination_directory;
     const std::string& sample_directory = package_directory + "samples/";
 
-    if ( !fs::exists( lmms_file ) ) {
+    if ( !fs::exists( lmms_file ) )
+    {
         std::cerr << "-- \"" << lmms_file << "\" does not exist.\n";
         return "";
     }
@@ -180,7 +182,8 @@ const std::string pack( const options::Options& options )
     const std::string& project_file = package_directory + fs::basename( lmms_file );
     if ( fs::hasExtension ( lmms_file, ".mmpz" ) )
     {
-        /// TODO (#1#): Unzip the project file if it is mmpz
+        std::cout << options.lmms_command << "\n";
+        lmms::unzipProject( lmms_file, options.lmms_command );
     }
     else
     {
