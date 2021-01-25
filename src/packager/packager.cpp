@@ -216,6 +216,18 @@ const std::string pack( const options::Options& options )
     const std::vector<std::string>& copied_files = Packager::copyFilesTo( files, sample_directory, options );
     std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
 
+    // Extra verification
+    bool non_existing_files = std::any_of( copied_files.cbegin(), copied_files.cend(), [] ( const std::string & file )
+    {
+        return !fs::exists( file );
+    } );
+
+    if ( non_existing_files )
+    {
+        std::cerr << "-- ERROR: Some files that must be copied in the package does not exist.\n";
+        return "";
+    }
+
     return lmms::zipFile( package_directory );
 }
 
