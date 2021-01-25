@@ -166,7 +166,7 @@ const std::string pack( const options::Options& options )
 
     if ( !fs::exists( lmms_file ) )
     {
-        std::cerr << "-- \"" << lmms_file << "\" does not exist.\n";
+        std::cerr << "-- ERROR: \"" << lmms_file << "\" does not exist.\n";
         return "";
     }
 
@@ -179,11 +179,10 @@ const std::string pack( const options::Options& options )
         std::cerr << "-- \"" << sample_directory << "\" cannot be created.\n";
     }
 
-    const std::string& project_file = package_directory + fs::basename( lmms_file );
+    std::string project_file = package_directory + fs::basename( lmms_file );
     if ( fs::hasExtension ( lmms_file, ".mmpz" ) )
     {
-        std::cout << options.lmms_command << "\n";
-        lmms::unzipProject( lmms_file, options.lmms_command );
+        project_file = lmms::unzipProject( lmms_file, options.lmms_command );
     }
     else
     {
@@ -194,10 +193,14 @@ const std::string pack( const options::Options& options )
         }
     }
 
-    /// 1. Extract samples
+    if ( !fs::exists( project_file ) )
+    {
+        std::cerr << "-- ERROR: \"" << project_file << "\" does not exist. Packaging aborted.\n";
+        return "";
+    }
+
     const std::vector<std::string>& files = retrievePathsOfFilesFromXMLFile( project_file );
     std::cout << "\n-- This project has " << files.size() << " files to copy.\n\n";
-    /// 2. copy samples to destination
     const std::vector<std::string>& copied_files = Packager::copyFilesTo( files, sample_directory, options );
     std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
 
