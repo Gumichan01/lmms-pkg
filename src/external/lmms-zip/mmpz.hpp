@@ -22,5 +22,7 @@ namespace lmms
 {
 
 std::string decompressProject( const std::string& project_file, const std::string& destination_directory,
-                          const std::string& lmms_command = "lmms" ) noexcept;
+                               const std::string& lmms_command = "lmms" ) noexcept;
+
+std::string zipFile( const std::string& package_directory ) noexcept;
 }

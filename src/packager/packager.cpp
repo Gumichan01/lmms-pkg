@@ -204,9 +204,7 @@ const std::string pack( const options::Options& options )
     const std::vector<std::string>& copied_files = Packager::copyFilesTo( files, sample_directory, options );
     std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
 
-    /// TODO (#1#) Compress
-
-    return package_directory;
+    return lmms::zipFile( package_directory );
 }
 
 }
