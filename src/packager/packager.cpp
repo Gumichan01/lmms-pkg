@@ -34,6 +34,7 @@ namespace Packager
 
 bool contains( const std::vector<std::string> names, const std::string& s );
 const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
+bool isXmlFile( const std::string& project_file ) noexcept;
 
 bool contains( const std::vector<std::string> names, const std::string& s )
 {
@@ -57,6 +58,11 @@ const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tin
     }
 
     return retrieved_elements;
+}
+
+bool isXmlFile( const std::string& project_file ) noexcept
+{
+    return tinyxml2::XMLDocument().LoadFile( project_file.c_str() ) == tinyxml2::XML_SUCCESS;
 }
 
 
@@ -196,6 +202,12 @@ const std::string pack( const options::Options& options )
     if ( !fs::exists( project_file ) )
     {
         std::cerr << "-- ERROR: \"" << project_file << "\" does not exist. Packaging aborted.\n";
+        return "";
+    }
+
+    if ( !isXmlFile( project_file ) )
+    {
+        std::cerr << "-- ERROR: Invalid XML file. Packaging aborted.\n";
         return "";
     }
 
