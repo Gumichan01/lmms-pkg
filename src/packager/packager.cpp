@@ -182,7 +182,7 @@ const std::string pack( const options::Options& options )
     std::string project_file = package_directory + fs::basename( lmms_file );
     if ( fs::hasExtension ( lmms_file, ".mmpz" ) )
     {
-        project_file = lmms::unzipProject( lmms_file, package_directory, options.lmms_command );
+        project_file = lmms::decompressProject( lmms_file, package_directory, options.lmms_command );
     }
     else
     {

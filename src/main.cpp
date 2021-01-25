@@ -43,7 +43,10 @@ int main( int argc, char * argv[] )
     if ( options.operation == options::OperationType::Export )
     {
         const std::string& package = Packager::pack( options );
-        std::cout << "-- LMMS Project packaged into \"" << package << "\"\n";
+        if ( !package.empty() )
+        {
+            std::cout << "-- LMMS Project packaged into \"" << package << "\"\n";
+        }
     }
     else    // Import
     {

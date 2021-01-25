@@ -27,7 +27,7 @@
 namespace lmms
 {
 
-std::string unzipProject( const std::string& project_file, const std::string& package_directory,
+std::string decompressProject( const std::string& project_file, const std::string& package_directory,
                           const std::string& lmms_command ) noexcept
 {
     const std::string& xml_file = package_directory + fs::basename( project_file.substr( 0, project_file.size() - 1 ) );
