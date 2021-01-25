@@ -21,25 +21,33 @@
 #include <iostream>
 
 #include "mmpz.hpp"
+#include "../filesystem/filesystem.hpp"
+
 
 namespace lmms
 {
 
-bool unzipProject( const std::string& project_file, const std::string& lmms_command ) noexcept
+std::string unzipProject( const std::string& project_file, const std::string& lmms_command ) noexcept
 {
     const std::string& xml_file = project_file.substr( 0, project_file.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
 
     std::cout << "-- " << command << "\n";
-    FILE * fpipe = ( FILE * )popen( lmms_command.c_str(), "r" );
+    FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
     if ( !fpipe )
     {
-        // If fpipe is NULL
         perror( "Something is wrong with LMMS" );
-        return false;
+        return "";
     }
     pclose( fpipe );
-    return true;
+
+    if ( !fs::exists( xml_file ) )
+    {
+        std::cerr << "-- ERROR: No file extracted. Something was wrong with the command or the file.\n";
+        return "";
+    }
+
+    return xml_file;
 }
 
 }

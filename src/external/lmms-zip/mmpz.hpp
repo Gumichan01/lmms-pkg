@@ -18,8 +18,9 @@
 
 #include <string>
 
-namespace lmms {
+namespace lmms
+{
 
-bool unzipProject(const std::string& project_file, const std::string& lmms_command = "lmms" ) noexcept;
+std::string unzipProject( const std::string& project_file, const std::string& lmms_command = "lmms" ) noexcept;
 
 }
