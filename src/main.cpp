@@ -33,8 +33,9 @@ int main( int argc, char * argv[] )
     {
         std::cerr << "Invalid number of arguments\n"
                   << "usage: " << fs::basename( argv[0] )
-                  << " --import|--export [--no-sf2] [--lmms-dir <path/to/lmms/data>]"
-                  << " [--lmms-exe <path/to/lmms/exe>] <name>.mmp(z) <destination/path> \n"
+                  << " --import|--export <name>.mmp(z) <destination/path>"
+                  << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
+                  << " [--lmms-exe <path/to/lmms/exe>] \n"
                   << "/!\\ Some arguments are not active yet \n\n";
         return EXIT_FAILURE;
     }
@@ -45,7 +46,7 @@ int main( int argc, char * argv[] )
         const std::string& package = Packager::pack( options );
         if ( !package.empty() )
         {
-            std::cout << "-- LMMS Project packaged into \"" << package << "\"\n";
+            std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
         }
     }
     else    // Import

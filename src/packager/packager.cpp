@@ -228,7 +228,7 @@ const std::string pack( const options::Options& options )
         return "";
     }
 
-    return lmms::zipFile( package_directory );
+    return options.zip ? lmms::zipFile( package_directory ) : package_directory;
 }
 
 }
