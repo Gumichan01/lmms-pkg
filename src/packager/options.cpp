@@ -36,8 +36,8 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 const Options retrieveArguments( int argc, char * argv[] ) noexcept
 {
     // Assuming there are at least 4 arguments
-    const std::string& project_file = fs::normalize( argv[argc - 2] );
-    const std::string& destination_directory = addTrailingSlashIfNeeded(fs::normalize( argv[argc - 1] ));
+    const std::string& project_file = fs::normalize( argv[2] );
+    const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
 
     bool sf2_export = true;
     std::string lmms_dir;
@@ -47,12 +47,12 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
     /*
         argv[0]: program
         argv[1]: --export | --import
-        argv[2 -> argc - 3]: optional parameters
-        argv[argc - 2]: project file
-        argv[argc - 1]: destination directory
+        argv[2]: project file
+        argv[3]: destination directory
+        argv[4 -> argc - 1]: optional parameters
     */
-    int i = 2;
-    while ( i < argc - 2 )
+    int i = 4;
+    while ( i < argc )
     {
         const std::string& opt = argv[i];
         if ( opt == "--no-sf2" )
@@ -64,7 +64,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         {
             if ( lmms_dir.empty() )
             {
-                lmms_dir = addTrailingSlashIfNeeded(fs::normalize( argv[i + 1] ));
+                lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[i + 1] ) );
                 std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
                 i++;
             }
