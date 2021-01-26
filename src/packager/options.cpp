@@ -40,6 +40,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
     const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
 
     bool sf2_export = true;
+    bool zip = true;
     std::string lmms_dir;
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
@@ -60,6 +61,11 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
             std::cout << "-- Ignore Soundfont2 files\n";
             sf2_export = false;
         }
+        else if ( opt == "--no-zip" )
+        {
+            std::cout << "-- The destination package will not be zipped\n";
+            zip = false;
+        }
         else if ( ( opt == "--lmms-dir" ) )
         {
             if ( lmms_dir.empty() )
@@ -70,7 +76,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
             }
             else
             {
-                std::cerr << "-- LMMS directory already set. Directory ignoed.\n";
+                std::cerr << "-- LMMS directory already set. Directory ignored.\n";
             }
         }
         else if ( ( opt == "--lmms-exe" ) )
@@ -106,7 +112,7 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         op = OperationType::Export;
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, lmms_dir, lmms_exe };
+    return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dir, lmms_exe };
 }
 
 }

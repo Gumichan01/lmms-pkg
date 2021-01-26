@@ -34,6 +34,7 @@ struct Options
     const std::string destination_directory;
     // Optional
     const bool sf2_export;
+    const bool zip;
     const std::string lmms_directory;
     const std::string lmms_command;     // Very useful if LMMS is not in the $PATH env
 };
