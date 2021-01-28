@@ -24,7 +24,8 @@ namespace options
 enum class OperationType
 {
     Import,
-    Export
+    Export,
+    InvalidOperation
 };
 
 struct Options

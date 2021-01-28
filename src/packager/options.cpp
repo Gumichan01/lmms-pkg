@@ -35,6 +35,23 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 
 const Options retrieveArguments( int argc, char * argv[] ) noexcept
 {
+    OperationType op;
+    const std::string& operation_str = argv[1];
+    int argvpos = 4;
+
+    if ( operation_str == "--import" )
+    {
+        op = OperationType::Import;
+    }
+    else if ( operation_str == "--export" )
+    {
+        op = OperationType::Export;
+    }
+    else
+    {
+        op = OperationType::InvalidOperation;
+    }
+
     // Assuming there are at least 4 arguments
     const std::string& project_file = fs::normalize( argv[2] );
     const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
@@ -49,30 +66,35 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         argv[0]: program
         argv[1]: --export | --import
         argv[2]: project file
+
+        // Depending on operation
+
+        Export:
         argv[3]: destination directory
         argv[4 -> argc - 1]: optional parameters
+
+        Import: no extra option
     */
-    int i = 4;
-    while ( i < argc )
+    while ( argvpos < argc )
     {
-        const std::string& opt = argv[i];
-        if ( opt == "--no-sf2" )
+        const std::string& opt = argv[argvpos];
+        if ( ( opt == "--no-sf2" ) && ( op == OperationType::Export ) )
         {
             std::cout << "-- Ignore Soundfont2 files\n";
             sf2_export = false;
         }
-        else if ( opt == "--no-zip" )
+        else if ( opt == "--no-zip" && op == OperationType::Export )
         {
             std::cout << "-- The destination package will not be zipped\n";
             zip = false;
         }
-        else if ( ( opt == "--lmms-dir" ) )
+        else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
         {
             if ( lmms_dir.empty() )
             {
-                lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[i + 1] ) );
+                lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
                 std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
-                i++;
+                argvpos++;
             }
             else
             {
@@ -83,10 +105,10 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         {
             if ( !lmms_exe_set )
             {
-                lmms_exe = argv[i + 1];
+                lmms_exe = argv[argvpos + 1];
                 std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
                 lmms_exe_set = true;
-                i++;
+                argvpos++;
             }
             else
             {
@@ -95,21 +117,9 @@ const Options retrieveArguments( int argc, char * argv[] ) noexcept
         }
         else
         {
-            std::cerr << "Warning: Unkwown parameter: " << opt << ". It was ignored. \n";
+            std::cerr << "Parameter \"" << opt << "\" is ignored.\n";
         }
-        i++;
-    }
-
-    const std::string& operation_str = argv[1];
-    OperationType op;
-
-    if ( operation_str == "--import" )
-    {
-        op = OperationType::Import;
-    }
-    else if ( operation_str == "--export" )
-    {
-        op = OperationType::Export;
+        argvpos++;
     }
 
     return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dir, lmms_exe };

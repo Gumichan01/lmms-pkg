@@ -49,9 +49,14 @@ int main( int argc, char * argv[] )
             std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
         }
     }
-    else    // Import
+    else if ( options.operation == options::OperationType::Import )    // Import
     {
         /// TODO Import project
+    }
+    else
+    {
+        std::cerr << "Waht the f***? This is not reachable\n";
+        return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }

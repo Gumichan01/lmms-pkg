@@ -236,4 +236,12 @@ const std::string pack( const options::Options& options )
     return options.zip ? lmms::zipFile( package_directory ) : package_directory;
 }
 
+
+bool checkPackage( const options::Options& options )
+{
+    const std::string& package_file = options.project_file;
+    const std::string& zip_print = lmms::listZipFiles( package_file );
+    return true;
+}
+
 }
