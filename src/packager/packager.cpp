@@ -36,6 +36,10 @@ bool contains( const std::vector<std::string> names, const std::string& s );
 const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
 bool isXmlFile( const std::string& project_file ) noexcept;
 
+const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::string& project_file );
+const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory, const options::Options& options );
+
+
 bool contains( const std::vector<std::string> names, const std::string& s )
 {
     return std::find( names.cbegin(), names.cend(), s ) != names.cend();
@@ -65,8 +69,6 @@ bool isXmlFile( const std::string& project_file ) noexcept
     return tinyxml2::XMLDocument().LoadFile( project_file.c_str() ) == tinyxml2::XML_SUCCESS;
 }
 
-
-// Public
 
 const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::string& project_file )
 {
@@ -163,6 +165,9 @@ const std::vector<std::string> copyFilesTo( const std::vector<std::string>& path
     } );
     return copied_files;
 }
+
+
+// Public
 
 const std::string pack( const options::Options& options )
 {

@@ -29,8 +29,6 @@ struct Options;
 
 namespace Packager
 {
-const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::string& project_file );
-const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory, const options::Options& options );
 const std::string pack( const options::Options& options );
 };
 
