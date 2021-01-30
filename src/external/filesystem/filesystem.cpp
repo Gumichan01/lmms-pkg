@@ -21,6 +21,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -248,7 +249,7 @@ bool createDir( const std::string& directory ) noexcept
     {
         return true;
     }
-    bool result = ( mkdir( dir ) == 0 );
+    bool result = ( mkdir( dir , 0644) == 0 );
     int code = errno;
 
     if ( !result )
@@ -272,4 +273,3 @@ bool exists( const std::string& path ) noexcept
 }
 
 }   // fs
-
