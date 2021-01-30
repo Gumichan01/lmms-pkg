@@ -11,6 +11,8 @@ DEBUG=yes
 CC=g++
 BUILD_DIR=build/
 SRC_DIR=src/
+LIBZIPPP_DIST_LINUX=`find dist/linux -name '*.a'`
+
 LMMS_PKG=lmms-pkg
 
 WFLAGS=-Wall -Wextra
@@ -44,8 +46,8 @@ OBJS=$(SRCS:.cpp=.o)
 	$(CC) -c $< -o $@ $(DEPS)
 
 $(LMMS_PKG): $(OBJS)
-	@echo "| Create " $@"... "
-	@$(CC) -o $@ $(OBJS) $(LFLAGS)
+	@echo "Create "$@
+	@$(CC) -o $@ $(OBJS) $(LIBZIPPP_DIST_LINUX) $(LFLAGS)
 
 clean:
 	@find $(SRC_DIR) -name '*.o' -delete
