@@ -73,25 +73,6 @@ std::string zipFile( const std::string& package_directory ) noexcept
         package_name = package_directory + ".zip";
     }
 
-    //const std::string& command = "zip -r " + package_name + " " + package_directory + " 2>&1";
-    //std::cout << "-- " << command << "\n";
-    /*FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
-    if ( !fpipe )
-    {
-        perror( "Something is wrong with LMMS" );
-        return "";
-    }
-
-    const int BUFF_SZ = 1024;
-    char buffer[BUFF_SZ] = { '\0' };
-    while ( fgets( buffer, BUFF_SZ, fpipe ) != NULL )
-    {
-        std::cerr << buffer;
-    }
-    std::cout << "\n";
-    pclose( fpipe );*/
-
-    //const std::string& project_file = "";
     ZipArchive zf(package_name);
     zf.open(ZipArchive::Write);
 
@@ -103,7 +84,6 @@ std::string zipFile( const std::string& package_directory ) noexcept
             if (fsys::is_regular_file(file.path()))
             {
                 std::cout << "zip: " << file.path().string() << "\n";
-                //std::cout << file.path().string() << " is regular\n";
                 zf.addFile( file.path().string(), file.path().string() );
             }
             else
