@@ -14,7 +14,6 @@ SRC_DIR=src/
 LIBZIPPP_DIST_LINUX=`find dist/linux -name '*.a'`
 
 LMMS_PKG=lmms-pkg
-
 WFLAGS=-Wall -Wextra
 
 ifeq ($(DEBUG),yes)
@@ -34,7 +33,7 @@ else
 endif
 
 DEPS=`pkg-config --cflags libzip`
-LFLAGS=`pkg-config --libs libzip`
+LFLAGS=-lstdc++fs `pkg-config --libs libzip`
 
 .PHONY: clean mrproper
 

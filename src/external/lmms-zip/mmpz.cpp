@@ -19,10 +19,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <experimental/filesystem>
 
 #include "mmpz.hpp"
+#include "../libzip/libzippp.h"
 #include "../filesystem/filesystem.hpp"
 
+using namespace libzippp;
+namespace fsys = std::experimental::filesystem;
 
 namespace lmms
 {
@@ -69,10 +73,9 @@ std::string zipFile( const std::string& package_directory ) noexcept
         package_name = package_directory + ".zip";
     }
 
-    const std::string& command = "zip -r " + package_name + " " + package_directory + " 2>&1";
-
-    std::cout << "-- " << command << "\n";
-    FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
+    //const std::string& command = "zip -r " + package_name + " " + package_directory + " 2>&1";
+    //std::cout << "-- " << command << "\n";
+    /*FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
     if ( !fpipe )
     {
         perror( "Something is wrong with LMMS" );
@@ -86,7 +89,36 @@ std::string zipFile( const std::string& package_directory ) noexcept
         std::cerr << buffer;
     }
     std::cout << "\n";
-    pclose( fpipe );
+    pclose( fpipe );*/
+
+    //const std::string& project_file = "";
+    ZipArchive zf(package_name);
+    zf.open(ZipArchive::Write);
+
+    if (zf.isOpen())
+    {
+        std::cout << "OK\n";
+        for (auto &file : fsys::recursive_directory_iterator(package_directory))
+        {
+            if (fsys::is_regular_file(file.path()))
+            {
+                std::cout << "zip: " << file.path().string() << "\n";
+                //std::cout << file.path().string() << " is regular\n";
+                zf.addFile( file.path().string(), file.path().string() );
+            }
+            else
+            {
+                std::cout << file.path().string() << " is something else\n";
+            }
+        }
+    }
+    else
+    {
+        std::cerr << "-- ERROR: Cannot zip " << package_name << ".\n";
+        return "";
+    }
+    zf.close();
+
     return package_name;
 }
 
