@@ -249,7 +249,11 @@ bool createDir( const std::string& directory ) noexcept
     {
         return true;
     }
+#if defined(__WIN32__) || defined(__WIN64__)
+    bool result = ( mkdir( dir ) == 0 );
+#else
     bool result = ( mkdir( dir , 0755) == 0 );
+#endif
     int code = errno;
 
     if ( !result )
