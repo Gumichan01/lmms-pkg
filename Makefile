@@ -9,9 +9,9 @@
 DEBUG=yes
 
 CC=g++
+#CC=x86_64-w64-mingw32-g++
 BUILD_DIR=build/
 SRC_DIR=src/
-LIBZIPPP_DIST_LINUX=`find dist/linux -name '*.a'`
 
 LMMS_PKG=lmms-pkg
 WFLAGS=-Wall -Wextra
@@ -33,7 +33,7 @@ else
 endif
 
 DEPS=`pkg-config --cflags libzip`
-LFLAGS=-lstdc++fs `pkg-config --libs libzip`
+LFLAGS=`pkg-config --libs libzip`
 
 .PHONY: clean mrproper
 
@@ -46,7 +46,7 @@ OBJS=$(SRCS:.cpp=.o)
 
 $(LMMS_PKG): $(OBJS)
 	@echo "Create "$@
-	@$(CC) -o $@ $(OBJS) $(LIBZIPPP_DIST_LINUX) $(LFLAGS)
+	@$(CC) -o $@ $(OBJS) $(LFLAGS)
 
 clean:
 	@find $(SRC_DIR) -name '*.o' -delete
