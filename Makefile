@@ -32,8 +32,8 @@ else
 
 endif
 
-DEPS=`pkg-config --cflags libzip`
-LFLAGS=`pkg-config --libs libzip`
+DEPS=`pkg-config --cflags libzip zlib`
+LFLAGS=`pkg-config --libs libzip zlib`
 
 .PHONY: clean mrproper
 
@@ -52,4 +52,4 @@ clean:
 	@find $(SRC_DIR) -name '*.o' -delete
 
 mrproper: clean
-	@rm $(LMMS_PKG)
+	@rm $(LMMS_PKG) 2>/dev/null
