@@ -35,6 +35,12 @@
 		</Compiler>
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
+		<Unit filename="src/external/ghc/filesystem.hpp" />
+		<Unit filename="src/external/libzip/libzippp.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="src/external/libzip/libzippp.h" />
 		<Unit filename="src/external/lmms-zip/mmpz.cpp" />
 		<Unit filename="src/external/lmms-zip/mmpz.hpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
@@ -43,6 +49,11 @@
 		<Unit filename="src/external/utf8/utf8_iterator.hpp" />
 		<Unit filename="src/external/utf8/utf8_string.cpp" />
 		<Unit filename="src/external/utf8/utf8_string.hpp" />
+		<Unit filename="src/external/zutils-win32/unzip.cpp" />
+		<Unit filename="src/external/zutils-win32/unzip.h" />
+		<Unit filename="src/external/zutils-win32/zip.cpp" />
+		<Unit filename="src/external/zutils-win32/zip.h" />
+		<Unit filename="src/external/zutils-win32/zutils.hpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/packager/options.cpp" />
 		<Unit filename="src/packager/options.hpp" />
