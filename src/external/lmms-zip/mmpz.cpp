@@ -68,7 +68,8 @@ bool compressPackage( const std::string& package_directory, const std::string& p
 bool compressPackage( const std::string& package_directory, const std::string& package_name ) noexcept
 {
 
-// I could not compile this fucking libzippp on Windows because of those dammned dependencies.
+// I could not compile this fucking libzippp on Windows because of those damned dependencies.
+// So I use Zip Utils for Windows
 // I don't want to waste my time installing VStudio, I am a FLOSS advocate ( -.-).
 #if defined(__WIN32__) || defined(__WIN64__)
 
