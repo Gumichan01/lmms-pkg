@@ -19,13 +19,14 @@
 
 // This file was taken from LunatiX, and has been adapted for this project
 
-#include <fstream>
-#include <algorithm>
 #include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #include "filesystem.hpp"
+#include "../ghc/filesystem.hpp"
+
+namespace fsys = ghc::filesystem;
 
 namespace fs
 {
@@ -227,18 +228,8 @@ std::string normalize( const std::string& path ) noexcept
 
 std::string copyFile( const std::string& source_path, const std::string& destination_path )
 {
-    std::ifstream input( source_path, std::ios_base::in | std::ios_base::binary );
-    if ( !input.is_open() )
-    {
-        std::cerr << "\nERROR: \"" << source_path << "\" cannot be open." << "\n";
-        return "";
-    }
-    else
-    {
-        std::ofstream output( destination_path, std::ios_base::out | std::ios_base::binary );
-        output << input.rdbuf();
-        return destination_path;
-    }
+    return fsys::copy_file( fsys::path( source_path ),
+                            fsys::path( destination_path ) ) ? destination_path : "";
 }
 
 bool createDir( const std::string& directory ) noexcept
@@ -252,7 +243,7 @@ bool createDir( const std::string& directory ) noexcept
 #if defined(__WIN32__) || defined(__WIN64__)
     bool result = ( mkdir( dir ) == 0 );
 #else
-    bool result = ( mkdir( dir , 0755) == 0 );
+    bool result = ( mkdir( dir, 0755 ) == 0 );
 #endif
     int code = errno;
 
