@@ -150,16 +150,20 @@ std::string zipFile( const std::string& package_directory ) noexcept
 
 bool checkZipFile( const std::string& package_file ) noexcept
 {
-    // 4. Check if the sample directory exists
+
+    bool valid_project_file = false;
+    bool has_sample_directory = false;
+
     if ( fsys::exists( fsys::path( package_file ) ) )
     {
-// #if defined(__WIN32__) || defined(__WIN64__)
+#if defined(__WIN32__) || defined(__WIN64__)
 
         HZIP zip = OpenZip( package_file.c_str(), nullptr );
 
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
         int numitems = ze.index;
+        const std::string& samples_dir = "/samples/";
 
         for ( int index = 0; index < numitems; index++ )
         {
@@ -185,6 +189,10 @@ bool checkZipFile( const std::string& package_file ) noexcept
                         CloseZip( zip );
                         return false;
                     }
+                    else
+                    {
+                        valid_project_file = true;
+                    }
                 }
                 else
                 {
@@ -192,11 +200,23 @@ bool checkZipFile( const std::string& package_file ) noexcept
                     std::cerr << "Internal error while unzipping the project file. Please contact a developer.\n";
                 }
             }
+            else if ( filename.substr( filename.size() - samples_dir.size(), samples_dir.size() ) == samples_dir )
+            {
+                has_sample_directory = true;
+            }
         }
 
         CloseZip( zip );
-// #else
-        return true;
+#else
+        /// TODO Check with libzippp
+#endif
+
+        if ( !has_sample_directory )
+        {
+            std::cerr << "The sample directory is not here.\n";
+        }
+
+        return valid_project_file && has_sample_directory;
     }
     return false;
 }
