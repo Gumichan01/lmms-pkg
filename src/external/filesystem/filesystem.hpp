@@ -22,7 +22,6 @@
 #ifndef FILESYSTEM_HPP_INCLUDED
 #define FILESYSTEM_HPP_INCLUDED
 
-#include "../utf8/utf8_string.hpp"
 #include <string>
 
 namespace fs
