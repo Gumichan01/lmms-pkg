@@ -79,14 +79,19 @@ bool compressPackage( const std::string& package_directory, const std::string& p
 
     for ( auto& file : fsys::recursive_directory_iterator( package_directory ) )
     {
+        std::cout << "zip: " << file.path().string() << "\n";
+
         if ( fsys::is_regular_file( file.path() ) )
         {
-            std::cout << "zip: " << file.path().string() << "\n";
             ZipAdd( zip, file.path().string().c_str(), file.path().string().c_str() );
+        }
+        else if ( fsys::is_directory( file.path() ) )
+        {
+            ZipAddFolder( zip, file.path().string().c_str() );
         }
         else
         {
-            std::cout << file.path().string() << " is something else\n";
+            std::cout << file.path().string() << " is something else. It is not zipped into the archive.\n";
         }
     }
 
