@@ -25,21 +25,22 @@ enum class OperationType
 {
     Import,
     Export,
+    Check,
     InvalidOperation
 };
 
 struct Options
 {
-    const OperationType operation;
-    const std::string project_file;
-    const std::string destination_directory;
+    const OperationType operation = OperationType::InvalidOperation;
+    const std::string project_file = "";
+    const std::string destination_directory = "";
     // Optional
-    const bool sf2_export;
-    const bool zip;
-    const std::string lmms_directory;
-    const std::string lmms_command;     // Very useful if LMMS is not in the $PATH env
+    const bool sf2_export = true;
+    const bool zip = true;
+    const std::string lmms_directory = "";
+    const std::string lmms_command = "";     // Very useful if LMMS is not in the $PATH env
 };
 
-const Options retrieveArguments( int argc, char * argv[] ) noexcept;
+const Options retrieveArguments( int argc, char * argv[] );
 
 }

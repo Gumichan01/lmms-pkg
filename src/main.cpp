@@ -25,38 +25,55 @@
 #include "external/filesystem/filesystem.hpp"
 
 
+void usage ( const std::string& progname );
+
+void usage ( const std::string& progname )
+{
+    std::cerr << "Invalid number of arguments\n"
+              << "usage: " << fs::basename( progname )
+              << " --import|--export <name>.mmp(z) <destination/path>"
+              << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
+              << " [--lmms-exe <path/to/lmms/exe>] \n"
+              << "/!\\ Some arguments are not active yet \n\n";
+}
+
 int main( int argc, char * argv[] )
 {
     const int MINIMUM_ARGC = 4;
 
     if ( argc < MINIMUM_ARGC )
     {
-        std::cerr << "Invalid number of arguments\n"
-                  << "usage: " << fs::basename( argv[0] )
-                  << " --import|--export <name>.mmp(z) <destination/path>"
-                  << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
-                  << " [--lmms-exe <path/to/lmms/exe>] \n"
-                  << "/!\\ Some arguments are not active yet \n\n";
+        usage( argv[0] );
         return EXIT_FAILURE;
     }
 
-    const options::Options& options = options::retrieveArguments( argc, argv );
-    if ( options.operation == options::OperationType::Export )
+    try
     {
-        const std::string& package = Packager::pack( options );
-        if ( !package.empty() )
+        const options::Options& options = options::retrieveArguments( argc, argv );
+        if ( options.operation == options::OperationType::Export )
         {
-            std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
+            const std::string& package = Packager::pack( options );
+            if ( !package.empty() )
+            {
+                std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
+            }
+        }
+        else if ( options.operation == options::OperationType::Import )    // Import
+        {
+            /// TODO Import project
+        }
+        else
+        {
+            std::cerr << "Invalid Operation\n";
+            usage( argv[0] );
+            return EXIT_FAILURE;
         }
     }
-    else if ( options.operation == options::OperationType::Import )    // Import
+    catch ( std::exception& e )
     {
-        /// TODO Import project
-    }
-    else
-    {
-        std::cerr << "Waht the f***? This is not reachable\n";
+        std::cerr << e.what() << "\n";
         return EXIT_FAILURE;
     }
+
     return EXIT_SUCCESS;
 }
