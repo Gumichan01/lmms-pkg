@@ -19,12 +19,12 @@
 #include <iostream>
 
 #include "mmpz.hpp"
-#include "../filesystem/filesystem.hpp"
-#include "../ghc/filesystem.hpp"
+#include "../external/filesystem/filesystem.hpp"
+#include "../external/ghc/filesystem.hpp"
 
 #if defined(__WIN32__) || defined(__WIN64__)
 
-#include "../zutils-win32/zutils.hpp"
+#include "../external/zutils-win32/zutils.hpp"
 
 #else
 

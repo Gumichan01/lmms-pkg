@@ -23,9 +23,9 @@
 
 #include "packager.hpp"
 #include "options.hpp"
+#include "mmpz.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/filesystem/filesystem.hpp"
-#include "../external/lmms-zip/mmpz.hpp"
 
 namespace Packager
 {

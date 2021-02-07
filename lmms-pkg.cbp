@@ -41,8 +41,6 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="src/external/libzip/libzippp.h" />
-		<Unit filename="src/external/lmms-zip/mmpz.cpp" />
-		<Unit filename="src/external/lmms-zip/mmpz.hpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
 		<Unit filename="src/external/utf8/utf8_iterator.cpp" />
@@ -55,6 +53,8 @@
 		<Unit filename="src/external/zutils-win32/zip.h" />
 		<Unit filename="src/external/zutils-win32/zutils.hpp" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/packager/mmpz.cpp" />
+		<Unit filename="src/packager/mmpz.hpp" />
 		<Unit filename="src/packager/options.cpp" />
 		<Unit filename="src/packager/options.hpp" />
 		<Unit filename="src/packager/packager.cpp" />
