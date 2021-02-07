@@ -39,7 +39,7 @@ void usage ( const std::string& progname )
 
 int main( int argc, char * argv[] )
 {
-    const int MINIMUM_ARGC = 4;
+    const int MINIMUM_ARGC = 3;
 
     if ( argc < MINIMUM_ARGC )
     {
@@ -58,9 +58,20 @@ int main( int argc, char * argv[] )
                 std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
             }
         }
-        else if ( options.operation == options::OperationType::Import )    // Import
+        else if ( options.operation == options::OperationType::Import )
         {
             /// TODO Import project
+        }
+        else if ( options.operation == options::OperationType::Check )
+        {
+            if ( Packager::checkPackage( options ) )
+            {
+                std::cout << "-- Valid package.\n";
+            }
+            else
+            {
+                std::cout << "-- Invalid package.\n";
+            }
         }
         else
         {

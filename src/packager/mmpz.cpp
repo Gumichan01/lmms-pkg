@@ -17,10 +17,12 @@
 */
 
 #include <iostream>
+#include <memory>
 
 #include "mmpz.hpp"
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/ghc/filesystem.hpp"
+#include "../external/tinyxml2/tinyxml2.h"
 
 #if defined(__WIN32__) || defined(__WIN64__)
 
@@ -139,6 +141,59 @@ std::string zipFile( const std::string& package_directory ) noexcept
     }
 
     return compressPackage( package_directory, package_name ) ? package_name : "";
+}
+
+bool checkZipFile( const std::string& package_file ) noexcept
+{
+    // 4. Check if the sample directory exists
+    if ( fsys::exists( fsys::path( package_file ) ) )
+    {
+// #if defined(__WIN32__) || defined(__WIN64__)
+
+        HZIP zip = OpenZip( package_file.c_str(), nullptr );
+
+        ZIPENTRY ze;
+        GetZipItem( zip, -1, &ze );
+        int numitems = ze.index;
+
+        for ( int index = 0; index < numitems; index++ )
+        {
+            ZIPENTRY entry;
+            GetZipItem( zip, index, &entry );
+            const std::string& filename = entry.name;
+
+            std::cout << "-- " << filename << "\n";
+
+            if ( fs::hasExtension( filename, ".mmp" ) )
+            {
+                const unsigned int bufsize = entry.unc_size + 1;
+                const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
+                int code = UnzipItem ( zip, index, buffer.get(), bufsize );
+
+                if ( code == ZR_OK )
+                {
+                    tinyxml2::XMLError tinycode = tinyxml2::XMLDocument().Parse( buffer.get(), bufsize );
+
+                    if ( tinycode != tinyxml2::XML_SUCCESS )
+                    {
+                        std::cerr << "The project file is not a valid LMMS project file.\n";
+                        CloseZip( zip );
+                        return false;
+                    }
+                }
+                else
+                {
+                    /// This block must be unreachable
+                    std::cerr << "Internal error while unzipping the project file. Please contact a developer.\n";
+                }
+            }
+        }
+
+        CloseZip( zip );
+// #else
+        return true;
+    }
+    return false;
 }
 
 }

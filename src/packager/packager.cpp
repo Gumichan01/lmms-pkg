@@ -239,8 +239,7 @@ const std::string pack( const options::Options& options )
 
 bool checkPackage( const options::Options& options )
 {
-    /// TODO check package
-    return true;
+    return lmms::checkZipFile( options.project_file );
 }
 
 }
