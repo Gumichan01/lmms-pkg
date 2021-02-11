@@ -23,17 +23,7 @@
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/ghc/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
-
-//#if defined(__WIN32__) || defined(__WIN64__)
-
 #include "../external/zutils-win32/zutils.hpp"
-
-/*#else
-
-#include "../external/libzip/libzippp.h"
-using namespace libzippp;
-
-#endif*/
 
 namespace fsys = ghc::filesystem;
 
@@ -69,12 +59,6 @@ bool compressPackage( const std::string& package_directory, const std::string& p
 
 bool compressPackage( const std::string& package_directory, const std::string& package_name ) noexcept
 {
-
-// I could not compile this fucking libzippp on Windows because of those damned dependencies.
-// So I use Zip Utils for Windows
-// I don't want to waste my time installing VStudio, I am a FLOSS advocate ( -.-).
-//#if defined(__WIN32__) || defined(__WIN64__)
-
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
 
     for ( auto& file : fsys::recursive_directory_iterator( package_directory ) )
@@ -96,34 +80,6 @@ bool compressPackage( const std::string& package_directory, const std::string& p
     }
 
     CloseZip( zip );
-/*#else
-
-    ZipArchive zf( package_name );
-    zf.open( ZipArchive::Write );
-
-    if ( zf.isOpen() )
-    {
-        for ( auto& file : fsys::recursive_directory_iterator( package_directory ) )
-        {
-            if ( fsys::is_regular_file( file.path() ) )
-            {
-                std::cout << "zip: " << file.path().string() << "\n";
-                zf.addFile( file.path().string(), file.path().string() );
-            }
-            else
-            {
-                std::cout << file.path().string() << " is something else\n";
-            }
-        }
-    }
-    else
-    {
-        std::cerr << "-- ERROR: Cannot zip " << package_name << ".\n";
-        return false;
-    }
-    zf.close();
-
-#endif*/
     return true;
 }
 
@@ -156,8 +112,6 @@ bool checkZipFile( const std::string& package_file ) noexcept
 
     if ( fsys::exists( fsys::path( package_file ) ) )
     {
-//#if defined(__WIN32__) || defined(__WIN64__)
-
         HZIP zip = OpenZip( package_file.c_str(), nullptr );
 
         ZIPENTRY ze;
@@ -207,9 +161,6 @@ bool checkZipFile( const std::string& package_file ) noexcept
         }
 
         CloseZip( zip );
-//#else
-        /// TODO Check with libzippp
-//#endif
 
         if ( !has_sample_directory )
         {
