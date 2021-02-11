@@ -9,8 +9,10 @@
 #endif
 typedef unsigned long DWORD;
 typedef char TCHAR;
-//typedef FILE* HANDLE;
-//typedef time_t FILETIME;
+#ifdef __unix
+typedef FILE* HANDLE;
+typedef time_t FILETIME;
+#endif
 #endif
 
 // UNZIPPING functions -- for unzipping.

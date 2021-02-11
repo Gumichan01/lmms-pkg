@@ -22,5 +22,9 @@
 
 // See http://www.wischik.com/lu/programmer/zip_utils.html
 
+#ifdef __unix
+#define ZIP_STD
+#endif
+
 #include "zip.h"
 #include "unzip.h"

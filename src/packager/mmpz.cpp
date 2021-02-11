@@ -24,16 +24,16 @@
 #include "../external/ghc/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 
-#if defined(__WIN32__) || defined(__WIN64__)
+//#if defined(__WIN32__) || defined(__WIN64__)
 
 #include "../external/zutils-win32/zutils.hpp"
 
-#else
+/*#else
 
-#include "../libzip/libzippp.h"
+#include "../external/libzip/libzippp.h"
 using namespace libzippp;
 
-#endif
+#endif*/
 
 namespace fsys = ghc::filesystem;
 
@@ -73,7 +73,7 @@ bool compressPackage( const std::string& package_directory, const std::string& p
 // I could not compile this fucking libzippp on Windows because of those damned dependencies.
 // So I use Zip Utils for Windows
 // I don't want to waste my time installing VStudio, I am a FLOSS advocate ( -.-).
-#if defined(__WIN32__) || defined(__WIN64__)
+//#if defined(__WIN32__) || defined(__WIN64__)
 
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
 
@@ -96,7 +96,7 @@ bool compressPackage( const std::string& package_directory, const std::string& p
     }
 
     CloseZip( zip );
-#else
+/*#else
 
     ZipArchive zf( package_name );
     zf.open( ZipArchive::Write );
@@ -123,7 +123,7 @@ bool compressPackage( const std::string& package_directory, const std::string& p
     }
     zf.close();
 
-#endif
+#endif*/
     return true;
 }
 
@@ -156,7 +156,7 @@ bool checkZipFile( const std::string& package_file ) noexcept
 
     if ( fsys::exists( fsys::path( package_file ) ) )
     {
-#if defined(__WIN32__) || defined(__WIN64__)
+//#if defined(__WIN32__) || defined(__WIN64__)
 
         HZIP zip = OpenZip( package_file.c_str(), nullptr );
 
@@ -207,9 +207,9 @@ bool checkZipFile( const std::string& package_file ) noexcept
         }
 
         CloseZip( zip );
-#else
+//#else
         /// TODO Check with libzippp
-#endif
+//#endif
 
         if ( !has_sample_directory )
         {
