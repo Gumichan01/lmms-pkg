@@ -39,7 +39,7 @@ std::string dirname( const std::string& path )
     return fsys::path( normalize( path ), fsys::path::generic_format ).parent_path();
 }
 
-std::string normalize( const std::string& path ) noexcept
+std::string normalize( const std::string& path )
 {
 #if defined(__WIN32__) || defined(__WIN64__)
     const char WIN_SEP = '\\';
