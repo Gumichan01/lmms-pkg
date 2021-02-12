@@ -36,11 +36,6 @@
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
 		<Unit filename="src/external/ghc/filesystem.hpp" />
-		<Unit filename="src/external/libzip/libzippp.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="src/external/libzip/libzippp.h" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
 		<Unit filename="src/external/zutils-win32/unzip.cpp" />

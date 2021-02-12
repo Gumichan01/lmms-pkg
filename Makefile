@@ -26,14 +26,12 @@ ifeq ($(DEBUG),yes)
 else
 
 	# Release mode
-	CFLAGS=-fPIC -w -std=c++14
+	CFLAGS=-w -std=c++14
 	OPTIMIZE=-O3
 	OPT_SIZE=-s
 
 endif
 
-DEPS=`pkg-config --cflags libzip zlib`
-LFLAGS=`pkg-config --libs libzip zlib`
 
 .PHONY: clean mrproper
 
@@ -42,14 +40,14 @@ OBJS=$(SRCS:.cpp=.o)
 
 %.o: %.cpp
 	@echo $@" - Compiling "$<
-	$(CC) -c $< -o $@ $(DEPS)
+	$(CC) -c $< -o $@
 
 $(LMMS_PKG): $(OBJS)
 	@echo "Create "$@
-	@$(CC) -o $@ $(OBJS) $(LFLAGS)
+	@$(CC) -o $@ $(OBJS)
 
 clean:
 	@find $(SRC_DIR) -name '*.o' -delete
 
 mrproper: clean
-	@rm $(LMMS_PKG) 2>/dev/null
+	@rm -f $(LMMS_PKG)
