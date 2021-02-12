@@ -19,7 +19,6 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_set>
-#include <fstream>
 
 #include "packager.hpp"
 #include "options.hpp"
@@ -102,63 +101,60 @@ const std::vector<std::string> retrievePathsOfFilesFromXMLFile( const std::strin
 
 const std::vector<std::string> copyFilesTo( const std::vector<std::string>& paths, const std::string& directory, const options::Options& options )
 {
-    // For each path
-    // 1. if the file exists, copy it to the destination + save path to the copied paths
-    // 2. if is does not exists, print a warning message
     std::vector<std::string> copied_files;
     std::for_each( paths.cbegin(), paths.cend(),
-                   [&directory, &copied_files, &options]( const std::string & path )
+                   [&directory, &copied_files, &options]( const std::string & source_path )
     {
-        if ( fs::hasExtension( path, ".sf2" ) && !options.sf2_export )
+        if ( fs::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
-            std::cout << "-- This following file: \"" << path << "\" is a SoundFont file and is ignored.\n";
+            std::cout << "-- This following file: \"" << source_path << "\" is a SoundFont file and is ignored.\n";
         }
         else
         {
-            std::ifstream file( path, std::ios_base::in | std::ios_base::binary );
-            if ( !file.is_open() )
+            const std::string& destination_path = directory + fs::basename( source_path );
+            if ( fs::exists( source_path ) )
             {
-                if ( !options.lmms_directory.empty() )
+                std::cout << "-- Copying \"" << source_path << "\" -> \"" << destination_path << "\"...";
+                if ( fs::copyFile( source_path, destination_path ) )
                 {
-                    std::cout << "-- " << path << "\" does not exit.\n";
-
-                    // Assuming the path is relative
-                    const std::string& lmms_source_file = options.lmms_directory + path;
-                    std::cout << "-- Trying \"" << lmms_source_file << "\"\n";
-
-                    std::ifstream lmms_file( lmms_source_file, std::ios_base::in | std::ios_base::binary );
-                    if ( !lmms_file.is_open() )
-                    {
-                        std::cerr << "-- Cannot get \"" << lmms_source_file << "\"\n";
-                    }
-                    else
-                    {
-                        lmms_file.close();
-                        const std::string& destination_path = directory + fs::basename( path );
-                        std::cout << "Copying \"" << lmms_source_file << "\" -> \"" << destination_path << "\"...";
-                        const std::string& copied_file = fs::copyFile( lmms_source_file, destination_path );
-                        if ( !copied_file.empty() )
-                        {
-                            std::cout << "DONE\n";
-                            copied_files.push_back( copied_file );
-                        }
-                    }
+                    std::cout << "DONE\n";
+                    copied_files.push_back( destination_path );
                 }
                 else
                 {
-                    std::cerr << "-- Cannot get \"" << path << "\" \n";
+                    std::cout << "FAILED\n";
                 }
             }
             else
             {
-                file.close();
-                const std::string& destination_path = directory + fs::basename( path );
-                std::cout << "-- Copying \"" << path << "\" -> \"" << destination_path << "\"...";
-                const std::string& copied_file = fs::copyFile( path, destination_path );
-                if ( !copied_file.empty() )
+                if ( !options.lmms_directory.empty() )
                 {
-                    std::cout << "DONE\n";
-                    copied_files.push_back( copied_file );
+                    std::cout << "-- " << source_path << "\" does not exit.\n";
+
+                    // Assuming the source_path is relative to the current directory the program is launched
+                    const std::string& lmms_source_file = options.lmms_directory + source_path;
+                    std::cout << "-- Trying \"" << lmms_source_file << "\"\n";
+
+                    if ( fs::exists( lmms_source_file ) )
+                    {
+                        if ( fs::copyFile( lmms_source_file, destination_path ) )
+                        {
+                            std::cout << "DONE\n";
+                            copied_files.push_back( destination_path );
+                        }
+                        else
+                        {
+                            std::cout << "FAILED\n";
+                        }
+                    }
+                    else
+                    {
+                        std::cerr << "-- Cannot get \"" << lmms_source_file << "\"\n";
+                    }
+                }
+                else
+                {
+                    std::cerr << "-- Cannot get \"" << source_path << "\" \n";
                 }
             }
         }
@@ -198,7 +194,7 @@ const std::string pack( const options::Options& options )
     else
     {
         std::cout << "-- Copying \"" << lmms_file << "\" -> \"" << project_file << "\"...";
-        if ( fs::copyFile( lmms_file, project_file ) == project_file )
+        if ( fs::copyFile( lmms_file, project_file ) )
         {
             std::cout << "DONE\n";
         }

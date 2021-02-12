@@ -32,7 +32,7 @@ std::string basename( const std::string& path );
 std::string dirname( const std::string& path );
 // Normalize the path as a Unix-like path
 std::string normalize( const std::string& path ) noexcept;
-std::string copyFile( const std::string& source_path, const std::string& destination_path );
+bool copyFile( const std::string& source_path, const std::string& destination_path );
 bool createDir( const std::string& directory ) noexcept;
 bool hasExtension( const std::string& path, const std::string& extension );
 bool exists( const std::string& path ) noexcept;

@@ -52,11 +52,11 @@ std::string normalize( const std::string& path ) noexcept
 #endif
 }
 
-std::string copyFile( const std::string& source_path, const std::string& destination_path )
+bool copyFile( const std::string& source_path, const std::string& destination_path )
 {
     return fsys::copy_file( fsys::path( source_path, fsys::path::generic_format ),
                             fsys::path( destination_path, fsys::path::generic_format ),
-                            fsys::copy_options::overwrite_existing ) ? destination_path : "";
+                            fsys::copy_options::overwrite_existing );
 }
 
 bool createDir( const std::string& directory ) noexcept
