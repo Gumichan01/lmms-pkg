@@ -23,7 +23,7 @@
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/ghc/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
-#include "../external/zutils-win32/zutils.hpp"
+#include "../external/zutils/zutils.hpp"
 
 namespace fsys = ghc::filesystem;
 

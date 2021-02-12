@@ -38,11 +38,11 @@
 		<Unit filename="src/external/ghc/filesystem.hpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.cpp" />
 		<Unit filename="src/external/tinyxml2/tinyxml2.h" />
-		<Unit filename="src/external/zutils-win32/unzip.cpp" />
-		<Unit filename="src/external/zutils-win32/unzip.h" />
-		<Unit filename="src/external/zutils-win32/zip.cpp" />
-		<Unit filename="src/external/zutils-win32/zip.h" />
-		<Unit filename="src/external/zutils-win32/zutils.hpp" />
+		<Unit filename="src/external/zutils/unzip.cpp" />
+		<Unit filename="src/external/zutils/unzip.h" />
+		<Unit filename="src/external/zutils/zip.cpp" />
+		<Unit filename="src/external/zutils/zip.h" />
+		<Unit filename="src/external/zutils/zutils.hpp" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/packager/mmpz.cpp" />
 		<Unit filename="src/packager/mmpz.hpp" />
