@@ -16,6 +16,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef OPTIONS_HPP_INCLUDED
+#define OPTIONS_HPP_INCLUDED
+
 #include <string>
 
 namespace options
@@ -44,3 +47,5 @@ struct Options
 const Options retrieveArguments( int argc, char * argv[] );
 
 }
+
+#endif // OPTIONS_HPP_INCLUDED

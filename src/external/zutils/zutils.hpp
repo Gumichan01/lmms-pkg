@@ -22,9 +22,14 @@
 
 // See http://www.wischik.com/lu/programmer/zip_utils.html
 
+#ifndef ZUTILS_HPP_INCLUDED
+#define ZUTILS_HPP_INCLUDED
+
 #ifdef __unix
 #define ZIP_STD
 #endif
 
 #include "zip.h"
 #include "unzip.h"
+
+#endif // ZUTILS_HPP_INCLUDED

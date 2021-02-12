@@ -16,6 +16,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MMPZ_HPP_INCLUDED
+#define MMPZ_HPP_INCLUDED
+
 #include <string>
 
 namespace lmms
@@ -27,3 +30,5 @@ std::string decompressProject( const std::string& project_file, const std::strin
 std::string zipFile( const std::string& package_directory ) noexcept;
 bool checkZipFile( const std::string& package_file ) noexcept;
 }
+
+#endif // MMPZ_HPP_INCLUDED
