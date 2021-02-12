@@ -31,7 +31,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++17" />
+			<Add option="-std=c++14" />
 		</Compiler>
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
