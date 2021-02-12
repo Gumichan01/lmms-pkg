@@ -19,7 +19,6 @@
 
 // This file was taken from LunatiX, and has been adapted for this project
 
-#include <cstring>
 
 #include "filesystem.hpp"
 #include "../ghc/filesystem.hpp"

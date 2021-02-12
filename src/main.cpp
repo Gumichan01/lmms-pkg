@@ -17,8 +17,6 @@
 */
 
 #include <iostream>
-#include <cstdlib>
-#include <algorithm>
 
 #include "packager/packager.hpp"
 #include "packager/options.hpp"
