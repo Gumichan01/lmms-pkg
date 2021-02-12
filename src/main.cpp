@@ -71,12 +71,12 @@ int main( int argc, char * argv[] )
                 std::cout << "-- Invalid package.\n";
             }
         }
-        else
-        {
-            std::cerr << "Invalid Operation\n";
-            usage( argv[0] );
-            return EXIT_FAILURE;
-        }
+    }
+    catch ( std::invalid_argument& e )
+    {
+        std::cerr << e.what() << "\n";
+        usage( argv[0] );
+        return EXIT_FAILURE;
     }
     catch ( std::exception& e )
     {

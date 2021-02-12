@@ -38,85 +38,76 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 }
 
 
-const Options retrieveImportExportArguments( int argc, char * argv[] );
+const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] );
 
-const Options retrieveImportExportArguments( int argc, char * argv[] )
+const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] )
 {
-    OperationType op;
     const std::string& operation_str = argv[1];
     // Assuming there are at least 4 arguments
     const std::string& project_file = fs::normalize( argv[2] );
     const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
 
-    if ( operation_str == "--import" )
+    if ( op == OperationType::Import )
     {
-        op = OperationType::Import;
         return Options { op, project_file, destination_directory };
     }
-    else if ( operation_str == "--export" )
+
+    // Assuming this is OperationType::Export
+    bool sf2_export = true;
+    bool zip = true;
+    std::string lmms_dir;
+    std::string lmms_exe = "lmms";
+    bool lmms_exe_set = false;
+
+    int argvpos = 4;
+    while ( argvpos < argc )
     {
-        op = OperationType::Export;
-
-        bool sf2_export = true;
-        bool zip = true;
-        std::string lmms_dir;
-        std::string lmms_exe = "lmms";
-        bool lmms_exe_set = false;
-
-        int argvpos = 4;
-        while ( argvpos < argc )
+        const std::string& opt = argv[argvpos];
+        if ( ( opt == "--no-sf2" ) && ( op == OperationType::Export ) )
         {
-            const std::string& opt = argv[argvpos];
-            if ( ( opt == "--no-sf2" ) && ( op == OperationType::Export ) )
+            std::cout << "-- Ignore Soundfont2 files\n";
+            sf2_export = false;
+        }
+        else if ( opt == "--no-zip" && op == OperationType::Export )
+        {
+            std::cout << "-- The destination package will not be zipped\n";
+            zip = false;
+        }
+        else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
+        {
+            if ( lmms_dir.empty() )
             {
-                std::cout << "-- Ignore Soundfont2 files\n";
-                sf2_export = false;
-            }
-            else if ( opt == "--no-zip" && op == OperationType::Export )
-            {
-                std::cout << "-- The destination package will not be zipped\n";
-                zip = false;
-            }
-            else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
-            {
-                if ( lmms_dir.empty() )
-                {
-                    lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
-                    std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
-                    argvpos++;
-                }
-                else
-                {
-                    std::cerr << "-- LMMS directory already set. Directory ignored.\n";
-                }
-            }
-            else if ( ( opt == "--lmms-exe" ) )
-            {
-                if ( !lmms_exe_set )
-                {
-                    lmms_exe = argv[argvpos + 1];
-                    std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
-                    lmms_exe_set = true;
-                    argvpos++;
-                }
-                else
-                {
-                    std::cerr << "LMMS custom executable already set. Executable ignored.\n";
-                }
+                lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
+                std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
+                argvpos++;
             }
             else
             {
-                std::cerr << "Parameter \"" << opt << "\" is ignored.\n";
+                std::cout << "-- LMMS directory already set. Directory ignored.\n";
             }
-            argvpos++;
         }
+        else if ( ( opt == "--lmms-exe" ) )
+        {
+            if ( !lmms_exe_set )
+            {
+                lmms_exe = argv[argvpos + 1];
+                std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
+                lmms_exe_set = true;
+                argvpos++;
+            }
+            else
+            {
+                std::cout << "LMMS custom executable already set. Executable ignored.\n";
+            }
+        }
+        else
+        {
+            std::cout << "Parameter \"" << opt << "\" is ignored.\n";
+        }
+        argvpos++;
+    }
 
-        return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dir, lmms_exe };
-    }
-    else
-    {
-        throw std::invalid_argument( "FATAL ERROR: invalid operation selection in this function: " + operation_str );
-    }
+    return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dir, lmms_exe };
 
 }
 
@@ -136,21 +127,36 @@ const Options retrieveImportExportArguments( int argc, char * argv[] )
 */
 const Options retrieveArguments( int argc, char * argv[] )
 {
-    OperationType op;
-    const std::string& operation_str = argv[1];
+    const OperationType op = [&]()
+    {
+        const std::string& operation_str = argv[1];
+        if ( operation_str == "--import" )
+        {
+            return OperationType::Import;
+        }
+        else if ( operation_str == "--export" )
+        {
+            return OperationType::Export;
+        }
+        else if ( operation_str == "--check" )
+        {
+            return OperationType::Check;
+        }
+        return OperationType::InvalidOperation;
+    } ();
 
-    if ( operation_str == "--import" || operation_str == "--export" )
+    if ( op == OperationType::Import || op == OperationType::Export )
     {
-        return retrieveImportExportArguments( argc, argv );
+        return retrieveImportExportArguments( op, argc, argv );
     }
-    else if ( operation_str == "--check" )
+    else if ( op == OperationType::Check )
     {
-        op = OperationType::Check;
         return Options{ op, argv[2] };
     }
     else
     {
-        return Options();
+        throw std::invalid_argument( "FATAL ERROR: invalid operation selection in this function: "
+                                     + std::string( argv[1] ) );
     }
 }
 
