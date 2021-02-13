@@ -33,6 +33,8 @@
 		<Compiler>
 			<Add option="-std=c++14" />
 		</Compiler>
+		<Unit filename="src/exceptions/exceptions.cpp" />
+		<Unit filename="src/exceptions/exceptions.hpp" />
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
 		<Unit filename="src/external/ghc/filesystem.hpp" />
