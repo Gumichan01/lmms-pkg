@@ -18,21 +18,24 @@
 
 #include <iostream>
 #include <memory>
+#include <system_error>
 
 #include "mmpz.hpp"
+#include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/ghc/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/zutils/zutils.hpp"
 
 namespace fsys = ghc::filesystem;
+using namespace exceptions;
 
 namespace lmms
 {
 
 
 std::string decompressProject( const std::string& project_file, const std::string& package_directory,
-                               const std::string& lmms_command ) noexcept
+                               const std::string& lmms_command )
 {
     const std::string& xml_file = package_directory + fs::basename( project_file.substr( 0, project_file.size() - 1 ) );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
@@ -41,23 +44,16 @@ std::string decompressProject( const std::string& project_file, const std::strin
     FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
     if ( !fpipe )
     {
-        perror( "Something is wrong with LMMS" );
-        return "";
+        throw std::system_error( errno, std::system_category(), "Something is wrong with LMMS" );
     }
+
     pclose( fpipe );
-
-    if ( !fs::exists( xml_file ) )
-    {
-        std::cerr << "-- ERROR: No file extracted. Something was wrong with the command or the file.\n";
-        return "";
-    }
-
     return xml_file;
 }
 
-bool compressPackage( const std::string& package_directory, const std::string& package_name ) noexcept;
+bool compressPackage( const std::string& package_directory, const std::string& package_name );
 
-bool compressPackage( const std::string& package_directory, const std::string& package_name ) noexcept
+bool compressPackage( const std::string& package_directory, const std::string& package_name )
 {
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
 
@@ -83,12 +79,11 @@ bool compressPackage( const std::string& package_directory, const std::string& p
     return true;
 }
 
-std::string zipFile( const std::string& package_directory ) noexcept
+std::string zipFile( const std::string& package_directory )
 {
     if ( package_directory.empty() )
     {
-        std::cerr << "-- ERROR: No directory provided.\n";
-        return "";
+        throw NonExistingFileException( "ERROR: No directory provided.\n" );
     }
 
     std::string package_name;
@@ -150,7 +145,7 @@ bool checkZipFile( const std::string& package_file )
                 else
                 {
                     /// This block must be unreachable
-                    throw std::runtime_error("Internal error while unzipping the project file. Please contact a developer.\n");
+                    throw std::runtime_error( "Internal error while unzipping the project file. Please contact a developer.\n" );
                 }
             }
             else if ( filename.substr( filename.size() - samples_dir.size(), samples_dir.size() ) == samples_dir )
