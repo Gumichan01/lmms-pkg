@@ -40,7 +40,7 @@ bool isXmlFile( const std::string& project_file ) noexcept;
 
 const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file );
 const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-                                                      const ghc::filesystem::path& directory, const options::Options& options );
+        const ghc::filesystem::path& directory, const options::Options& options );
 ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options );
 
 bool contains( const std::vector<std::string> names, const std::string& s )
@@ -237,17 +237,28 @@ const std::string pack( const options::Options& options )
     const std::vector<ghc::filesystem::path>& files = retrievePathsOfFilesFromXMLFile( project_filepath.string() );
     std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
 
-    const ghc::filesystem::path sample_directory( destination_directory + "samples/" );
-    if ( !ghc::filesystem::exists( sample_directory ) )
+    if ( !files.empty() )
     {
-        if ( !ghc::filesystem::create_directories( sample_directory ) )
+        const ghc::filesystem::path sample_directory( destination_directory + "samples/" );
+        if ( !ghc::filesystem::exists( sample_directory ) )
         {
-            throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
+            if ( !ghc::filesystem::create_directories( sample_directory ) )
+            {
+                throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
+            }
         }
-    }
 
-    const std::vector<ghc::filesystem::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
-    std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+        const std::vector<ghc::filesystem::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
+        std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+    }
+    else
+    {
+        std::cout << "-- \"" << project_filepath.filename().string() << "\" has no external sample or soundfont file to export.\n"
+                  << "-- So it does not make sense to export this project.\n"
+                  << "-- No package file will be generated, but the generated directory containing the project file is created: \""
+                  << package_directory.string() + "\".\n";
+        return package_directory.string();
+    }
 
     return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
 }
