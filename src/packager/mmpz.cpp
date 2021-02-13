@@ -112,10 +112,11 @@ bool checkZipFile( const std::string& package_file )
 
             std::cout << "-- " << filename << "\n";
 
-            if ( ghc::filesystem::hasExtension( filename, ".mmp" ) )
+            if ( ghc::filesystem::hasExtension( ghc::filesystem::path(filename), ".mmp" ) )
             {
                 const unsigned int bufsize = entry.unc_size + 1;
                 const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
+
                 int code = UnzipItem ( zip, index, buffer.get(), bufsize );
 
                 if ( code == ZR_OK )

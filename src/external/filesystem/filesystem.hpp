@@ -40,11 +40,6 @@ inline std::string normalize( const std::string& filepath )
 #endif
 }
 
-inline bool hasExtension( const std::string& filepath, const std::string& extension )
-{
-    return hasExtension ( path( filepath ), extension );
-}
-
 inline bool hasExtension( const path& filepath, const std::string& extension )
 {
     return filepath.extension() == extension;
