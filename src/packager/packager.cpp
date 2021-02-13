@@ -181,13 +181,20 @@ const std::string pack( const options::Options& options )
         throw NonExistingFileException( "ERROR: \"" + lmms_file.string() + "\" does not exist.\n" );
     }
 
-    if ( !ghc::filesystem::create_directories( package_directory ) )
+    if ( !ghc::filesystem::exists( package_directory ) )
     {
-        throw DirectoryCreationException( "ERROR: \"" + package_directory.string() + "\" cannot be created.\n" );
+        if ( !ghc::filesystem::create_directories( package_directory ) )
+        {
+            throw DirectoryCreationException( "ERROR: \"" + package_directory.string() + "\" cannot be created.\n" );
+        }
     }
-    else if ( !ghc::filesystem::create_directories( sample_directory ) )
+
+    if ( !ghc::filesystem::exists( sample_directory ) )
     {
-        throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
+        if ( !ghc::filesystem::create_directories( sample_directory ) )
+        {
+            throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
+        }
     }
 
     ghc::filesystem::path project_filepath( destination_directory + lmms_file.filename().string() );
@@ -222,17 +229,6 @@ const std::string pack( const options::Options& options )
     std::cout << "\n-- This project has " << files.size() << " files to copy.\n\n";
     const std::vector<ghc::filesystem::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
     std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
-
-    // Extra verification
-    bool non_existing_files = std::any_of( copied_files.cbegin(), copied_files.cend(), [] ( const ghc::filesystem::path & file )
-    {
-        return !ghc::filesystem::exists( file );
-    } );
-
-    if ( non_existing_files )
-    {
-        throw NonExistingFileException( "ERROR: Some files that must be copied in the package does not exist.\n" );
-    }
 
     return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
 }
