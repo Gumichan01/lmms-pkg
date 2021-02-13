@@ -116,7 +116,7 @@ const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::fil
             const ghc::filesystem::path& destination_path = ghc::filesystem::path( directory.string() + source_path.filename().string() );
             if ( ghc::filesystem::exists( source_path ) )
             {
-                std::cout << "-- Copying \"" << source_path << "\" -> \"" << destination_path.string() << "\"...";
+                std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
                 if ( ghc::filesystem::copy_file( source_path, destination_path ) )
                 {
                     std::cout << "DONE\n";
@@ -131,7 +131,7 @@ const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::fil
             {
                 if ( !options.lmms_directory.empty() )
                 {
-                    std::cout << "-- " << source_path << "\" does not exit.\n";
+                    std::cout << "-- \"" << source_path.string() << "\" does not exist.\n";
 
                     // Assuming the source_path is relative to the current directory the program is launched
                     const ghc::filesystem::path& lmms_source_file = ghc::filesystem::path( options.lmms_directory + source_path.string() );
