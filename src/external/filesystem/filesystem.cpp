@@ -20,58 +20,62 @@
 // This file was taken from LunatiX, and has been adapted for this project
 
 
-#include "filesystem.hpp"
-#include "../ghc/filesystem.hpp"
+//#include "filesystem.hpp"
 
-namespace fsys = ghc::filesystem;
+//namespace fsys = ghc::filesystem;
 
-namespace fs
+namespace ghc::filesystem   // Extending GHC Filesysstem
 {
 
 // Public
 
-std::string basename( const std::string& path )
+/*std::string basename( const std::string& filepath )
 {
-    return fsys::path( normalize( path ), fsys::path::generic_format ).filename();
+    return path( normalize( filepath ), path::generic_format ).filename();
 }
-std::string dirname( const std::string& path )
+std::string dirname( const std::string& filepath )
 {
-    return fsys::path( normalize( path ), fsys::path::generic_format ).parent_path();
-}
+    return path( normalize( filepath ), path::generic_format ).parent_path();
+}*/
 
-std::string normalize( const std::string& path )
+/**inline std::string normalize( const std::string& filepath )
 {
 #if defined(__WIN32__) || defined(__WIN64__)
     const char WIN_SEP = '\\';
     const char UNIX_SEP = '/';
-    std::string normalized_path = path;
+    std::string normalized_path = filepath;
     std::replace( normalized_path.begin(), normalized_path.end(), WIN_SEP, UNIX_SEP );
     return normalized_path;
 #else
-    return path;
+    return filepath;
 #endif
-}
+}*/
 
-bool copyFile( const std::string& source_path, const std::string& destination_path )
+/*bool copyFile( const std::string& source_path, const std::string& destination_path )
 {
-    return fsys::copy_file( fsys::path( source_path, fsys::path::generic_format ),
-                            fsys::path( destination_path, fsys::path::generic_format ),
-                            fsys::copy_options::overwrite_existing );
-}
+    return copy_file( path( source_path, path::generic_format ),
+                            path( destination_path, path::generic_format ),
+                            copy_options::overwrite_existing );
+}*/
 
-bool createDir( const std::string& directory ) noexcept
+/*bool createDir( const std::string& directory ) noexcept
 {
-    return fsys::create_directories( fsys::path( directory ) );
-}
+    return create_directories( path( directory ) );
+}*/
 
-bool hasExtension( const std::string& path, const std::string& extension )
+/**inline bool hasExtension( const std::string& filepath, const std::string& extension )
 {
-    return fsys::path( path ).extension() == extension;
+    return hasExtension ( path( filepath ), extension );
 }
 
-bool exists( const std::string& path ) noexcept
+inline bool hasExtension( const path& filepath, const std::string& extension )
 {
-    return fsys::exists( fsys::path( path ) );
-}
+    return filepath.extension() == extension;
+}*/
 
-}   // fs
+/*bool exists( const std::string& filepath ) noexcept
+{
+    return exists( path( filepath ) );
+}*/
+
+}   // ghc::filesystem

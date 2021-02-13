@@ -22,20 +22,33 @@
 #ifndef FILESYSTEM_HPP_INCLUDED
 #define FILESYSTEM_HPP_INCLUDED
 
-#include <string>
+#include "../ghc/filesystem.hpp"
 
-namespace fs
+namespace ghc::filesystem
 {
 
-// Note: Trailing '\' (on Windows) or '/' (on Linux) are not counted as part of the path name.
-std::string basename( const std::string& path );
-std::string dirname( const std::string& path );
-// Normalize the path as a Unix-like path
-std::string normalize( const std::string& path );
-bool copyFile( const std::string& source_path, const std::string& destination_path );
-bool createDir( const std::string& directory ) noexcept;
-bool hasExtension( const std::string& path, const std::string& extension );
-bool exists( const std::string& path ) noexcept;
+inline std::string normalize( const std::string& filepath )
+{
+#if defined(__WIN32__) || defined(__WIN64__)
+    const char WIN_SEP = '\\';
+    const char UNIX_SEP = '/';
+    std::string normalized_path = filepath;
+    std::replace( normalized_path.begin(), normalized_path.end(), WIN_SEP, UNIX_SEP );
+    return normalized_path;
+#else
+    return filepath;
+#endif
+}
+
+inline bool hasExtension( const std::string& filepath, const std::string& extension )
+{
+    return hasExtension ( path( filepath ), extension );
+}
+
+inline bool hasExtension( const path& filepath, const std::string& extension )
+{
+    return filepath.extension() == extension;
+}
 
 }
 

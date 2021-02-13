@@ -23,21 +23,22 @@
 #include "mmpz.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
-#include "../external/ghc/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/zutils/zutils.hpp"
 
-namespace fsys = ghc::filesystem;
 using namespace exceptions;
 
 namespace lmms
 {
 
 
-std::string decompressProject( const std::string& project_file, const std::string& package_directory,
-                               const std::string& lmms_command )
+ghc::filesystem::path decompressProject( const std::string& project_file,
+                                         const std::string& package_directory,
+                                         const std::string& lmms_command )
 {
-    const std::string& xml_file = package_directory + fs::basename( project_file.substr( 0, project_file.size() - 1 ) );
+    // Assuming the name of the project file has ".mmpz" as an extension
+    const std::string& basename = ghc::filesystem::path( project_file ).filename();
+    const std::string& xml_file = package_directory + basename.substr( 0, basename.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
 
     std::cout << "-- " << command << "\n";
@@ -48,24 +49,24 @@ std::string decompressProject( const std::string& project_file, const std::strin
     }
 
     pclose( fpipe );
-    return xml_file;
+    return ghc::filesystem::path( xml_file );
 }
 
-bool compressPackage( const std::string& package_directory, const std::string& package_name );
+void compressPackage( const std::string& package_directory, const std::string& package_name );
 
-bool compressPackage( const std::string& package_directory, const std::string& package_name )
+void compressPackage( const std::string& package_directory, const std::string& package_name )
 {
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
 
-    for ( auto& file : fsys::recursive_directory_iterator( package_directory ) )
+    for ( auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
         std::cout << "zip: " << file.path().string() << "\n";
 
-        if ( fsys::is_regular_file( file.path() ) )
+        if ( ghc::filesystem::is_regular_file( file.path() ) )
         {
             ZipAdd( zip, file.path().string().c_str(), file.path().string().c_str() );
         }
-        else if ( fsys::is_directory( file.path() ) )
+        else if ( ghc::filesystem::is_directory( file.path() ) )
         {
             ZipAddFolder( zip, file.path().string().c_str() );
         }
@@ -76,27 +77,17 @@ bool compressPackage( const std::string& package_directory, const std::string& p
     }
 
     CloseZip( zip );
-    return true;
 }
 
-std::string zipFile( const std::string& package_directory )
+std::string zipFile( const ghc::filesystem::path& package_directory )
 {
-    if ( package_directory.empty() )
-    {
-        throw NonExistingFileException( "ERROR: No directory provided.\n" );
-    }
+    const std::string& pkg_dir_txt = package_directory.string();
+    const std::string& package_name = ( pkg_dir_txt.back() == '/' || pkg_dir_txt.back() == '\\' ) ?
+                                      pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + ".zip" :
+                                      pkg_dir_txt + ".zip";
 
-    std::string package_name;
-    if ( package_directory[package_directory.size() - 1 ] == '/' )
-    {
-        package_name = package_directory.substr( 0, package_directory.size() - 1 ) + ".zip";
-    }
-    else
-    {
-        package_name = package_directory + ".zip";
-    }
-
-    return compressPackage( package_directory, package_name ) ? package_name : "";
+    compressPackage( package_directory, package_name );
+    return package_name;
 }
 
 bool checkZipFile( const std::string& package_file )
@@ -104,7 +95,7 @@ bool checkZipFile( const std::string& package_file )
     bool valid_project_file = false;
     bool has_sample_directory = false;
 
-    if ( fsys::exists( fsys::path( package_file ) ) )
+    if ( ghc::filesystem::exists( ghc::filesystem::path( package_file ) ) )
     {
         HZIP zip = OpenZip( package_file.c_str(), nullptr );
 
@@ -121,7 +112,7 @@ bool checkZipFile( const std::string& package_file )
 
             std::cout << "-- " << filename << "\n";
 
-            if ( fs::hasExtension( filename, ".mmp" ) )
+            if ( ghc::filesystem::hasExtension( filename, ".mmp" ) )
             {
                 const unsigned int bufsize = entry.unc_size + 1;
                 const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );

@@ -21,13 +21,22 @@
 
 #include <string>
 
+namespace ghc
+{
+namespace filesystem
+{
+class path;
+}
+}
+
 namespace lmms
 {
 
-std::string decompressProject( const std::string& project_file, const std::string& destination_directory,
-                               const std::string& lmms_command = "lmms" );
+ghc::filesystem::path decompressProject( const std::string& project_file,
+                                         const std::string& destination_directory,
+                                         const std::string& lmms_command = "lmms" );
 
-std::string zipFile( const std::string& package_directory );
+std::string zipFile( const ghc::filesystem::path& package_directory );
 bool checkZipFile( const std::string& package_file );
 }
 

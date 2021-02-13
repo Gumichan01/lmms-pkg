@@ -28,7 +28,7 @@ void usage ( const std::string& progname );
 void usage ( const std::string& progname )
 {
     std::cerr << "Invalid number of arguments\n"
-              << "usage: " << fs::basename( progname )
+              << "usage: " << ghc::filesystem::path( progname ).filename()
               << " --import|--export <name>.mmp(z) <destination/path>"
               << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
               << " [--lmms-exe <path/to/lmms/exe>] \n"

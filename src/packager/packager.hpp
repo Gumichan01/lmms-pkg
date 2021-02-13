@@ -19,7 +19,6 @@
 #ifndef PACKAGER_HPP_INCLUDED
 #define PACKAGER_HPP_INCLUDED
 
-#include <vector>
 #include <string>
 
 namespace options
