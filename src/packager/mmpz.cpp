@@ -30,7 +30,7 @@ using namespace exceptions;
 
 namespace lmms
 {
-
+const std::string PACKAGE_EXTENSION( ".mmpk" );
 
 ghc::filesystem::path decompressProject( const std::string& project_file,
         const std::string& package_directory,
@@ -89,8 +89,8 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
 {
     const std::string& pkg_dir_txt = package_directory.string();
     const std::string& package_name = ( pkg_dir_txt.back() == '/' || pkg_dir_txt.back() == '\\' ) ?
-                                      pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + ".zip" :
-                                      pkg_dir_txt + ".zip";
+                                      pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + PACKAGE_EXTENSION :
+                                      pkg_dir_txt + PACKAGE_EXTENSION;
 
     compressPackage( package_directory, package_name );
     return package_name;
