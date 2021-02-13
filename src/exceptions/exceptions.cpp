@@ -35,6 +35,19 @@ const char * NonExistingFileException::what() const noexcept
 }
 
 
+AlreadyExistingFileException::AlreadyExistingFileException( const std::string& what_arg )
+    : std::system_error(), msg( what_arg ) {}
+
+AlreadyExistingFileException::AlreadyExistingFileException( const char * what_arg )
+    : std::system_error(), msg( what_arg ) {}
+
+
+const char * AlreadyExistingFileException::what() const noexcept
+{
+    return msg.c_str();
+}
+
+
 DirectoryCreationException::DirectoryCreationException( const std::string& what_arg )
     : std::system_error(), msg( what_arg ) {}
 

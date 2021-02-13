@@ -101,7 +101,9 @@ const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const 
     return paths;
 }
 
-const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths, const ghc::filesystem::path& directory, const options::Options& options )
+const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
+        const ghc::filesystem::path& directory,
+        const options::Options& options )
 {
     std::vector<ghc::filesystem::path> copied_files;
     std::for_each( paths.cbegin(), paths.cend(),
@@ -189,31 +191,34 @@ const std::string pack( const options::Options& options )
         }
     }
 
-    if ( !ghc::filesystem::exists( sample_directory ) )
+    const ghc::filesystem::path& project_filepath = [&] ()
     {
-        if ( !ghc::filesystem::create_directories( sample_directory ) )
+        if ( ghc::filesystem::hasExtension ( lmms_file, ".mmpz" ) )
         {
-            throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
-        }
-    }
-
-    ghc::filesystem::path project_filepath( destination_directory + lmms_file.filename().string() );
-    if ( ghc::filesystem::hasExtension ( lmms_file, ".mmpz" ) )
-    {
-        project_filepath = lmms::decompressProject( project_file, destination_directory, options.lmms_command );
-    }
-    else
-    {
-        std::cout << "-- Copying \"" << lmms_file.string() << "\" -> \"" << project_filepath.string() << "\"...";
-        if ( ghc::filesystem::copy_file( lmms_file, project_filepath ) )
-        {
-            std::cout << "DONE\n";
+            return lmms::decompressProject( project_file, destination_directory, options.lmms_command );
         }
         else
         {
-            std::cout << "FAILED\n";
+            const ghc::filesystem::path filepath( destination_directory + lmms_file.filename().string() );
+
+            if ( ghc::filesystem::exists( filepath ) )
+            {
+                throw AlreadyExistingFileException( "ERROR: \"" + filepath.string() +
+                                                    "\" Already exists. You need to export to a fresh directory.\n" );
+            }
+
+            std::cout << "-- Copying \"" << lmms_file.string() << "\" -> \"" << filepath.string() << "\"...";
+            if ( ghc::filesystem::copy_file( lmms_file, filepath ) )
+            {
+                std::cout << "DONE\n";
+            }
+            else
+            {
+                std::cout << "FAILED\n";
+            }
+            return filepath;
         }
-    }
+    } ();
 
     if ( !ghc::filesystem::exists( project_filepath ) )
     {
@@ -226,7 +231,16 @@ const std::string pack( const options::Options& options )
     }
 
     const std::vector<ghc::filesystem::path>& files = retrievePathsOfFilesFromXMLFile( project_filepath.string() );
-    std::cout << "\n-- This project has " << files.size() << " files to copy.\n\n";
+    std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
+
+    if ( !ghc::filesystem::exists( sample_directory ) )
+    {
+        if ( !ghc::filesystem::create_directories( sample_directory ) )
+        {
+            throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
+        }
+    }
+
     const std::vector<ghc::filesystem::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
     std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
 

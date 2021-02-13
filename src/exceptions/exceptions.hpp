@@ -38,6 +38,18 @@ public:
 };
 
 
+class AlreadyExistingFileException: public std::system_error
+{
+    const std::string msg;
+
+public:
+    explicit AlreadyExistingFileException( const std::string& what_arg );
+    explicit AlreadyExistingFileException( const char * what_arg );
+
+    virtual const char * what() const noexcept;
+};
+
+
 class DirectoryCreationException: public std::system_error
 {
     const std::string msg;

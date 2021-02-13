@@ -33,13 +33,19 @@ namespace lmms
 
 
 ghc::filesystem::path decompressProject( const std::string& project_file,
-                                         const std::string& package_directory,
-                                         const std::string& lmms_command )
+        const std::string& package_directory,
+        const std::string& lmms_command )
 {
     // Assuming the name of the project file has ".mmpz" as an extension
     const std::string& basename = ghc::filesystem::path( project_file ).filename();
     const std::string& xml_file = package_directory + basename.substr( 0, basename.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
+
+    if ( ghc::filesystem::exists( xml_file ) )
+    {
+        throw AlreadyExistingFileException( "ERROR: \"" + xml_file +
+                                            "\" Already exists. You need to export to a fresh directory.\n" );
+    }
 
     std::cout << "-- " << command << "\n";
     FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
@@ -104,7 +110,7 @@ bool checkZipFile( const std::string& package_file )
         const int numitems = ze.index;
         const std::string& samples_dir = "/samples/";
 
-        if ( numitems <= 0)
+        if ( numitems <= 0 )
         {
             std::cerr << "Invalid package: This package has no items.\n";
             return false;
@@ -120,7 +126,7 @@ bool checkZipFile( const std::string& package_file )
 
             std::cout << "-- " << filename << "\n";
 
-            if ( ghc::filesystem::hasExtension( ghc::filesystem::path(filename), ".mmp" ) )
+            if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
             {
                 const unsigned int bufsize = entry.unc_size + 1;
                 const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
