@@ -101,8 +101,16 @@ bool checkZipFile( const std::string& package_file )
 
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
-        int numitems = ze.index;
+        const int numitems = ze.index;
         const std::string& samples_dir = "/samples/";
+
+        if ( numitems <= 0)
+        {
+            std::cerr << "Invalid package: This package has no items.\n";
+            return false;
+        }
+
+        std::cout << "-- " << numitems << " items to check.\n";
 
         for ( int index = 0; index < numitems; index++ )
         {
