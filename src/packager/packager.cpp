@@ -23,8 +23,11 @@
 #include "packager.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
+#include "../exceptions/exceptions.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/filesystem/filesystem.hpp"
+
+using namespace exceptions;
 
 namespace Packager
 {
@@ -173,17 +176,16 @@ const std::string pack( const options::Options& options )
 
     if ( !fs::exists( lmms_file ) )
     {
-        std::cerr << "-- ERROR: \"" << lmms_file << "\" does not exist.\n";
-        return "";
+        throw NonExistingFileException( "ERROR: \"" + lmms_file + "\" does not exist.\n" );
     }
 
     if ( !fs::createDir( package_directory ) )
     {
-        std::cerr << "-- \"" << package_directory << "\" cannot be created.\n";
+        throw DirectoryCreationException( "ERROR: \"" + package_directory + "\" cannot be created.\n" );
     }
     else if ( !fs::createDir( sample_directory ) )
     {
-        std::cerr << "-- \"" << sample_directory << "\" cannot be created.\n";
+        throw DirectoryCreationException( "ERROR: \"" + sample_directory + "\" cannot be created.\n" );
     }
 
     std::string project_file = package_directory + fs::basename( lmms_file );
@@ -198,18 +200,20 @@ const std::string pack( const options::Options& options )
         {
             std::cout << "DONE\n";
         }
+        else
+        {
+            std::cout << "FAILED\n";
+        }
     }
 
     if ( !fs::exists( project_file ) )
     {
-        std::cerr << "-- ERROR: \"" << project_file << "\" does not exist. Packaging aborted.\n";
-        return "";
+        throw NonExistingFileException( "ERROR: \"" + project_file + "\" does not exist. Packaging aborted.\n" );
     }
 
     if ( !isXmlFile( project_file ) )
     {
-        std::cerr << "-- ERROR: Invalid XML file. Packaging aborted.\n";
-        return "";
+        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_file + "\". Packaging aborted.\n" );
     }
 
     const std::vector<std::string>& files = retrievePathsOfFilesFromXMLFile( project_file );
@@ -225,8 +229,7 @@ const std::string pack( const options::Options& options )
 
     if ( non_existing_files )
     {
-        std::cerr << "-- ERROR: Some files that must be copied in the package does not exist.\n";
-        return "";
+        throw NonExistingFileException( "ERROR: Some files that must be copied in the package does not exist.\n" );
     }
 
     return options.zip ? lmms::zipFile( package_directory ) : package_directory;

@@ -28,7 +28,7 @@ std::string decompressProject( const std::string& project_file, const std::strin
                                const std::string& lmms_command = "lmms" ) noexcept;
 
 std::string zipFile( const std::string& package_directory ) noexcept;
-bool checkZipFile( const std::string& package_file ) noexcept;
+bool checkZipFile( const std::string& package_file );
 }
 
 #endif // MMPZ_HPP_INCLUDED

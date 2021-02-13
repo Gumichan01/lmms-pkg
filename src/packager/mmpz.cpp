@@ -104,9 +104,8 @@ std::string zipFile( const std::string& package_directory ) noexcept
     return compressPackage( package_directory, package_name ) ? package_name : "";
 }
 
-bool checkZipFile( const std::string& package_file ) noexcept
+bool checkZipFile( const std::string& package_file )
 {
-
     bool valid_project_file = false;
     bool has_sample_directory = false;
 
@@ -151,7 +150,7 @@ bool checkZipFile( const std::string& package_file ) noexcept
                 else
                 {
                     /// This block must be unreachable
-                    std::cerr << "Internal error while unzipping the project file. Please contact a developer.\n";
+                    throw std::runtime_error("Internal error while unzipping the project file. Please contact a developer.\n");
                 }
             }
             else if ( filename.substr( filename.size() - samples_dir.size(), samples_dir.size() ) == samples_dir )

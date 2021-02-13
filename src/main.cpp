@@ -51,10 +51,7 @@ int main( int argc, char * argv[] )
         if ( options.operation == options::OperationType::Export )
         {
             const std::string& package = Packager::pack( options );
-            if ( !package.empty() )
-            {
-                std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
-            }
+            std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
         }
         else if ( options.operation == options::OperationType::Import )
         {
@@ -62,14 +59,8 @@ int main( int argc, char * argv[] )
         }
         else if ( options.operation == options::OperationType::Check )
         {
-            if ( Packager::checkPackage( options ) )
-            {
-                std::cout << "-- Valid package.\n";
-            }
-            else
-            {
-                std::cout << "-- Invalid package.\n";
-            }
+            std::cout << ( Packager::checkPackage( options )
+                           ? "-- Valid package.\n" : "-- Invalid package.\n" );
         }
     }
     catch ( std::invalid_argument& e )
