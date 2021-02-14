@@ -51,6 +51,9 @@
 		<Unit filename="src/packager/options.hpp" />
 		<Unit filename="src/packager/packager.cpp" />
 		<Unit filename="src/packager/packager.hpp" />
+		<Unit filename="src/packager/xml.cpp" />
+		<Unit filename="src/packager/xml.hpp" />
+		<Unit filename="src/packager/xml.tpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

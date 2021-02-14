@@ -29,6 +29,7 @@ struct Options;
 namespace Packager
 {
 const std::string pack( const options::Options& options );
+const std::string unpack( const options::Options& options );
 bool checkPackage( const options::Options& options );
 };
 

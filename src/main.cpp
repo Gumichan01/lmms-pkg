@@ -28,7 +28,7 @@ void usage ( const std::string& progname )
 {
     std::cerr << "Invalid number of arguments\n"
               << "usage: " << ghc::filesystem::path( progname ).filename()
-              << " --import|--export <name>.mmp(z) <destination/path>"
+              << " --import|--export|--check <name>.mmp(z) <destination/path>"
               << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
               << " [--lmms-exe <path/to/lmms/exe>] \n"
               << "/!\\ Some arguments are not active yet \n\n";
@@ -55,6 +55,8 @@ int main( int argc, char * argv[] )
         else if ( options.operation == options::OperationType::Import )
         {
             /// TODO Import project
+            const std::string& directory = Packager::unpack( options );
+            std::cout << "-- LMMS Project imported into \"" << directory << "\"\n";
         }
         else if ( options.operation == options::OperationType::Check )
         {

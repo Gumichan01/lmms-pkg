@@ -27,8 +27,12 @@
 namespace xml
 {
 bool isXmlFile( const std::string& project_file ) noexcept;
-const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root,
-                                                                       const std::vector<std::string>& names );
+
+template<typename T>
+const std::vector<T *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
+
 }
+
+#include "xml.tpp"
 
 #endif // XML_HPP_INCLUDED

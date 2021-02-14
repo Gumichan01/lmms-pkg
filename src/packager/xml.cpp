@@ -18,41 +18,12 @@
 
 #include "xml.hpp"
 
-#include <algorithm>
-
 namespace xml
 {
-
-inline bool contains( const std::vector<std::string>& names, const std::string& s )
-{
-    return std::find( names.cbegin(), names.cend(), s ) != names.cend();
-}
-
-// Public
 
 bool isXmlFile( const std::string& project_file ) noexcept
 {
     return tinyxml2::XMLDocument().LoadFile( project_file.c_str() ) == tinyxml2::XML_SUCCESS;
-}
-
-const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root,
-                                                                       const std::vector<std::string>& names )
-{
-    std::vector<const tinyxml2::XMLElement *> retrieved_elements;
-    const tinyxml2::XMLElement * element = root->FirstChildElement();
-
-    while ( element != nullptr )
-    {
-        if ( contains( names, element->Name() ) )
-        {
-            retrieved_elements.push_back( element );
-        }
-        const std::vector<const tinyxml2::XMLElement *>& elements = getAllElementsByNames( element, names );
-        retrieved_elements.insert( retrieved_elements.end(), elements.cbegin(), elements.cend() );
-        element = element->NextSiblingElement();
-    }
-
-    return retrieved_elements;
 }
 
 } // xml

@@ -27,36 +27,38 @@
 #include <algorithm>
 #include <unordered_set>
 
+
 using namespace exceptions;
+namespace txml = tinyxml2;
 
 namespace Packager
 {
 
 // Private functions
 
-const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file );
+const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
 const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-                                                      const ghc::filesystem::path& directory,
-                                                      const options::Options& options );
+        const ghc::filesystem::path& directory,
+        const options::Options& options );
 ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options );
 
 
-const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file )
+const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file )
 {
-    tinyxml2::XMLDocument doc;
+    txml::XMLDocument doc;
     doc.LoadFile( xml_file.c_str() );
 
-    const tinyxml2::XMLElement * root = doc.RootElement();
+    const txml::XMLElement * root = doc.RootElement();
     if ( root == nullptr )
     {
         throw InvalidXmlFileException( "No root element. Are you sure this file contains an XML content?\n" );
     }
 
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
-    const std::vector<const tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames( root, NAMES );
+    const std::vector<const txml::XMLElement *>& elements = xml::getAllElementsByNames<const txml::XMLElement>( root, NAMES );
 
     std::unordered_set<std::string> unique_paths;
-    std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( const tinyxml2::XMLElement * e )
+    std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( const txml::XMLElement * e )
     {
         unique_paths.insert( e->Attribute( "src" ) );
     } );
@@ -135,7 +137,6 @@ const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::fil
     return copied_files;
 }
 
-
 ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options )
 {
     const std::string& project_file = options.project_file;
@@ -165,6 +166,65 @@ ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path&
             std::cout << "FAILED\n";
         }
         return filepath;
+    }
+}
+
+
+const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory );
+void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources );
+
+const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory )
+{
+    std::vector<ghc::filesystem::path> paths;
+    for ( auto& file : ghc::filesystem::recursive_directory_iterator( project_directory ) )
+    {
+        const ghc::filesystem::path& filepath = file.path();
+        if ( ghc::filesystem::is_regular_file( filepath ) )
+        {
+            paths.push_back( filepath );
+        }
+    }
+    return paths;
+}
+
+void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources )
+{
+    txml::XMLDocument doc;
+    doc.LoadFile( project_file.c_str() );
+
+    const txml::XMLElement * root = doc.RootElement();
+    if ( root == nullptr )
+    {
+        /// At this point, this part must not be reachable
+        throw PackageImportException( "The imported project file is invalid." );
+    }
+
+    const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
+    const std::vector<txml::XMLElement *>& elements = xml::getAllElementsByNames<txml::XMLElement>( root, NAMES );
+
+    std::for_each( elements.cbegin(), elements.cend(), [&resources]( txml::XMLElement * e )
+    {
+        const std::string source( e->Attribute( "src" ) );
+        const std::string& filename = ghc::filesystem::path( source ).filename().string();
+        auto found = std::find_if( resources.cbegin(), resources.cend(), [&filename] ( const ghc::filesystem::path & resource )
+        {
+            return resource.filename().string() == filename;
+        } );
+
+        if ( found != resources.cend() )
+        {
+            std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project \n";
+            const std::string& resource_found = ghc::filesystem::absolute( ( *found ) );
+            std::cout << "-- Set attribute \"src\" to \"" << resource_found << "\" \n";
+            e->SetAttribute( "src", resource_found.c_str() );
+        }
+    } );
+
+    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    if ( code != tinyxml2::XMLError::XML_SUCCESS )
+    {
+        throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +
+                                      std::string( doc.ErrorStr() ) );
     }
 }
 
@@ -202,7 +262,7 @@ const std::string pack( const options::Options& options )
         throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_filepath.string() + "\". Packaging aborted.\n" );
     }
 
-    const std::vector<ghc::filesystem::path>& files = retrievePathsOfFilesFromXMLFile( project_filepath.string() );
+    const std::vector<ghc::filesystem::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
     std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
 
     if ( !files.empty() )
@@ -231,6 +291,44 @@ const std::string pack( const options::Options& options )
     return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
 }
 
+
+const std::string unpack( const options::Options& options )
+{
+    const ghc::filesystem::path package( options.project_file );
+    const ghc::filesystem::path destination_directory( options.destination_directory );
+
+    if ( !ghc::filesystem::exists( package ) )
+    {
+        throw NonExistingFileException( "ERROR: \"" + package.string() + "\" does not exist.\n" );
+    }
+
+    if ( lmms::checkZipFile( package.string() ) )
+    {
+        std::cout << "Package is OK.\n\n";
+        if ( !ghc::filesystem::exists( destination_directory ) )
+        {
+            if ( !ghc::filesystem::create_directories( destination_directory ) )
+            {
+                throw DirectoryCreationException( "ERROR: \"" + destination_directory.string() + "\" cannot be created.\n" );
+            }
+        }
+
+        const ghc::filesystem::path project_file( lmms::unzipFile( package, destination_directory ) );
+        std::cout << "Package extracted into \"" << destination_directory.string() << "\".\n";
+
+        const ghc::filesystem::path backup_file( project_file.native() + ".backup" );
+        ghc::filesystem::copy( project_file, backup_file );
+        std::cout << "Backup file created: \"" << backup_file.string() << "\"\n\n";
+
+        configureProject( project_file, getProjectResourcePaths( destination_directory ) );
+    }
+    else
+    {
+        throw PackageImportException( "ERROR: Cannot import \"" + package.string() + "\": invalid package.\n" );
+    }
+
+    return destination_directory.string();
+}
 
 bool checkPackage( const options::Options& options )
 {
