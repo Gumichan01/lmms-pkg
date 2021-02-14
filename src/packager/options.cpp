@@ -44,8 +44,12 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
 
 const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] )
 {
+    if ( argc < 4 )
+    {
+        throw std::invalid_argument( "Not enough arguments to execute the requested operation." );
+    }
+
     const std::string& operation_str = argv[1];
-    // Assuming there are at least 4 arguments
     const std::string& project_file = fs::normalize( argv[2] );
     const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
 
