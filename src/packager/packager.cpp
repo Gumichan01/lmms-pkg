@@ -23,8 +23,8 @@
 #include "packager.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
+#include "xml.hpp"
 #include "../exceptions/exceptions.hpp"
-#include "../external/tinyxml2/tinyxml2.h"
 #include "../external/filesystem/filesystem.hpp"
 
 using namespace exceptions;
@@ -34,58 +34,23 @@ namespace Packager
 
 // Private functions
 
-bool contains( const std::vector<std::string> names, const std::string& s );
-const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );
-bool isXmlFile( const std::string& project_file ) noexcept;
-
 const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file );
 const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-        const ghc::filesystem::path& directory, const options::Options& options );
+                                                      const ghc::filesystem::path& directory,
+                                                      const options::Options& options );
 ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options );
-
-bool contains( const std::vector<std::string> names, const std::string& s )
-{
-    return std::find( names.cbegin(), names.cend(), s ) != names.cend();
-}
-
-const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names )
-{
-    std::vector<const tinyxml2::XMLElement *> retrieved_elements;
-    const tinyxml2::XMLElement * element = root->FirstChildElement();
-
-    while ( element != nullptr )
-    {
-        if ( contains( names, element->Name() ) )
-        {
-            retrieved_elements.push_back( element );
-        }
-        const std::vector<const tinyxml2::XMLElement *>& elements = getAllElementsByNames( element, names );
-        retrieved_elements.insert( retrieved_elements.end(), elements.cbegin(), elements.cend() );
-        element = element->NextSiblingElement();
-    }
-
-    return retrieved_elements;
-}
-
-bool isXmlFile( const std::string& project_file ) noexcept
-{
-    return tinyxml2::XMLDocument().LoadFile( project_file.c_str() ) == tinyxml2::XML_SUCCESS;
-}
 
 
 const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file )
 {
-    tinyxml2::XMLDocument doc;
-    doc.LoadFile( xml_file.c_str() );
-
-    const tinyxml2::XMLElement * root = doc.RootElement();
+    const tinyxml2::XMLElement * root = xml::parseXmlFile( xml_file );
     if ( root == nullptr )
     {
         throw InvalidXmlFileException( "No root element. Are you sure this file contains an XML content?\n" );
     }
 
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
-    const std::vector<const tinyxml2::XMLElement *>& elements = getAllElementsByNames( root, NAMES );
+    const std::vector<const tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames( root, NAMES );
 
     std::unordered_set<std::string> unique_paths;
     std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( const tinyxml2::XMLElement * e )
@@ -229,7 +194,7 @@ const std::string pack( const options::Options& options )
         throw NonExistingFileException( "ERROR: \"" + project_filepath.string() + "\" does not exist. Packaging aborted.\n" );
     }
 
-    if ( !isXmlFile( project_filepath ) )
+    if ( !xml::isXmlFile( project_filepath ) )
     {
         throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_filepath.string() + "\". Packaging aborted.\n" );
     }
