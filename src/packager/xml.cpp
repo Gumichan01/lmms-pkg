@@ -55,11 +55,4 @@ const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tin
     return retrieved_elements;
 }
 
-const tinyxml2::XMLElement * parseXmlFile( const std::string& xml_file ) noexcept
-{
-    tinyxml2::XMLDocument doc;
-    doc.LoadFile( xml_file.c_str() );
-    return doc.RootElement();
-}
-
 } // xml

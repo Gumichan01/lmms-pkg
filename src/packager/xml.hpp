@@ -29,7 +29,6 @@ namespace xml
 bool isXmlFile( const std::string& project_file ) noexcept;
 const std::vector<const tinyxml2::XMLElement *> getAllElementsByNames( const tinyxml2::XMLElement * root,
                                                                        const std::vector<std::string>& names );
-const tinyxml2::XMLElement * parseXmlFile( const std::string& xml_file ) noexcept;
 }
 
 #endif // XML_HPP_INCLUDED

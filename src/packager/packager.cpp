@@ -43,7 +43,10 @@ ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path&
 
 const std::vector<ghc::filesystem::path> retrievePathsOfFilesFromXMLFile( const std::string& xml_file )
 {
-    const tinyxml2::XMLElement * root = xml::parseXmlFile( xml_file );
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile( xml_file.c_str() );
+
+    const tinyxml2::XMLElement * root = doc.RootElement();
     if ( root == nullptr )
     {
         throw InvalidXmlFileException( "No root element. Are you sure this file contains an XML content?\n" );
