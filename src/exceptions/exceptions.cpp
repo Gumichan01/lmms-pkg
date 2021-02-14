@@ -28,7 +28,6 @@ NonExistingFileException::NonExistingFileException( const std::string& what_arg 
 NonExistingFileException::NonExistingFileException( const char * what_arg )
     : std::system_error(), msg( what_arg ) {}
 
-
 const char * NonExistingFileException::what() const noexcept
 {
     return msg.c_str();
@@ -40,7 +39,6 @@ AlreadyExistingFileException::AlreadyExistingFileException( const std::string& w
 
 AlreadyExistingFileException::AlreadyExistingFileException( const char * what_arg )
     : std::system_error(), msg( what_arg ) {}
-
 
 const char * AlreadyExistingFileException::what() const noexcept
 {
@@ -54,11 +52,11 @@ DirectoryCreationException::DirectoryCreationException( const std::string& what_
 DirectoryCreationException::DirectoryCreationException( const char * what_arg )
     : std::system_error(), msg( what_arg ) {}
 
-
 const char * DirectoryCreationException::what() const noexcept
 {
     return msg.c_str();
 }
+
 
 InvalidXmlFileException::InvalidXmlFileException( const std::string& what_arg )
     : std::exception(), msg( what_arg ) {}
@@ -66,8 +64,19 @@ InvalidXmlFileException::InvalidXmlFileException( const std::string& what_arg )
 InvalidXmlFileException::InvalidXmlFileException( const char * what_arg )
     : std::exception(), msg( what_arg ) {}
 
-
 const char * InvalidXmlFileException::what() const noexcept
+{
+    return msg.c_str();
+}
+
+
+PackageImportException::PackageImportException( const std::string& what_arg )
+    : std::system_error(), msg( what_arg ) {}
+
+PackageImportException::PackageImportException( const char * what_arg )
+    : std::system_error(), msg( what_arg ) {}
+
+const char * PackageImportException::what() const noexcept
 {
     return msg.c_str();
 }
