@@ -33,8 +33,8 @@ namespace lmms
 const std::string PACKAGE_EXTENSION( ".mmpk" );
 
 ghc::filesystem::path decompressProject( const std::string& project_file,
-        const std::string& package_directory,
-        const std::string& lmms_command )
+                                         const std::string& package_directory,
+                                         const std::string& lmms_command )
 {
     // Assuming the name of the project file has ".mmpz" as an extension
     const std::string& basename = ghc::filesystem::path( project_file ).filename();
@@ -96,6 +96,55 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
     return package_name;
 }
 
+std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
+{
+    HZIP zip = OpenZip( package.string().c_str(), nullptr );
+    ZIPENTRY ze;
+    GetZipItem( zip, -1, &ze );
+
+    const int numitems = ze.index;
+    ghc::filesystem::path project_path( directory );
+
+    for ( int index = 0; index < numitems; index++ )
+    {
+        ZIPENTRY entry;
+        GetZipItem( zip, index, &entry );
+        const std::string& filename = entry.name;
+
+        std::cout << "-- Extract \"" << filename << "\"\n";
+        const int code = UnzipItem ( zip, index, filename.c_str() );
+        if ( code != ZR_OK )
+        {
+            CloseZip( zip );
+            throw PackageImportException( "Cannot unzip " + filename + "\n" );
+        }
+
+        if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
+        {
+            project_path /= ghc::filesystem::path( filename );
+        }
+    }
+
+    CloseZip( zip );
+
+    try
+    {
+        std::error_code ec;
+        auto option = ghc::filesystem::copy_options::recursive;
+        const ghc::filesystem::path target_path( directory.native() + "/" + package.stem().native() );
+        ghc::filesystem::copy( package.stem(), target_path, option );
+        ghc::filesystem::remove_all( package.stem(), ec );
+    }
+    catch ( ghc::filesystem::filesystem_error& e )
+    {
+        std::error_code ec;
+        ghc::filesystem::remove_all( package.stem(), ec );
+        throw PackageImportException( "ERROR: " + std::string( e.what() ) );
+    }
+
+    return project_path;
+}
+
 bool checkZipFile( const std::string& package_file )
 {
     bool valid_project_file = false;
@@ -151,6 +200,7 @@ bool checkZipFile( const std::string& package_file )
                 else
                 {
                     /// This block must be unreachable
+                    CloseZip( zip );
                     throw std::runtime_error( "Internal error while unzipping the project file. Please contact a developer.\n" );
                 }
             }

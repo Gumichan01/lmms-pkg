@@ -37,6 +37,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
                                          const std::string& lmms_command = "lmms" );
 
 std::string zipFile( const ghc::filesystem::path& package_directory );
+std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory );
 bool checkZipFile( const std::string& package_file );
 }
 
