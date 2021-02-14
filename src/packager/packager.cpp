@@ -30,20 +30,20 @@
 
 using namespace exceptions;
 namespace txml = tinyxml2;
+namespace fsys = ghc::filesystem;
 
 namespace Packager
 {
 
 // Private functions
 
-const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
-const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-        const ghc::filesystem::path& directory,
-        const options::Options& options );
-ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options );
+const std::vector<fsys::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
+const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths, const fsys::path& directory,
+                                           const options::Options & options );
+fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const options::Options& options );
 
 
-const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file )
+const std::vector<fsys::path> retrieveResourcesFromXmlFile( const std::string& xml_file )
 {
     txml::XMLDocument doc;
     doc.LoadFile( xml_file.c_str() );
@@ -63,34 +63,33 @@ const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std
         unique_paths.insert( e->Attribute( "src" ) );
     } );
 
-    std::vector<ghc::filesystem::path> paths;
+    std::vector<fsys::path> paths;
     std::for_each( unique_paths.cbegin(), unique_paths.cend(), [&paths]( const std::string & s )
     {
-        paths.push_back( ghc::filesystem::path( s ) );
+        paths.push_back( fsys::path( s ) );
     } );
 
     return paths;
 }
 
-const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-        const ghc::filesystem::path& directory,
-        const options::Options& options )
+const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths, const fsys::path& directory,
+                                           const options::Options& options )
 {
-    std::vector<ghc::filesystem::path> copied_files;
+    std::vector<fsys::path> copied_files;
     std::for_each( paths.cbegin(), paths.cend(),
-                   [&directory, &copied_files, &options]( const ghc::filesystem::path & source_path )
+                   [&directory, &copied_files, &options]( const fsys::path & source_path )
     {
-        if ( ghc::filesystem::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
+        if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
             std::cout << "-- This following file: \"" << source_path.string() << "\" is a SoundFont file and is ignored.\n";
         }
         else
         {
-            const ghc::filesystem::path& destination_path = ghc::filesystem::path( directory.string() + source_path.filename().string() );
-            if ( ghc::filesystem::exists( source_path ) )
+            const fsys::path& destination_path = fsys::path( directory.string() + source_path.filename().string() );
+            if ( fsys::exists( source_path ) )
             {
                 std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
-                if ( ghc::filesystem::copy_file( source_path, destination_path ) )
+                if ( fsys::copy_file( source_path, destination_path ) )
                 {
                     std::cout << "DONE\n";
                     copied_files.push_back( destination_path );
@@ -107,12 +106,12 @@ const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::fil
                     std::cout << "-- \"" << source_path.string() << "\" does not exist.\n";
 
                     // Assuming the source_path is relative to the current directory the program is launched
-                    const ghc::filesystem::path& lmms_source_file = ghc::filesystem::path( options.lmms_directory + source_path.string() );
+                    const fsys::path& lmms_source_file = fsys::path( options.lmms_directory + source_path.string() );
                     std::cout << "-- Trying \"" << lmms_source_file.string() << "\"\n";
 
-                    if ( ghc::filesystem::exists( lmms_source_file ) )
+                    if ( fsys::exists( lmms_source_file ) )
                     {
-                        if ( ghc::filesystem::copy_file( lmms_source_file, destination_path ) )
+                        if ( fsys::copy_file( lmms_source_file, destination_path ) )
                         {
                             std::cout << "DONE\n";
                             copied_files.push_back( destination_path );
@@ -137,27 +136,27 @@ const std::vector<ghc::filesystem::path> copyFilesTo( const std::vector<ghc::fil
     return copied_files;
 }
 
-ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options )
+fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const options::Options& options )
 {
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
 
-    if ( ghc::filesystem::hasExtension ( lmms_file, ".mmpz" ) )
+    if ( fsys::hasExtension ( lmms_file, ".mmpz" ) )
     {
         return lmms::decompressProject( project_file, destination_directory, options.lmms_command );
     }
     else
     {
-        const ghc::filesystem::path filepath( destination_directory + lmms_file.filename().string() );
+        const fsys::path filepath( destination_directory + lmms_file.filename().string() );
 
-        if ( ghc::filesystem::exists( filepath ) )
+        if ( fsys::exists( filepath ) )
         {
             throw AlreadyExistingFileException( "ERROR: \"" + filepath.string() +
                                                 "\" Already exists. You need to export to a fresh directory.\n" );
         }
 
         std::cout << "-- Copying \"" << lmms_file.string() << "\" -> \"" << filepath.string() << "\"...";
-        if ( ghc::filesystem::copy_file( lmms_file, filepath ) )
+        if ( fsys::copy_file( lmms_file, filepath ) )
         {
             std::cout << "DONE\n";
         }
@@ -170,16 +169,16 @@ ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path&
 }
 
 
-const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory );
-void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources );
+const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project_directory );
+void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources );
 
-const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory )
+const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project_directory )
 {
-    std::vector<ghc::filesystem::path> paths;
-    for ( auto& file : ghc::filesystem::recursive_directory_iterator( project_directory ) )
+    std::vector<fsys::path> paths;
+    for ( auto& file : fsys::recursive_directory_iterator( project_directory ) )
     {
-        const ghc::filesystem::path& filepath = file.path();
-        if ( ghc::filesystem::is_regular_file( filepath ) )
+        const fsys::path& filepath = file.path();
+        if ( fsys::is_regular_file( filepath ) )
         {
             paths.push_back( filepath );
         }
@@ -187,7 +186,7 @@ const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::fil
     return paths;
 }
 
-void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources )
+void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources )
 {
     txml::XMLDocument doc;
     doc.LoadFile( project_file.c_str() );
@@ -205,8 +204,8 @@ void configureProject( const ghc::filesystem::path& project_file, const std::vec
     std::for_each( elements.cbegin(), elements.cend(), [&resources]( txml::XMLElement * e )
     {
         const std::string source( e->Attribute( "src" ) );
-        const std::string& filename = ghc::filesystem::path( source ).filename().string();
-        auto found = std::find_if( resources.cbegin(), resources.cend(), [&filename] ( const ghc::filesystem::path & resource )
+        const std::string& filename = fsys::path( source ).filename().string();
+        auto found = std::find_if( resources.cbegin(), resources.cend(), [&filename] ( const fsys::path & resource )
         {
             return resource.filename().string() == filename;
         } );
@@ -214,7 +213,7 @@ void configureProject( const ghc::filesystem::path& project_file, const std::vec
         if ( found != resources.cend() )
         {
             std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project \n";
-            const std::string& resource_found = ghc::filesystem::absolute( ( *found ) );
+            const std::string& resource_found = fsys::absolute( ( *found ) );
             std::cout << "-- Set attribute \"src\" to \"" << resource_found << "\" \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
@@ -235,24 +234,24 @@ const std::string pack( const options::Options& options )
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
 
-    const ghc::filesystem::path lmms_file( project_file );
-    const ghc::filesystem::path package_directory( destination_directory );
+    const fsys::path lmms_file( project_file );
+    const fsys::path package_directory( destination_directory );
 
-    if ( !ghc::filesystem::exists( lmms_file ) )
+    if ( !fsys::exists( lmms_file ) )
     {
         throw NonExistingFileException( "ERROR: \"" + lmms_file.string() + "\" does not exist.\n" );
     }
 
-    if ( !ghc::filesystem::exists( package_directory ) )
+    if ( !fsys::exists( package_directory ) )
     {
-        if ( !ghc::filesystem::create_directories( package_directory ) )
+        if ( !fsys::create_directories( package_directory ) )
         {
             throw DirectoryCreationException( "ERROR: \"" + package_directory.string() + "\" cannot be created.\n" );
         }
     }
 
-    const ghc::filesystem::path& project_filepath = generateProjectFileInPackage( lmms_file, options );
-    if ( !ghc::filesystem::exists( project_filepath ) )
+    const fsys::path& project_filepath = generateProjectFileInPackage( lmms_file, options );
+    if ( !fsys::exists( project_filepath ) )
     {
         throw NonExistingFileException( "ERROR: \"" + project_filepath.string() + "\" does not exist. Packaging aborted.\n" );
     }
@@ -262,21 +261,21 @@ const std::string pack( const options::Options& options )
         throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_filepath.string() + "\". Packaging aborted.\n" );
     }
 
-    const std::vector<ghc::filesystem::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
+    const std::vector<fsys::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
     std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
 
     if ( !files.empty() )
     {
-        const ghc::filesystem::path sample_directory( destination_directory + "samples/" );
-        if ( !ghc::filesystem::exists( sample_directory ) )
+        const fsys::path sample_directory( destination_directory + "samples/" );
+        if ( !fsys::exists( sample_directory ) )
         {
-            if ( !ghc::filesystem::create_directories( sample_directory ) )
+            if ( !fsys::create_directories( sample_directory ) )
             {
                 throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
             }
         }
 
-        const std::vector<ghc::filesystem::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
+        const std::vector<fsys::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
         std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
     }
     else
@@ -294,10 +293,10 @@ const std::string pack( const options::Options& options )
 
 const std::string unpack( const options::Options& options )
 {
-    const ghc::filesystem::path package( options.project_file );
-    const ghc::filesystem::path destination_directory( options.destination_directory );
+    const fsys::path package( options.project_file );
+    const fsys::path destination_directory( options.destination_directory );
 
-    if ( !ghc::filesystem::exists( package ) )
+    if ( !fsys::exists( package ) )
     {
         throw NonExistingFileException( "ERROR: \"" + package.string() + "\" does not exist.\n" );
     }
@@ -305,19 +304,19 @@ const std::string unpack( const options::Options& options )
     if ( lmms::checkZipFile( package.string() ) )
     {
         std::cout << "Package is OK.\n\n";
-        if ( !ghc::filesystem::exists( destination_directory ) )
+        if ( !fsys::exists( destination_directory ) )
         {
-            if ( !ghc::filesystem::create_directories( destination_directory ) )
+            if ( !fsys::create_directories( destination_directory ) )
             {
                 throw DirectoryCreationException( "ERROR: \"" + destination_directory.string() + "\" cannot be created.\n" );
             }
         }
 
-        const ghc::filesystem::path project_file( lmms::unzipFile( package, destination_directory ) );
+        const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );
         std::cout << "Package extracted into \"" << destination_directory.string() << "\".\n";
 
-        const ghc::filesystem::path backup_file( project_file.native() + ".backup" );
-        ghc::filesystem::copy( project_file, backup_file );
+        const fsys::path backup_file( project_file.native() + ".backup" );
+        fsys::copy( project_file, backup_file );
         std::cout << "Backup file created: \"" << backup_file.string() << "\"\n\n";
 
         configureProject( project_file, getProjectResourcePaths( destination_directory ) );
