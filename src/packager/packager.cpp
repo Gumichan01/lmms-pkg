@@ -16,16 +16,16 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-#include <algorithm>
-#include <unordered_set>
-
 #include "packager.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
 #include "xml.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
+
+#include <iostream>
+#include <algorithm>
+#include <unordered_set>
 
 using namespace exceptions;
 

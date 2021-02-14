@@ -16,12 +16,11 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-
 #include "packager/packager.hpp"
 #include "packager/options.hpp"
 #include "external/filesystem/filesystem.hpp"
 
+#include <iostream>
 
 void usage ( const std::string& progname );
 

@@ -16,11 +16,12 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "options.hpp"
+#include "../external/filesystem/filesystem.hpp"
+
 #include <iostream>
 #include <stdexcept>
 
-#include "options.hpp"
-#include "../external/filesystem/filesystem.hpp"
 
 namespace fs = ghc::filesystem;
 

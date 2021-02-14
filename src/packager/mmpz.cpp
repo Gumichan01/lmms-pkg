@@ -16,15 +16,15 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-#include <memory>
-#include <system_error>
-
 #include "mmpz.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
 #include "../external/zutils/zutils.hpp"
+
+#include <iostream>
+#include <memory>
+#include <system_error>
 
 using namespace exceptions;
 
