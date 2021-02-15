@@ -38,7 +38,7 @@ $ lmms-pkg --import my-package.mmpk import-directory/
 
 **TODO** Make a video.
 
-See the wiki to get more examples.
+See the [wiki](https://github.com/Gumichan01/lmms-pkg/wiki/Manual) to get more examples.
 
 ## Compilation ##
 
