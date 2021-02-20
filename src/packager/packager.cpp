@@ -89,15 +89,9 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
             if ( fsys::exists( source_path ) )
             {
                 std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
-                if ( fsys::copy_file( source_path, destination_path ) )
-                {
-                    std::cout << "DONE\n";
-                    copied_files.push_back( destination_path );
-                }
-                else
-                {
-                    std::cout << "FAILED\n";
-                }
+                fsys::copy_file( source_path, destination_path );
+                copied_files.push_back( destination_path );
+                std::cout << "DONE\n";
             }
             else
             {
@@ -111,15 +105,9 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
 
                     if ( fsys::exists( lmms_source_file ) )
                     {
-                        if ( fsys::copy_file( lmms_source_file, destination_path ) )
-                        {
-                            std::cout << "DONE\n";
-                            copied_files.push_back( destination_path );
-                        }
-                        else
-                        {
-                            std::cout << "FAILED\n";
-                        }
+                        fsys::copy_file( lmms_source_file, destination_path );
+                        copied_files.push_back( destination_path );
+                        std::cout << "DONE\n";
                     }
                     else
                     {
@@ -156,14 +144,8 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
         }
 
         std::cout << "-- Copying \"" << lmms_file.string() << "\" -> \"" << filepath.string() << "\"...";
-        if ( fsys::copy_file( lmms_file, filepath ) )
-        {
-            std::cout << "DONE\n";
-        }
-        else
-        {
-            std::cout << "FAILED\n";
-        }
+        fsys::copy_file( lmms_file, filepath );
+        std::cout << "DONE\n";
         return filepath;
     }
 }
@@ -244,10 +226,7 @@ const std::string pack( const options::Options& options )
 
     if ( !fsys::exists( package_directory ) )
     {
-        if ( !fsys::create_directories( package_directory ) )
-        {
-            throw DirectoryCreationException( "ERROR: \"" + package_directory.string() + "\" cannot be created.\n" );
-        }
+        fsys::create_directories( package_directory );
     }
 
     const fsys::path& project_filepath = generateProjectFileInPackage( lmms_file, options );
@@ -269,14 +248,12 @@ const std::string pack( const options::Options& options )
         const fsys::path sample_directory( destination_directory + "samples/" );
         if ( !fsys::exists( sample_directory ) )
         {
-            if ( !fsys::create_directories( sample_directory ) )
-            {
-                throw DirectoryCreationException( "ERROR: \"" + sample_directory.string() + "\" cannot be created.\n" );
-            }
+            fsys::create_directories( sample_directory );
         }
 
         const std::vector<fsys::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
         std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+        return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
     }
     else
     {
@@ -286,8 +263,6 @@ const std::string pack( const options::Options& options )
                   << package_directory.string() + "\".\n";
         return package_directory.string();
     }
-
-    return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
 }
 
 
@@ -306,10 +281,7 @@ const std::string unpack( const options::Options& options )
         std::cout << "Package is OK.\n\n";
         if ( !fsys::exists( destination_directory ) )
         {
-            if ( !fsys::create_directories( destination_directory ) )
-            {
-                throw DirectoryCreationException( "ERROR: \"" + destination_directory.string() + "\" cannot be created.\n" );
-            }
+            fsys::create_directories( destination_directory );
         }
 
         const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );

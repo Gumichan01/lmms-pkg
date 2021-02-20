@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
     }
     catch ( std::exception& e )
     {
-        std::cerr << e.what() << "\n";
+        std::cerr << "\n" << e.what() << "\n";
         return EXIT_FAILURE;
     }
 
