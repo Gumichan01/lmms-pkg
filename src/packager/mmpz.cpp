@@ -64,17 +64,19 @@ void compressPackage( const std::string& package_directory, const std::string& p
 {
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
 
+    const ghc::filesystem::path dir_parent = ghc::filesystem::absolute( package_directory ).parent_path().parent_path();
     for ( auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
-        std::cout << "zip: " << file.path().string() << "\n";
+        const std::string& filename = ghc::filesystem::relative( ghc::filesystem::absolute( file.path() ), dir_parent ).string();
+        std::cout << "zip: " << filename << "\n";
 
         if ( ghc::filesystem::is_regular_file( file.path() ) )
         {
-            ZipAdd( zip, file.path().string().c_str(), file.path().string().c_str() );
+            ZipAdd( zip, filename.c_str(), file.path().string().c_str() );
         }
         else if ( ghc::filesystem::is_directory( file.path() ) )
         {
-            ZipAddFolder( zip, file.path().string().c_str() );
+            ZipAddFolder( zip, filename.c_str() );
         }
         else
         {
