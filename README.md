@@ -2,13 +2,13 @@
 
 ## What is this? ##
 
-LMMS Packager is a programm that packages your LMMS project, your samples and your soundfont (SF2) files into one compressed file.
+LMMS Packager is a program that packages your LMMS project, your samples and your soundfont (SF2) files into one compressed file.
 
 
 ## Why? ##
 
 As a music producer, it can be tricky to share an LMMS project that uses some external materials (samples and soundfont files) with the community,
-because you have to make sure that the user has everything he/she needs to load the project properly. 
+because you have to make sure that the user has everything he/she needs to load the project properly. You may also want to have a backup package.
 
 As an LMMS user / music producer, it is painful to import every samples manually into LMMS.
 This cannot be a problem with just one sample (or soundfont file) but with more than 20 or more, it is a waste of time.
@@ -36,7 +36,6 @@ This is how you import your project.
 $ lmms-pkg --import my-package.mmpk import-directory/
 ```
 
-**TODO** Make a video.
 
 See the [wiki](https://github.com/Gumichan01/lmms-pkg/wiki/Manual) to get more examples.
 
