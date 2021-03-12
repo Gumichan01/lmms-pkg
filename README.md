@@ -2,7 +2,7 @@
 
 ## What is this? ##
 
-LMMS Packager is a program that packages your LMMS project, your samples and your soundfont (SF2) files into one compressed file.
+LMMS Packager is a command-line tool that packages your LMMS project, your samples and your soundfont (SF2) files into one compressed file.
 
 
 ## Why? ##
@@ -39,7 +39,13 @@ $ lmms-pkg --import my-package.mmpk import-directory/
 
 See the [wiki](https://github.com/Gumichan01/lmms-pkg/wiki/Manual) to get more examples.
 
-## Compilation ##
+
+## Run it ##
+
+**TODO**: Provide compiled binaries (.exe for Windows, AppImage for Linux)
+
+
+## Build ##
 
 ### Windows ###
 
