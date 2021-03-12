@@ -107,7 +107,8 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
                     {
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files.push_back( destination_path );
-                        std::cout << "DONE\n";
+                        std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
+                                  << destination_path.string() << "\"...DONE";
                     }
                     else
                     {
@@ -245,7 +246,7 @@ const std::string pack( const options::Options& options )
 
     if ( !files.empty() )
     {
-        const fsys::path sample_directory( destination_directory + "samples/" );
+        const fsys::path sample_directory( destination_directory + "resources/" );
         if ( !fsys::exists( sample_directory ) )
         {
             fsys::create_directories( sample_directory );

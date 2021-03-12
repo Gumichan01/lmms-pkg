@@ -159,7 +159,7 @@ bool checkZipFile( const std::string& package_file )
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
         const int numitems = ze.index;
-        const std::string& samples_dir = "/samples/";
+        const std::string& resources_dir = "/resources/";
 
         if ( numitems <= 0 )
         {
@@ -206,7 +206,7 @@ bool checkZipFile( const std::string& package_file )
                     throw std::runtime_error( "Internal error while unzipping the project file. Please contact a developer.\n" );
                 }
             }
-            else if ( filename.substr( filename.size() - samples_dir.size(), samples_dir.size() ) == samples_dir )
+            else if ( filename.substr( filename.size() - resources_dir.size(), resources_dir.size() ) == resources_dir )
             {
                 has_sample_directory = true;
             }
