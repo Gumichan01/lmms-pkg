@@ -30,8 +30,7 @@ void usage ( const std::string& progname )
               << "usage: " << ghc::filesystem::path( progname ).filename()
               << " --import|--export|--check <name>.mmp(z) <destination/path>"
               << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
-              << " [--lmms-exe <path/to/lmms/exe>] \n"
-              << "/!\\ Some arguments are not active yet \n\n";
+              << " [--lmms-exe <path/to/lmms/exe>] \n\n";
 }
 
 int main( int argc, char * argv[] )
