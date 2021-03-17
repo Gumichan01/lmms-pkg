@@ -8,7 +8,9 @@ LMMS Packager is a command-line tool that packages your LMMS project, your sampl
 ## Why? ##
 
 As a music producer, it can be tricky to share an LMMS project that uses some external materials (samples and soundfont files) with the community,
-because you have to make sure that the user has everything he/she needs to load the project properly. You may also want to have a backup package.
+because you have to make sure that the user has everything he/she needs to load the project properly.
+
+As a music producer, you may also want to have a backup package, and maybe you also want to version it.
 
 As an LMMS user / music producer, it is painful to import every samples manually into LMMS.
 This cannot be a problem with just one sample (or soundfont file) but with more than 20 or more, it is a waste of time.
@@ -18,7 +20,7 @@ That is why LMMS Packager exists.
 
 ## What does it do? ##
 
-It takes your project, retrieves the samples and the soundfont files used by the project and packaqes them in a *.mmpk* file.
+It takes your project, retrieves the samples and the soundfont files used by the project and packages them in a *.mmpk* file.
 It can also extract the package, and configure the project file.
 
 
