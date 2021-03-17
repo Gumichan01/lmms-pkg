@@ -42,7 +42,7 @@ See the [wiki](https://github.com/Gumichan01/lmms-pkg/wiki/Manual) to get more e
 
 ## Run it ##
 
-**TODO**: Provide compiled binaries (.exe for Windows, AppImage for Linux)
+You can get binaries [here](https://github.com/Gumichan01/lmms-pkg/releases).
 
 
 ## Build ##
