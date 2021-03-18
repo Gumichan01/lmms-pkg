@@ -95,12 +95,10 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
             }
             else
             {
-                if ( !options.lmms_directory.empty() )
+                for (const std::string& dir : options.lmms_directories)
                 {
-                    std::cout << "-- \"" << source_path.string() << "\" does not exist.\n";
-
                     // Assuming the source_path is relative to the current directory the program is launched
-                    const fsys::path& lmms_source_file = fsys::path( options.lmms_directory + source_path.string() );
+                    const fsys::path& lmms_source_file = fsys::path( dir + source_path.string() );
                     std::cout << "-- Trying \"" << lmms_source_file.string() << "\"\n";
 
                     if ( fsys::exists( lmms_source_file ) )
@@ -108,16 +106,13 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files.push_back( destination_path );
                         std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
-                                  << destination_path.string() << "\"...DONE";
+                                  << destination_path.string() << "\"...DONE\n";
+                        break;
                     }
                     else
                     {
                         std::cerr << "-- Cannot get \"" << lmms_source_file.string() << "\"\n";
                     }
-                }
-                else
-                {
-                    std::cerr << "-- Cannot get \"" << source_path.string() << "\" \n";
                 }
             }
         }

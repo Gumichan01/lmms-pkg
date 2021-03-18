@@ -61,7 +61,7 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
     // Assuming this is OperationType::Export
     bool sf2_export = true;
     bool zip = true;
-    std::string lmms_dir;
+    std::vector<std::string> lmms_dirs;
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
 
@@ -81,18 +81,22 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
         }
         else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
         {
-            if ( lmms_dir.empty() )
+            if ( lmms_dirs.empty() )
             {
-                lmms_dir = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
-                std::cout << "-- An LMMS directory has been set: " << lmms_dir << "\n";
-                argvpos++;
+                while ( std::string( argv[argvpos + 1] ).find( "--" ) )
+                {
+                    std::string directory = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
+                    lmms_dirs.push_back( directory );
+                    std::cout << "-- An LMMS directory has been set: " << directory << "\n";
+                    argvpos++;
+                }
             }
             else
             {
                 std::cout << "-- LMMS directory already set. Directory ignored.\n";
             }
         }
-        else if ( ( opt == "--lmms-exe" ) )
+        else if ( opt == "--lmms-exe" )
         {
             if ( !lmms_exe_set )
             {
@@ -113,7 +117,7 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
         argvpos++;
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dir, lmms_exe };
+    return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dirs, lmms_exe };
 
 }
 
