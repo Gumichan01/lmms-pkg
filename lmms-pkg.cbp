@@ -75,6 +75,8 @@
 		<Unit filename="src/packager/mmpz.hpp" />
 		<Unit filename="src/packager/options.cpp" />
 		<Unit filename="src/packager/options.hpp" />
+		<Unit filename="src/packager/pack_priv.cpp" />
+		<Unit filename="src/packager/pack_priv.hpp" />
 		<Unit filename="src/packager/packager.cpp" />
 		<Unit filename="src/packager/packager.hpp" />
 		<Unit filename="src/packager/xml.cpp" />
