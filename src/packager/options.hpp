@@ -41,7 +41,7 @@ struct Options
     // Optional
     const bool sf2_export = true;
     const bool zip = true;
-    const std::vector<std::string> lmms_directories;
+    const std::vector<std::string> lmms_directories {};
     const std::string lmms_command = "";     // Very useful if LMMS is not in the $PATH env
 };
 
