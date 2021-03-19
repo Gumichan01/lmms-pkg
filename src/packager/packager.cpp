@@ -103,10 +103,11 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
 
                     if ( fsys::exists( lmms_source_file ) )
                     {
+                        std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
+                                  << destination_path.string() << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files.push_back( destination_path );
-                        std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
-                                  << destination_path.string() << "\"...DONE\n";
+                        std::cout << "DONE\n";
                         break;
                     }
                     else
