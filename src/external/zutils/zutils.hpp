@@ -25,9 +25,7 @@
 #ifndef ZUTILS_HPP_INCLUDED
 #define ZUTILS_HPP_INCLUDED
 
-#ifdef __unix
 #define ZIP_STD
-#endif
 
 #include "zip.h"
 #include "unzip.h"

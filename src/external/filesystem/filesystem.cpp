@@ -1,4 +1,3 @@
-
 /*
 *   LMMS Project Packager
 *   Copyright © 2021 Luxon Jean-Pierre
@@ -17,19 +16,32 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file was taken from LunatiX, and has been adapted for this project
+// FS_impl must be included before the FS_fwd
+#include "../ghc/fs_impl.hpp"
+#include "filesystem.hpp"
 
-#ifndef FILESYSTEM_HPP_INCLUDED
-#define FILESYSTEM_HPP_INCLUDED
+#include <algorithm>
 
-#include "../ghc/fs_fwd.hpp"
 
 namespace ghc::filesystem
 {
 
-std::string normalize( const std::string& filepath );
-bool hasExtension( const path& filepath, const std::string& extension );
-
+std::string normalize( const std::string& filepath )
+{
+#if defined(__WIN32__) || defined(__WIN64__)
+    const char WIN_SEP = '\\';
+    const char UNIX_SEP = '/';
+    std::string normalized_path = filepath;
+    std::replace( normalized_path.begin(), normalized_path.end(), WIN_SEP, UNIX_SEP );
+    return normalized_path;
+#else
+    return filepath;
+#endif
 }
 
-#endif // FILESYSTEM_HPP_INCLUDED
+bool hasExtension( const path& filepath, const std::string& extension )
+{
+    return filepath.extension() == extension;
+}
+
+}

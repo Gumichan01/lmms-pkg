@@ -44,7 +44,8 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
 
 const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] )
 {
-    if ( argc < 4 )
+    const int MIN_AGUMENTS_NUMBER = 4;
+    if ( argc < MIN_AGUMENTS_NUMBER )
     {
         throw std::invalid_argument( "Not enough arguments to execute the requested operation." );
     }
@@ -65,7 +66,7 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
 
-    int argvpos = 4;
+    int argvpos = MIN_AGUMENTS_NUMBER;
     while ( argvpos < argc )
     {
         const std::string& opt = argv[argvpos];
