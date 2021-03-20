@@ -201,18 +201,11 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
     {
         const std::string source( e->Attribute( "src" ) );
         const std::string& filename = fsys::path( source ).filename().string();
-
-        try
+        auto element = resources.find( fsys::path( source ).string() );
+        if ( element != resources.cend() )
         {
-            const std::string& target = resources.at( fsys::path( source ).string() );
-            std::cout << "OH - " << target << "\n";
+            const std::string& target = element->second;
             e->SetAttribute( "src", target.c_str() );
-        }
-        catch ( std::exception& ex )
-        {
-            throw PackageExportException( std::string( "Internal export error : " ) +
-                                          fsys::path( source ).string() + std::string( " not a valid resource. " ) +
-                                          ex.what() );
         }
     }
 
