@@ -9,11 +9,14 @@
 DEBUG=yes
 
 CC=g++
-#CC=x86_64-w64-mingw32-g++
 BUILD_DIR=build/
 SRC_DIR=src/
 
 LMMS_PKG=lmms-pkg
+BUILD_APPIMG_TOOL=./build-appimage.sh
+APPIMG_DIR=$(LMMS_PKG).AppDir/
+APPIMAGE_PROG=$(LMMS_PKG)-x86_64.AppImage
+
 WFLAGS=-Wall -Wextra
 
 ifeq ($(DEBUG),yes)
@@ -33,7 +36,7 @@ else
 endif
 
 
-.PHONY: clean mrproper
+.PHONY: clean mrproper appimage
 
 SRCS=$(wildcard */*.cpp) $(wildcard */*/*.cpp) $(wildcard */*/*/*.cpp)
 OBJS=$(SRCS:.cpp=.o)
@@ -46,8 +49,11 @@ $(LMMS_PKG): $(OBJS)
 	@echo "Create "$@
 	@$(CC) -o $@ $(OBJS)
 
+appimage: $(LMMS_PKG)
+	$(BUILD_APPIMG_TOOL) $(LMMS_PKG)
+
 clean:
 	@find $(SRC_DIR) -name '*.o' -delete
 
 mrproper: clean
-	@rm -f $(LMMS_PKG)
+	@rm -rf $(LMMS_PKG) $(APPIMG_DIR) $(APPIMAGE_PROG)
