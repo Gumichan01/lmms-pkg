@@ -62,10 +62,15 @@ Just do this:
 
 ```
 make	# ( -.-)
-``` 
+```
 
 You will have an `lmms-pkg` file.
 
+You can also generate an AppImage with this command:
+
+```
+make appimage
+```
 
 ## License ##
 
