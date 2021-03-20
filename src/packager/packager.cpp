@@ -27,7 +27,6 @@
 
 
 using namespace exceptions;
-namespace fsys = ghc::filesystem;
 
 namespace Packager
 {
@@ -62,6 +61,8 @@ const std::string pack( const options::Options& options )
     }
 
     const std::vector<fsys::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
+    const std::vector<std::string>& dup_files = getDuplicatedFilenames( files );
+
     std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
 
     if ( !files.empty() )
@@ -72,8 +73,9 @@ const std::string pack( const options::Options& options )
             fsys::create_directories( sample_directory );
         }
 
-        const std::vector<fsys::path>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), options );
+        const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), dup_files, options );
         std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+
         return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
     }
     else

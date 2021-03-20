@@ -24,11 +24,10 @@
 #include "../exceptions/exceptions.hpp"
 
 #include <iostream>
-#include <algorithm>
 #include <unordered_set>
+#include <unordered_map>
 
 using namespace exceptions;
-namespace fsys = ghc::filesystem;
 
 namespace Packager
 {
@@ -50,26 +49,27 @@ const std::vector<fsys::path> retrieveResourcesFromXmlFile( const std::string& x
     const std::vector<const tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<const tinyxml2::XMLElement>( root, NAMES );
 
     std::unordered_set<std::string> unique_paths;
-    std::for_each( elements.cbegin(), elements.cend(), [&unique_paths]( const tinyxml2::XMLElement * e )
+    for ( const tinyxml2::XMLElement * e : elements )
     {
         unique_paths.insert( e->Attribute( "src" ) );
-    } );
+    }
 
     std::vector<fsys::path> paths;
-    std::for_each( unique_paths.cbegin(), unique_paths.cend(), [&paths]( const std::string & s )
+    for ( const std::string& s :  unique_paths )
     {
         paths.push_back( fsys::path( s ) );
-    } );
+    }
 
     return paths;
 }
 
-const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths, const fsys::path& directory,
-        const options::Options& options )
+const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<fsys::path>& paths, const fsys::path& directory,
+                                                                  const std::vector<std::string>& duplicated_filenames,
+                                                                  const options::Options& options )
 {
-    std::vector<fsys::path> copied_files;
-    std::for_each( paths.cbegin(), paths.cend(),
-                   [&directory, &copied_files, &options]( const fsys::path & source_path )
+    std::unordered_map<std::string, std::string> copied_files;
+    std::unordered_map<std::string, int> name_counter;
+    for ( const fsys::path& source_path : paths )
     {
         if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
@@ -77,12 +77,34 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
         }
         else
         {
-            const fsys::path& destination_path = fsys::path( directory.string() + source_path.filename().string() );
+            const std::string src_pathname = source_path.stem();
+            const fsys::path& destination_path = [&] ()
+            {
+                if ( std::find( duplicated_filenames.cbegin(), duplicated_filenames.cend(), src_pathname ) != duplicated_filenames.cend() )
+                {
+                    if ( name_counter.find( src_pathname ) != name_counter.end() )
+                    {
+                        name_counter[src_pathname] += 1;
+                    }
+                    else
+                    {
+                        name_counter[src_pathname] = 1;
+                    }
+
+                    return fsys::path( directory.string() + source_path.stem().string()
+                                       + "-" + std::to_string( name_counter[src_pathname] ) + source_path.extension().string() );
+                }
+                else
+                {
+                    return fsys::path( directory.string() + source_path.filename().string() );
+                }
+            } ();
+
             if ( fsys::exists( source_path ) )
             {
                 std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
                 fsys::copy_file( source_path, destination_path );
-                copied_files.push_back( destination_path );
+                copied_files[source_path.string()] = destination_path.string();
                 std::cout << "DONE\n";
             }
             else
@@ -98,7 +120,7 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
                         std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
                                   << destination_path.string() << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
-                        copied_files.push_back( destination_path );
+                        copied_files[lmms_source_file.string()] = destination_path.string();
                         std::cout << "DONE\n";
                         break;
                     }
@@ -109,7 +131,7 @@ const std::vector<fsys::path> copyFilesTo( const std::vector<fsys::path>& paths,
                 }
             }
         }
-    } );
+    }
     return copied_files;
 }
 
@@ -139,6 +161,26 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
     }
 }
 
+
+const std::vector<std::string> getDuplicatedFilenames( const std::vector<fsys::path> paths )
+{
+    std::unordered_set<std::string> names;
+    std::vector<std::string> duplicated_names;
+    for ( fsys::path p : paths )
+    {
+        const std::string& name = p.stem().string();
+
+        if ( names.find( name ) != names.end() )
+        {
+            duplicated_names.push_back( name );
+        }
+        else
+        {
+            names.insert( name );
+        }
+    }
+    return duplicated_names;
+}
 
 /// Import
 
