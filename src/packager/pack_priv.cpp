@@ -255,7 +255,7 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
     const std::vector<tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<tinyxml2::XMLElement>( root, NAMES );
 
-    std::for_each( elements.cbegin(), elements.cend(), [&resources]( tinyxml2::XMLElement * e )
+    for ( tinyxml2::XMLElement * e : elements )
     {
         const std::string source( e->Attribute( "src" ) );
         const std::string& filename = fsys::path( source ).filename().string();
@@ -271,7 +271,7 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
             std::cout << "-- Set attribute \"src\" to \"" << resource_found << "\" \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
-    } );
+    }
 
     tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
     if ( code != tinyxml2::XMLError::XML_SUCCESS )
