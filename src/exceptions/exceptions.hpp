@@ -83,17 +83,6 @@ public:
     virtual const char * what() const noexcept;
 };
 
-class PackageExportException: public std::system_error
-{
-    const std::string msg;
-
-public:
-    explicit PackageExportException( const std::string& what_arg );
-    explicit PackageExportException( const char * what_arg );
-
-    virtual const char * what() const noexcept;
-};
-
 }
 
 #endif  // EXCEPTIONS_HPP_INCLUDED

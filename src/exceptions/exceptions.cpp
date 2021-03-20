@@ -81,16 +81,4 @@ const char * PackageImportException::what() const noexcept
     return msg.c_str();
 }
 
-
-PackageExportException::PackageExportException( const std::string& what_arg )
-    : std::system_error(), msg( what_arg ) {}
-
-PackageExportException::PackageExportException( const char * what_arg )
-    : std::system_error(), msg( what_arg ) {}
-
-const char * PackageExportException::what() const noexcept
-{
-    return msg.c_str();
-}
-
 }
