@@ -10,8 +10,10 @@
 				<Option object_output=".objs-debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="--check dup-samples.mmpk" />
 				<Compiler>
 					<Add option="-pg" />
+					<Add option="-Og" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
