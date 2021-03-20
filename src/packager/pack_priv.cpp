@@ -64,8 +64,8 @@ const std::vector<fsys::path> retrieveResourcesFromXmlFile( const std::string& x
 }
 
 const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<fsys::path>& paths, const fsys::path& directory,
-                                                                  const std::vector<std::string>& duplicated_filenames,
-                                                                  const options::Options& options )
+        const std::vector<std::string>& duplicated_filenames,
+        const options::Options& options )
 {
     std::unordered_map<std::string, std::string> copied_files;
     std::unordered_map<std::string, int> name_counter;
@@ -104,7 +104,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
             {
                 std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
                 fsys::copy_file( source_path, destination_path );
-                copied_files[source_path.string()] = destination_path.string();
+                copied_files[source_path.string()] = destination_path.filename().string();
                 std::cout << "DONE\n";
             }
             else
@@ -120,7 +120,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
                         std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
                                   << destination_path.string() << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
-                        copied_files[lmms_source_file.string()] = destination_path.string();
+                        copied_files[source_path.string()] = destination_path.filename().string();
                         std::cout << "DONE\n";
                         break;
                     }
@@ -181,6 +181,47 @@ const std::vector<std::string> getDuplicatedFilenames( const std::vector<fsys::p
     }
     return duplicated_names;
 }
+
+void configureProjectFileInPackage( const fsys::path& project_file, const std::unordered_map<std::string, std::string>& resources )
+{
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile( project_file.c_str() );
+
+    const tinyxml2::XMLElement * root = doc.RootElement();
+    if ( root == nullptr )
+    {
+        /// At this point, this part must not be reachable
+        throw PackageImportException( "Fatal error: The exported project file is invalid." );
+    }
+
+    const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
+    const std::vector<tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<tinyxml2::XMLElement>( root, NAMES );
+
+    for ( tinyxml2::XMLElement * e : elements )
+    {
+        const std::string source( e->Attribute( "src" ) );
+        const std::string& filename = fsys::path( source ).filename().string();
+
+        try
+        {
+            const std::string& target = resources.at( fsys::path( source ).string() );
+            std::cout << "OH - " << target << "\n";
+            e->SetAttribute( "src", target.c_str() );
+        }
+        catch ( std::exception& ex )
+        {
+            throw PackageExportException( std::string( "Internal error : cannot export the project: " ) + ex.what() );
+        }
+    }
+
+    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    if ( code != tinyxml2::XMLError::XML_SUCCESS )
+    {
+        throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +
+                                      std::string( doc.ErrorStr() ) );
+    }
+}
+
 
 /// Import
 

@@ -75,7 +75,7 @@ const std::string pack( const options::Options& options )
 
         const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), dup_files, options );
         std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
-
+        configureProjectFileInPackage( project_filepath, copied_files );
         return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
     }
     else

@@ -43,7 +43,7 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
 
 const std::vector<std::string> getDuplicatedFilenames(const std::vector<fsys::path> paths);
 
-//configureProjectFileInPackage( const fsys::path& project_file, const std::vector<fsys::path>& resources );
+void configureProjectFileInPackage( const fsys::path& project_file, const std::unordered_map<std::string, std::string>& resources );
 
 const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project_directory );
 void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources );
