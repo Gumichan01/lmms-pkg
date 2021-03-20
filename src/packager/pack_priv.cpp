@@ -210,7 +210,9 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
         }
         catch ( std::exception& ex )
         {
-            throw PackageExportException( std::string( "Internal error : cannot export the project: " ) + ex.what() );
+            throw PackageExportException( std::string( "Internal export error : " ) +
+                                          fsys::path( source ).string() + std::string( " not a valid resource. " ) +
+                                          ex.what() );
         }
     }
 
