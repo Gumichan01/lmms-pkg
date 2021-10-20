@@ -51,6 +51,7 @@ $(LMMS_PKG): $(OBJS)
 
 appimage: $(LMMS_PKG)
 	$(BUILD_APPIMG_TOOL) $(LMMS_PKG)
+	@chmod 755 $(APPIMAGE_PROG)
 
 clean:
 	@find $(SRC_DIR) -name '*.o' -delete
