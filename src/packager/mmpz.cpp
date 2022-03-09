@@ -180,21 +180,10 @@ bool checkZipFile( const std::string& package_file )
             if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
             {
                 const unsigned int MAX_PROJECT_SIZE = 4194304; // 4 Mio, that should be enough to cover most project files
-                const unsigned int bufsize = [&] ()
-                {
-                    if ( entry.unc_size > 0 )
-                    {
-                        return static_cast<unsigned int>(entry.unc_size) + 1;
-                    }
-                    else
-                    {
-                        return MAX_PROJECT_SIZE;
-                    }
-                } ();
+                const unsigned int bufsize = MAX_PROJECT_SIZE;
                 const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
 
                 int code = UnzipItem ( zip, index, buffer.get(), bufsize );
-
                 if ( code == ZR_OK )
                 {
                     tinyxml2::XMLError tinycode = tinyxml2::XMLDocument().Parse( buffer.get(), bufsize );
