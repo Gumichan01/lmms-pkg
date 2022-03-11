@@ -89,7 +89,7 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
         {
             if ( lmms_dirs.empty() )
             {
-                while ( std::string( argv[argvpos + 1] ).find( "--" ) )
+                while ( ((argvpos + 1 ) < argc) && std::string( argv[argvpos + 1] ).find( "--" ) )
                 {
                     std::string directory = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
                     lmms_dirs.push_back( directory );
