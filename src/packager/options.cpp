@@ -40,6 +40,11 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 }
 
 
+Options::~Options()
+{
+    // Empty
+}
+
 const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] );
 
 const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] )
