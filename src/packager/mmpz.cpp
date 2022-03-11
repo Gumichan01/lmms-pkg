@@ -133,7 +133,7 @@ const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, con
     {
         std::error_code ec;
         auto option = ghc::filesystem::copy_options::recursive;
-        const ghc::filesystem::path target_path( directory.string() + "/" + directory.string() );
+        const ghc::filesystem::path target_path( directory.string() + "/" + package.stem().string() );
         ghc::filesystem::copy( package.stem(), target_path, option );
         ghc::filesystem::remove_all( package.stem(), ec );
     }
