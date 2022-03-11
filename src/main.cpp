@@ -49,13 +49,13 @@ int main( int argc, char * argv[] )
         if ( options.operation == options::OperationType::Export )
         {
             const std::string& package = Packager::pack( options );
-            std::cout << "-- LMMS Project exported into \"" << package << "\"\n";
+            std::cout << "-- LMMS project exported into \"" << package << "\"\n";
         }
         else if ( options.operation == options::OperationType::Import )
         {
             /// TODO Import project
             const std::string& directory = Packager::unpack( options );
-            std::cout << "-- LMMS Project imported into \"" << directory << "\"\n";
+            std::cout << "-- LMMS project imported into \"" << directory << "\"\n";
         }
         else if ( options.operation == options::OperationType::Check )
         {

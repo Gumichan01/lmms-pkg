@@ -77,7 +77,7 @@ const std::string pack( const options::Options& options )
         const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), dup_files, options );
         std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
         configureProjectFileInPackage( project_filepath, copied_files );
-        return options.zip ? lmms::zipFile( package_directory ) : package_directory.string();
+        return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ) : package_directory.string());
     }
     else
     {
@@ -85,7 +85,7 @@ const std::string pack( const options::Options& options )
                   << "-- So it does not make sense to export this project.\n"
                   << "-- No package file will be generated, but the generated directory containing the project file is created: \""
                   << package_directory.string() + "\".\n";
-        return package_directory.string();
+        return ghc::filesystem::normalize(package_directory.string());
     }
 }
 
@@ -116,14 +116,13 @@ const std::string unpack( const options::Options& options )
         std::cout << "Backup file created: \"" << ghc::filesystem::normalize( backup_file.string() ) << "\"\n\n";
 
         configureProject( project_file, getProjectResourcePaths( destination_directory ) );
+        return ghc::filesystem::normalize(project_file.parent_path().string() + "/");
     }
     else
     {
         throw PackageImportException( "ERROR: Cannot import \"" + ghc::filesystem::normalize( package.string() )
                                       + "\": invalid package.\n" );
     }
-
-    return destination_directory.string();
 }
 
 bool checkPackage( const options::Options& options )
