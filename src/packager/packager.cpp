@@ -57,13 +57,14 @@ const std::string pack( const options::Options& options )
 
     if ( !xml::isXmlFile( project_filepath.string() ) )
     {
-        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_filepath.string() + "\". Packaging aborted.\n" );
+        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + ghc::filesystem::normalize( project_filepath.string() )
+                                       + "\". Packaging aborted.\n" );
     }
 
     const std::vector<fsys::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
     const std::vector<std::string>& dup_files = getDuplicatedFilenames( files );
 
-    std::cout << "\n-- This project has " << files.size() << " file(s) to copy.\n\n";
+    std::cout << "\n-- This project has " << files.size() << " file(s) that can be copied.\n\n";
 
     if ( !files.empty() )
     {
@@ -108,17 +109,18 @@ const std::string unpack( const options::Options& options )
         }
 
         const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );
-        std::cout << "Package extracted into \"" << destination_directory.string() << "\".\n";
+        std::cout << "Package extracted into \"" << ghc::filesystem::normalize( destination_directory.string() ) << "\".\n";
 
         const fsys::path backup_file( project_file.string() + ".backup" );
         fsys::copy( project_file, backup_file );
-        std::cout << "Backup file created: \"" << backup_file.string() << "\"\n\n";
+        std::cout << "Backup file created: \"" << ghc::filesystem::normalize( backup_file.string() ) << "\"\n\n";
 
         configureProject( project_file, getProjectResourcePaths( destination_directory ) );
     }
     else
     {
-        throw PackageImportException( "ERROR: Cannot import \"" + package.string() + "\": invalid package.\n" );
+        throw PackageImportException( "ERROR: Cannot import \"" + ghc::filesystem::normalize( package.string() )
+                                      + "\": invalid package.\n" );
     }
 
     return destination_directory.string();

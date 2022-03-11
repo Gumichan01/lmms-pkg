@@ -73,7 +73,8 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
     {
         if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
-            std::cout << "-- This following file: \"" << source_path.string() << "\" is a SoundFont file and is ignored.\n";
+            std::cout << "-- This following file: \"" << ghc::filesystem::normalize( source_path.string() )
+                      << "\" is a SoundFont file and is ignored.\n";
         }
         else
         {
@@ -102,7 +103,8 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
 
             if ( fsys::exists( source_path ) )
             {
-                std::cout << "-- Copying \"" << source_path.string() << "\" -> \"" << destination_path.string() << "\"...";
+                std::cout << "-- Copying \"" << ghc::filesystem::normalize( source_path.string() )
+                          << "\" -> \"" << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                 fsys::copy_file( source_path, destination_path );
                 copied_files[source_path.string()] = destination_path.filename().string();
                 std::cout << "DONE\n";
@@ -113,12 +115,12 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
                 {
                     // Assuming the source_path is relative to the current directory the program is launched
                     const fsys::path& lmms_source_file = fsys::path( dir + source_path.string() );
-                    std::cout << "-- Trying \"" << lmms_source_file.string() << "\"\n";
+                    std::cout << "-- Trying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
 
                     if ( fsys::exists( lmms_source_file ) )
                     {
-                        std::cout << "-- Copying \"" << lmms_source_file.string() << "\" -> \""
-                                  << destination_path.string() << "\"...";
+                        std::cout << "-- Copying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\" -> \""
+                                  << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files[source_path.string()] = destination_path.filename().string();
                         std::cout << "DONE\n";
@@ -126,7 +128,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
                     }
                     else
                     {
-                        std::cerr << "-- Cannot get \"" << lmms_source_file.string() << "\"\n";
+                        std::cerr << "-- Cannot get \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
                     }
                 }
             }
@@ -150,11 +152,12 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
 
         if ( fsys::exists( filepath ) )
         {
-            throw AlreadyExistingFileException( "ERROR: \"" + filepath.string() +
+            throw AlreadyExistingFileException( "ERROR: \"" + ghc::filesystem::normalize( filepath.string() ) +
                                                 "\" Already exists. You need to export to a fresh directory.\n" );
         }
 
-        std::cout << "-- Copying \"" << lmms_file.string() << "\" -> \"" << filepath.string() << "\"...";
+        std::cout << "-- Copying \"" << ghc::filesystem::normalize( lmms_file.string() )
+                  << "\" -> \"" << ghc::filesystem::normalize( filepath.string() ) << "\"...";
         fsys::copy_file( lmms_file, filepath );
         std::cout << "DONE\n";
         return filepath;
@@ -261,9 +264,9 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
 
         if ( found != resources.cend() )
         {
-            std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project \n";
+            std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project. \n";
             const std::string& resource_found = fsys::absolute( ( *found ) ).string();
-            std::cout << "-- Set attribute \"src\" to \"" << resource_found << "\" \n";
+            std::cout << "-- Set \"" << ghc::filesystem::normalize( resource_found ) << "\" in project file. \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
     }
