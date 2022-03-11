@@ -98,7 +98,7 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
     return package_name;
 }
 
-std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
+const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
 {
     HZIP zip = OpenZip( package.string().c_str(), nullptr );
     ZIPENTRY ze;
@@ -144,7 +144,7 @@ std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesyst
         throw PackageImportException( "ERROR: " + std::string( e.what() ) );
     }
 
-    return project_path.string();
+    return project_path;
 }
 
 bool checkZipFile( const std::string& package_file )
