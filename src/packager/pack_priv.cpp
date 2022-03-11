@@ -73,8 +73,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
     {
         if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
-            std::cout << "-- This following file: \"" << ghc::filesystem::normalize( source_path.string() )
-                      << "\" is a SoundFont file and is ignored.\n";
+            std::cout << "-- Ignore SoundFont file: \"" << ghc::filesystem::normalize( source_path.string() ) << "\".\n";
         }
         else
         {
