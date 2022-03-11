@@ -37,7 +37,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
                                          const std::string& lmms_command )
 {
     // Assuming the name of the project file has ".mmpz" as an extension
-    const std::string& basename = ghc::filesystem::path( project_file ).filename();
+    const std::string& basename = ghc::filesystem::path( project_file ).filename().string();
     const std::string& xml_file = package_directory + basename.substr( 0, basename.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
 
@@ -94,7 +94,7 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
                                       pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + PACKAGE_EXTENSION :
                                       pkg_dir_txt + PACKAGE_EXTENSION;
 
-    compressPackage( package_directory, package_name );
+    compressPackage( pkg_dir_txt, package_name );
     return package_name;
 }
 
@@ -133,7 +133,7 @@ std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesyst
     {
         std::error_code ec;
         auto option = ghc::filesystem::copy_options::recursive;
-        const ghc::filesystem::path target_path( directory.native() + "/" + package.stem().native() );
+        const ghc::filesystem::path target_path( directory.string() + "/" + directory.string() );
         ghc::filesystem::copy( package.stem(), target_path, option );
         ghc::filesystem::remove_all( package.stem(), ec );
     }
@@ -144,7 +144,7 @@ std::string unzipFile( const ghc::filesystem::path& package, const ghc::filesyst
         throw PackageImportException( "ERROR: " + std::string( e.what() ) );
     }
 
-    return project_path;
+    return project_path.string();
 }
 
 bool checkZipFile( const std::string& package_file )

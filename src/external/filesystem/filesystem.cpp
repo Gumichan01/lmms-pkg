@@ -41,7 +41,7 @@ std::string normalize( const std::string& filepath )
 
 bool hasExtension( const path& filepath, const std::string& extension )
 {
-    return filepath.extension() == extension;
+    return filepath.extension().string() == extension;
 }
 
 }

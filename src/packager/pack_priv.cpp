@@ -77,7 +77,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
         }
         else
         {
-            const std::string src_pathname = source_path.stem();
+            const std::string& src_pathname = source_path.stem().string();
             const fsys::path& destination_path = [&] ()
             {
                 if ( std::find( duplicated_filenames.cbegin(), duplicated_filenames.cend(), src_pathname ) != duplicated_filenames.cend() )
@@ -185,7 +185,7 @@ const std::vector<std::string> getDuplicatedFilenames( const std::vector<fsys::p
 void configureProjectFileInPackage( const fsys::path& project_file, const std::unordered_map<std::string, std::string>& resources )
 {
     tinyxml2::XMLDocument doc;
-    doc.LoadFile( project_file.c_str() );
+    doc.LoadFile( project_file.string().c_str() );
 
     const tinyxml2::XMLElement * root = doc.RootElement();
     if ( root == nullptr )
@@ -209,7 +209,7 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
         }
     }
 
-    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    tinyxml2::XMLError code = doc.SaveFile( project_file.string().c_str() );
     if ( code != tinyxml2::XMLError::XML_SUCCESS )
     {
         throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +
@@ -238,7 +238,7 @@ const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project
 void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources )
 {
     tinyxml2::XMLDocument doc;
-    doc.LoadFile( project_file.c_str() );
+    doc.LoadFile( project_file.string().c_str() );
 
     const tinyxml2::XMLElement * root = doc.RootElement();
     if ( root == nullptr )
@@ -262,13 +262,13 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
         if ( found != resources.cend() )
         {
             std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project \n";
-            const std::string& resource_found = fsys::absolute( ( *found ) );
+            const std::string& resource_found = fsys::absolute( ( *found ) ).string();
             std::cout << "-- Set attribute \"src\" to \"" << resource_found << "\" \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
     }
 
-    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    tinyxml2::XMLError code = doc.SaveFile( project_file.string().c_str() );
     if ( code != tinyxml2::XMLError::XML_SUCCESS )
     {
         throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +

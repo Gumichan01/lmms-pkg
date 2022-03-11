@@ -55,7 +55,7 @@ const std::string pack( const options::Options& options )
         throw NonExistingFileException( "ERROR: \"" + project_filepath.string() + "\" does not exist. Packaging aborted.\n" );
     }
 
-    if ( !xml::isXmlFile( project_filepath ) )
+    if ( !xml::isXmlFile( project_filepath.string() ) )
     {
         throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + project_filepath.string() + "\". Packaging aborted.\n" );
     }
@@ -110,7 +110,7 @@ const std::string unpack( const options::Options& options )
         const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );
         std::cout << "Package extracted into \"" << destination_directory.string() << "\".\n";
 
-        const fsys::path backup_file( project_file.native() + ".backup" );
+        const fsys::path backup_file( project_file.string() + ".backup" );
         fsys::copy( project_file, backup_file );
         std::cout << "Backup file created: \"" << backup_file.string() << "\"\n\n";
 
