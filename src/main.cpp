@@ -53,7 +53,6 @@ int main( int argc, char * argv[] )
         }
         else if ( options.operation == options::OperationType::Import )
         {
-            /// TODO Import project
             const std::string& directory = Packager::unpack( options );
             std::cout << "-- LMMS project imported into \"" << directory << "\"\n";
         }
