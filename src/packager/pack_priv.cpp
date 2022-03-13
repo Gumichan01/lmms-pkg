@@ -110,28 +110,34 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
             }
             else
             {
+                bool found = false;
+                if ( !options.lmms_directories.empty() )
+                {
+                    std::cout << "-- Searching for \"" << ghc::filesystem::normalize( source_path.string() )
+                    << "\" in LMMS directories...\n";
+                }
+
                 for ( const std::string& dir : options.lmms_directories )
                 {
                     // Assuming the source_path is relative to the current directory it is located
                     // (example: in LMMS/ or LMMS_Data/)
                     const fsys::path& lmms_source_file = fsys::path( dir + source_path.string() );
-                    std::cout << "---- Trying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
-
                     if ( fsys::exists( lmms_source_file ) )
                     {
+                        std::cout << "-- Found \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
                         std::cout << "-- Copying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\" -> \""
                                   << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files[source_path.string()] = destination_path.filename().string();
                         std::cout << "DONE\n";
+                        found = true;
                         break;
                     }
-                    else
-                    {
-                        std::cerr << "---- Not in \"" << dir << "\".\n";
-                    }
                 }
-                std::cerr << "-- \"" << ghc::filesystem::normalize( source_path.string() ) << "\" not found.\n";
+                if ( !found )
+                {
+                    std::cerr << "-- \"" << ghc::filesystem::normalize( source_path.string() ) << "\" not found.\n";
+                }
             }
         }
     }
