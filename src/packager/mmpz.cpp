@@ -229,7 +229,7 @@ const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, con
 bool checkZipFile( const std::string& package_file )
 {
     bool valid_project_file = false;
-    bool has_sample_directory = false;
+    bool has_resources_dir = false;
 
     if ( ghc::filesystem::exists( ghc::filesystem::path( package_file ) ) )
     {
@@ -238,7 +238,7 @@ bool checkZipFile( const std::string& package_file )
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
         const int numitems = ze.index;
-        const std::string& resources_dir = "/resources/";
+        const std::string resources_dir("/resources/");
 
         if ( numitems <= 0 )
         {
@@ -252,7 +252,7 @@ bool checkZipFile( const std::string& package_file )
         {
             ZIPENTRY entry;
             GetZipItem( zip, index, &entry );
-            const std::string& filename = entry.name;
+            const std::string filename( entry.name );
 
             std::cout << "-- " << filename << "\n";
 
@@ -279,18 +279,18 @@ bool checkZipFile( const std::string& package_file )
             }
             else if ( filename.substr( filename.size() - resources_dir.size(), resources_dir.size() ) == resources_dir )
             {
-                has_sample_directory = true;
+                has_resources_dir = true;
             }
         }
 
         CloseZip( zip );
 
-        if ( !has_sample_directory )
+        if ( !has_resources_dir )
         {
             std::cerr << "The sample directory is not here.\n";
         }
 
-        return valid_project_file && has_sample_directory;
+        return valid_project_file && has_resources_dir;
     }
     return false;
 }
