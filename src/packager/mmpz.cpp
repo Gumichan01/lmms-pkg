@@ -287,7 +287,7 @@ bool checkZipFile( const std::string& package_file )
 
         if ( !has_resources_dir )
         {
-            std::cerr << "The sample directory is not here.\n";
+            std::cerr << "The resource directory is not here.\n";
         }
 
         return valid_project_file && has_resources_dir;
