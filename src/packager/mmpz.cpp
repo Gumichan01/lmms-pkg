@@ -338,7 +338,8 @@ bool checkZipFile( const std::string& package_file )
                     throw std::runtime_error( "Internal error while unzipping the project file. Please contact a developer.\n" );
                 }
             }
-            else if ( filename.substr( filename.size() - resources_dir.size(), resources_dir.size() ) == resources_dir )
+            else if ( filename.size() >= resources_dir.size() &&
+                      filename.substr( filename.size() - resources_dir.size(), resources_dir.size() ) == resources_dir )
             {
                 has_resources_dir = true;
             }
