@@ -352,6 +352,11 @@ bool checkZipFile( const std::string& package_file )
             std::cerr << "ERROR: No resource directory.\n";
         }
 
+        if ( !valid_project_file )
+        {
+            std::cerr << "ERROR: No project file.\n";
+        }
+
         return valid_project_file && has_resources_dir;
     }
     return false;
