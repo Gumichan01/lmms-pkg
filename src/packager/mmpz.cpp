@@ -155,12 +155,12 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
         }
         else
         {
-            std::cerr << "ERROR: Invalid XML file.\n";
+            std::cerr << "ERROR: This is not a valid LMMS project file.\n";
         }
     }
     else
     {
-        std::cerr << "The project file is not a valid LMMS project file.\n";
+        std::cerr << "ERROR: Invalid XML file.\n";
     }
 
     return valid_project;
@@ -308,19 +308,15 @@ bool checkZipFile( const std::string& package_file )
 
         if ( numitems <= 0 )
         {
-            std::cerr << "Invalid package: This package has no items.\n";
+            std::cerr << "ERROR: This package has no items.\n";
             return false;
         }
-
-        std::cout << "-- " << numitems << " items to check.\n";
 
         for ( int index = 0; index < numitems; index++ )
         {
             ZIPENTRY entry;
             GetZipItem( zip, index, &entry );
             const std::string filename( entry.name );
-
-            std::cout << "-- " << filename << "\n";
 
             if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
             {
@@ -353,7 +349,7 @@ bool checkZipFile( const std::string& package_file )
 
         if ( !has_resources_dir )
         {
-            std::cerr << "The resource directory is not here.\n";
+            std::cerr << "ERROR: No resource directory.\n";
         }
 
         return valid_project_file && has_resources_dir;
