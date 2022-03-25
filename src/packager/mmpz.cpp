@@ -107,10 +107,10 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
 
 bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsigned int bufsize)
 {
-    const std::string ROOT_NAME("lmms-project");
-    const std::string PROJECT_TYPE_NAME("type");
-    const std::string PROJECT_TYPE_VALUE("song");
-    const std::string VERSION_ATTRIBUTE("creatorversion");
+    const char * ROOT_NAME = "lmms-project";
+    const char * PROJECT_TYPE_NAME = "type";
+    const char * PROJECT_TYPE_VALUE = "song";
+    const char * VERSION_ATTRIBUTE = "creatorversion";
     const std::size_t VSIZE = 3;
     const std::array<std::string, VSIZE> valid_versions{"1.2.0", "1.2.1", "1.2.2"};
 
@@ -126,11 +126,11 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
             const std::string root_name( root->Name() ? root->Name() : "" );
             if ( root_name == ROOT_NAME )
             {
-                const char * type_attr_value = root->Attribute( PROJECT_TYPE_NAME.c_str() );
+                const char * type_attr_value = root->Attribute( PROJECT_TYPE_NAME );
                 const std::string project_type( type_attr_value ? type_attr_value : "" );
                 if ( project_type == PROJECT_TYPE_VALUE )
                 {
-                    const char * version_attr_value = root->Attribute( VERSION_ATTRIBUTE.c_str() );
+                    const char * version_attr_value = root->Attribute( VERSION_ATTRIBUTE );
                     const std::string version( version_attr_value ? version_attr_value : "" );
                     if ( version.empty() || std::find(valid_versions.cbegin(), valid_versions.cend(), version) != valid_versions.cend() )
                     {
@@ -320,14 +320,13 @@ bool checkZipFile( const std::string& package_file )
 
             if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
             {
-                const unsigned int MAX_PROJECT_SIZE = 4194304; // 4 Mio, that should be enough to cover most project files
-                const unsigned int bufsize = MAX_PROJECT_SIZE;
-                const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
+                const unsigned int BUFSIZE = 4194304; // 4 Mio, that should be enough to cover most project files
+                const std::unique_ptr<char []> buffer = std::make_unique<char []>( BUFSIZE );
 
-                int code = UnzipItem ( zip, index, buffer.get(), bufsize );
+                int code = UnzipItem ( zip, index, buffer.get(), BUFSIZE );
                 if ( code == ZR_OK )
                 {
-                    if ( checkLMMSProjectBuffer(buffer, bufsize) )
+                    if ( checkLMMSProjectBuffer( buffer, BUFSIZE ) )
                     {
                         valid_project_file = true;
                     }
@@ -389,15 +388,14 @@ bool zipFileInfo( const std::string& package_file )
 
             if ( ghc::filesystem::hasExtension( ghc::filesystem::path( filename ), ".mmp" ) )
             {
-                const unsigned int MAX_PROJECT_SIZE = 4194304; // 4 Mio, that should be enough to cover most project files
-                const unsigned int bufsize = MAX_PROJECT_SIZE;
-                const std::unique_ptr<char []> buffer = std::make_unique<char []>( bufsize );
+                const unsigned int BUFSIZE = 4194304; // 4 Mio, that should be enough to cover most project files
+                const std::unique_ptr<char []> buffer = std::make_unique<char []>( BUFSIZE );
 
-                int code = UnzipItem ( zip, index, buffer.get(), bufsize );
+                int code = UnzipItem ( zip, index, buffer.get(), BUFSIZE );
                 if ( code == ZR_OK )
                 {
                     std::cout << "-- Project: " << ghc::filesystem::path( filename ).filename().string() << "\n";
-                    if ( !projectInfo(buffer, bufsize) )
+                    if ( !projectInfo( buffer, BUFSIZE ) )
                     {
                         CloseZip( zip );
                         return false;
