@@ -27,8 +27,8 @@ void usage ( const std::string& progname );
 void usage ( const std::string& progname )
 {
     std::cerr << "Invalid number of arguments\n"
-              << "usage: " << ghc::filesystem::path( progname ).filename()
-              << " --import|--export|--check <name>.mmp(z) <destination/path>"
+              << "usage: " << ghc::filesystem::path( progname ).filename().string()
+              << " --import|--export|--check|--info <name>.mmp(z) <destination/path>"
               << " [--no-sf2] [--no-zip] [--lmms-dir <path/to/lmms/data>]"
               << " [--lmms-exe <path/to/lmms/exe>] \n\n";
 }
@@ -60,6 +60,14 @@ int main( int argc, char * argv[] )
         {
             std::cout << ( Packager::checkPackage( options )
                            ? "-- Valid package.\n" : "-- Invalid package.\n" );
+        }
+        else if ( options.operation == options::OperationType::Info )
+        {
+            if ( !Packager::packageInfo( options ))
+            {
+                // This could happen with an invalid package
+                std::cerr << "-- Error during information extraction.\n";
+            }
         }
     }
     catch ( std::invalid_argument& e )

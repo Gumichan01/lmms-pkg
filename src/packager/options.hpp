@@ -30,6 +30,7 @@ enum class OperationType
     Import,
     Export,
     Check,
+    Info,
     InvalidOperation
 };
 

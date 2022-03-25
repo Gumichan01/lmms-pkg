@@ -39,6 +39,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
 std::string zipFile( const ghc::filesystem::path& package_directory );
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory );
 bool checkZipFile( const std::string& package_file );
+bool zipFileInfo( const std::string& package_file );
 }
 
 #endif // MMPZ_HPP_INCLUDED

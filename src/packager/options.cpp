@@ -158,6 +158,10 @@ const Options retrieveArguments( int argc, char * argv[] )
         {
             return OperationType::Check;
         }
+        else if ( operation_str == "--info" )
+        {
+            return OperationType::Info;
+        }
         return OperationType::InvalidOperation;
     } ();
 
@@ -165,7 +169,7 @@ const Options retrieveArguments( int argc, char * argv[] )
     {
         return retrieveImportExportArguments( op, argc, argv );
     }
-    else if ( op == OperationType::Check )
+    else if ( op == OperationType::Check || op == OperationType::Info )
     {
         return Options{ op, argv[2] };
     }

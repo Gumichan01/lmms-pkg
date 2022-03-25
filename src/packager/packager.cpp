@@ -130,4 +130,9 @@ bool checkPackage( const options::Options& options )
     return lmms::checkZipFile( options.project_file );
 }
 
+bool packageInfo( const options::Options& options )
+{
+    return lmms::zipFileInfo( options.project_file );
+}
+
 }
