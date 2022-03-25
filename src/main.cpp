@@ -59,14 +59,14 @@ int main( int argc, char * argv[] )
         else if ( options.operation == options::OperationType::Check )
         {
             std::cout << ( Packager::checkPackage( options )
-                           ? "-- Valid package.\n" : "-- Invalid package.\n" );
+                           ? "-- Valid package.\n" : "Invalid package.\n" );
         }
         else if ( options.operation == options::OperationType::Info )
         {
             if ( !Packager::packageInfo( options ))
             {
                 // This could happen with an invalid package
-                std::cerr << "-- Error during information extraction.\n";
+                std::cerr << "Error during information extraction.\n";
             }
         }
     }
