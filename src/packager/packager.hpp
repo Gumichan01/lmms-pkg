@@ -1,6 +1,6 @@
 /*
 *   LMMS Project Packager
-*   Copyright © 2021 Luxon Jean-Pierre
+*   Copyright © 2022 Luxon Jean-Pierre
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
