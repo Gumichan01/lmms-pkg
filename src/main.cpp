@@ -58,8 +58,12 @@ int main( int argc, char * argv[] )
         }
         else if ( options.operation == options::OperationType::Check )
         {
-            std::cout << ( Packager::checkPackage( options )
-                           ? "-- Valid package.\n" : "Invalid package.\n" );
+            bool valid = Packager::checkPackage( options );
+            std::cout << ( valid ? "-- Valid package.\n" : "Invalid package.\n" );
+            if ( !valid )
+            {
+                return EXIT_FAILURE;
+            }
         }
         else if ( options.operation == options::OperationType::Info )
         {
@@ -67,6 +71,7 @@ int main( int argc, char * argv[] )
             {
                 // This could happen with an invalid package
                 std::cerr << "Error during information extraction.\n";
+                return EXIT_FAILURE;
             }
         }
     }
