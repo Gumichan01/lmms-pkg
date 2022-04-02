@@ -84,6 +84,8 @@
 		<Unit filename="src/packager/xml.cpp" />
 		<Unit filename="src/packager/xml.hpp" />
 		<Unit filename="src/packager/xml.tpp" />
+		<Unit filename="src/program/program.cpp" />
+		<Unit filename="src/program/program.hpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

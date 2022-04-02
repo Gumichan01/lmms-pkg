@@ -49,7 +49,7 @@ struct Options
 };
 
 
-const Options retrieveArguments( int argc, char * argv[] );
+const Options retrieveArguments( const int argc, const char * argv[] );
 
 }
 

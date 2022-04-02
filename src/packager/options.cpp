@@ -45,9 +45,9 @@ Options::~Options()
     // Empty
 }
 
-const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] );
+const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] );
 
-const Options retrieveImportExportArguments( const OperationType& op, int argc, char * argv[] )
+const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] )
 {
     const int MIN_AGUMENTS_NUMBER = 4;
     if ( argc < MIN_AGUMENTS_NUMBER )
@@ -141,7 +141,7 @@ const Options retrieveImportExportArguments( const OperationType& op, int argc, 
     Import:
     argv[3]: destination directory
 */
-const Options retrieveArguments( int argc, char * argv[] )
+const Options retrieveArguments( const int argc, const char * argv[] )
 {
     const OperationType op = [&]()
     {
