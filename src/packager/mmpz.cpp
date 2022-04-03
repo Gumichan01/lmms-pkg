@@ -17,6 +17,7 @@
 */
 
 #include "mmpz.hpp"
+#include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
@@ -41,6 +42,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
     const std::string& basename = ghc::filesystem::path( project_file ).filename().string();
     const std::string& xml_file = package_directory + basename.substr( 0, basename.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
+    Program::Printer print = Program::getPrinter();
 
     if ( ghc::filesystem::exists( xml_file ) )
     {
@@ -48,7 +50,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
                                             "\" Already exists. You need to export to a fresh directory.\n" );
     }
 
-    std::cout << "-- " << command << "\n";
+    print << "-- " << command << "\n";
     FILE * fpipe = ( FILE * )popen( command.c_str(), "r" );
     if ( !fpipe )
     {
@@ -63,13 +65,14 @@ void compressPackage( const std::string& package_directory, const std::string& p
 
 void compressPackage( const std::string& package_directory, const std::string& package_name )
 {
-    HZIP zip = CreateZip( package_name.c_str(), nullptr );
-
     const ghc::filesystem::path dir_parent = ghc::filesystem::absolute( package_directory ).parent_path().parent_path();
+    HZIP zip = CreateZip( package_name.c_str(), nullptr );
+    Program::Printer print = Program::getPrinter();
+
     for ( auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
         const std::string& filename = ghc::filesystem::relative( ghc::filesystem::absolute( file.path() ), dir_parent ).string();
-        std::cout << "zip: " << ghc::filesystem::normalize(filename) << "\n";
+        print << "zip: " << ghc::filesystem::normalize(filename) << "\n";
 
         if ( ghc::filesystem::is_regular_file( file.path() ) )
         {
@@ -81,7 +84,7 @@ void compressPackage( const std::string& package_directory, const std::string& p
         }
         else
         {
-            std::cout << file.path().string() << " is something else. It is not zipped into the archive.\n";
+            std::cerr << file.path().string() << " is something else. It is not zipped into the archive.\n";
         }
     }
 
@@ -114,6 +117,7 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
     const std::size_t VSIZE = 3;
     const std::array<std::string, VSIZE> VALID_VERSIONS{"1.2.0", "1.2.1", "1.2.2"};
     const char * VALID_VERSIONS_STR = "{ 1.2.0, 1.2.1, 1.2.2 }";
+    Program::Printer print = Program::getPrinter();
 
     bool valid_project = false;
     tinyxml2::XMLDocument doc;
@@ -121,12 +125,14 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
 
     if ( tinycode == tinyxml2::XML_SUCCESS )
     {
+        print << "-- Valid XML document\n";
         const tinyxml2::XMLElement * root = doc.RootElement();
         if ( root != nullptr )
         {
             const std::string root_name( root->Name() ? root->Name() : "" );
             if ( root_name == ROOT_NAME )
             {
+                print << "-- Valid LMMS project file\n";
                 const char * type_attr_value = root->Attribute( PROJECT_TYPE_NAME );
                 const std::string project_type( type_attr_value ? type_attr_value : "" );
                 if ( project_type == PROJECT_TYPE_VALUE )
@@ -135,6 +141,7 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
                     const std::string version( version_attr_value ? version_attr_value : "" );
                     if ( version.empty() || std::find(VALID_VERSIONS.cbegin(), VALID_VERSIONS.cend(), version) != VALID_VERSIONS.cend() )
                     {
+                        print << "-- Valid LMMS Version of the project\n";
                         valid_project = true;
                     }
                     else
@@ -151,12 +158,12 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
             }
             else
             {
-                std::cerr << "ERROR: Not an LMMS project.\n";
+                std::cerr << "ERROR: This is not a valid LMMS project file.\n";
             }
         }
         else
         {
-            std::cerr << "ERROR: This is not a valid LMMS project file.\n";
+            std::cerr << "ERROR: Cannot navigate through the XML document.\n";
         }
     }
     else
@@ -246,6 +253,7 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
 
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
 {
+    Program::Printer print = Program::getPrinter();
     HZIP zip = OpenZip( package.string().c_str(), nullptr );
     ZIPENTRY ze;
     GetZipItem( zip, -1, &ze );
@@ -259,7 +267,7 @@ const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, con
         GetZipItem( zip, index, &entry );
         const std::string& filename = entry.name;
 
-        std::cout << "-- Extract \"" << filename << "\".\n";
+        print << "-- Extract \"" << filename << "\".\n";
         const int code = UnzipItem ( zip, index, filename.c_str() );
         if ( code != ZR_OK )
         {
@@ -297,6 +305,7 @@ bool checkZipFile( const std::string& package_file )
 {
     bool valid_project_file = false;
     bool has_resources_dir = false;
+    Program::Printer print = Program::getPrinter();
 
     if ( ghc::filesystem::exists( ghc::filesystem::path( package_file ) ) )
     {
@@ -313,6 +322,8 @@ bool checkZipFile( const std::string& package_file )
             return false;
         }
 
+        print << "-- " << numitems << " item(s).\n";
+
         for ( int index = 0; index < numitems; index++ )
         {
             ZIPENTRY entry;
@@ -327,9 +338,12 @@ bool checkZipFile( const std::string& package_file )
                 int code = UnzipItem ( zip, index, buffer.get(), BUFSIZE );
                 if ( code == ZR_OK )
                 {
+                    print << "-- Checking project file...\n";
                     if ( checkLMMSProjectBuffer( buffer, BUFSIZE ) )
                     {
                         valid_project_file = true;
+                        print << "-- Project file OK\n";
+                        print << "*  " << filename << " OK\n";
                     }
                 }
                 else
@@ -343,6 +357,11 @@ bool checkZipFile( const std::string& package_file )
                       filename.substr( filename.size() - resources_dir.size(), resources_dir.size() ) == resources_dir )
             {
                 has_resources_dir = true;
+                print << "*  " << filename << " OK\n";
+            }
+            else
+            {
+                print << "*  " << filename << " OK\n";
             }
         }
 
@@ -366,6 +385,8 @@ bool checkZipFile( const std::string& package_file )
 bool zipFileInfo( const std::string& package_file )
 {
     const ghc::filesystem::path package( package_file );
+    Program::Printer print = Program::getPrinter();
+
     if ( ghc::filesystem::exists( ghc::filesystem::path( package ) ) )
     {
         if ( !ghc::filesystem::hasExtension( package, ".mmpk" ) )
@@ -421,12 +442,12 @@ bool zipFileInfo( const std::string& package_file )
             }
         }
 
-        std::cout << "\n-- Files: \n";
+        print << "\n-- Files: \n";
         for (const std::string& filename : filenames)
         {
-            std::cout << "---- " << filename << "\n";
+            print << "---- " << filename << "\n";
         }
-        std::cout << "-- Total: " << numitems << "\n";
+        print << "-- Total: " << numitems << "\n";
         CloseZip( zip );
         return true;
     }

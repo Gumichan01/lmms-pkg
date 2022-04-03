@@ -21,6 +21,7 @@
 #include "mmpz.hpp"
 #include "xml.hpp"
 
+#include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 
 #include <iostream>
@@ -69,11 +70,13 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
 {
     std::unordered_map<std::string, std::string> copied_files;
     std::unordered_map<std::string, int> name_counter;
+    Program::Printer print = Program::getPrinter();
+
     for ( const fsys::path& source_path : paths )
     {
         if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
         {
-            std::cout << "-- Ignore SoundFont file: \"" << ghc::filesystem::normalize( source_path.string() ) << "\".\n";
+            print << "-- Ignore SoundFont file: \"" << ghc::filesystem::normalize( source_path.string() ) << "\".\n";
         }
         else
         {
@@ -102,19 +105,19 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
 
             if ( fsys::exists( source_path ) )
             {
-                std::cout << "-- Copying \"" << ghc::filesystem::normalize( source_path.string() )
-                          << "\" -> \"" << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
+                print << "-- Copying \"" << ghc::filesystem::normalize( source_path.string() )
+                      << "\" -> \"" << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                 fsys::copy_file( source_path, destination_path );
                 copied_files[source_path.string()] = destination_path.filename().string();
-                std::cout << "DONE\n";
+                print << "DONE\n";
             }
             else
             {
                 bool found = false;
                 if ( !options.lmms_directories.empty() )
                 {
-                    std::cout << "-- Searching for \"" << ghc::filesystem::normalize( source_path.string() )
-                    << "\" in LMMS directories...\n";
+                    print << "-- Searching for \"" << ghc::filesystem::normalize( source_path.string() )
+                              << "\" in LMMS directories...\n";
                 }
 
                 for ( const std::string& dir : options.lmms_directories )
@@ -124,19 +127,19 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
                     const fsys::path& lmms_source_file = fsys::path( dir + source_path.string() );
                     if ( fsys::exists( lmms_source_file ) )
                     {
-                        std::cout << "-- Found \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
-                        std::cout << "-- Copying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\" -> \""
-                                  << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
+                        print << "-- Found \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\"\n";
+                        print << "-- Copying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\" -> \""
+                              << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
                         copied_files[source_path.string()] = destination_path.filename().string();
-                        std::cout << "DONE\n";
+                        print << "DONE\n";
                         found = true;
                         break;
                     }
                 }
                 if ( !found )
                 {
-                    std::cerr << "-- \"" << ghc::filesystem::normalize( source_path.string() ) << "\" not found.\n";
+                    std::cerr << "-- FILE NOT FOUND: \"" << ghc::filesystem::normalize( source_path.string() ) << "\".\n";
                 }
             }
         }
@@ -148,9 +151,11 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
 {
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
+    Program::Printer print = Program::getPrinter();
 
     if ( fsys::hasExtension ( lmms_file, ".mmpz" ) )
     {
+        print << "-- This is a compressed project. Using LMMS to decompress it...\n";
         return lmms::decompressProject( project_file, destination_directory, options.lmms_command );
     }
     else
@@ -163,10 +168,10 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
                                                 "\" Already exists. You need to export to a fresh directory.\n" );
         }
 
-        std::cout << "-- Copying \"" << ghc::filesystem::normalize( lmms_file.string() )
-                  << "\" -> \"" << ghc::filesystem::normalize( filepath.string() ) << "\"...";
+        print << "-- Copying \"" << ghc::filesystem::normalize( lmms_file.string() )
+              << "\" -> \"" << ghc::filesystem::normalize( filepath.string() ) << "\"...";
         fsys::copy_file( lmms_file, filepath );
-        std::cout << "DONE\n";
+        print << "DONE\n";
         return filepath;
     }
 }
@@ -247,6 +252,7 @@ const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project
 
 void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources )
 {
+    Program::Printer print = Program::getPrinter();
     tinyxml2::XMLDocument doc;
     doc.LoadFile( project_file.string().c_str() );
 
@@ -271,9 +277,9 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
 
         if ( found != resources.cend() )
         {
-            std::cout << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project. \n";
+            print << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project. \n";
             const std::string& resource_found = fsys::absolute( ( *found ) ).string();
-            std::cout << "-- Set \"" << ghc::filesystem::normalize( resource_found ) << "\" in project file. \n";
+            print << "-- Set \"" << ghc::filesystem::normalize( resource_found ) << "\" in project file. \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
     }

@@ -47,6 +47,7 @@ Options::~Options()
 
 const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] );
 
+// TODO use a proper argument parser
 const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] )
 {
     const int MIN_AGUMENTS_NUMBER = 4;
@@ -61,12 +62,18 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
 
     if ( op == OperationType::Import )
     {
-        return Options { op, project_file, destination_directory };
+        int argvpos = MIN_AGUMENTS_NUMBER;
+        while ( argvpos < argc && std::string( argv[argvpos] ) != "--verbose" )
+        {
+            argvpos++;
+        };
+        return Options { op, project_file, destination_directory, false, false, (argvpos < argc), {}, "" };
     }
 
     // Assuming this is OperationType::Export
     bool sf2_export = true;
     bool zip = true;
+    bool verbose = false;
     std::vector<std::string> lmms_dirs;
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
@@ -77,12 +84,10 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
         const std::string& opt = argv[argvpos];
         if ( ( opt == "--no-sf2" ) && ( op == OperationType::Export ) )
         {
-            std::cout << "-- Ignore Soundfont2 files\n";
             sf2_export = false;
         }
         else if ( opt == "--no-zip" && op == OperationType::Export )
         {
-            std::cout << "-- The destination package will not be zipped\n";
             zip = false;
         }
         else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
@@ -93,13 +98,12 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
                 {
                     std::string directory = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
                     lmms_dirs.push_back( directory );
-                    std::cout << "-- An LMMS directory has been set: " << directory << "\n";
                     argvpos++;
                 }
             }
             else
             {
-                std::cout << "-- LMMS directory already set. Directory ignored.\n";
+                std::cerr << "-- LMMS directory already set. Directory ignored.\n";
             }
         }
         else if ( opt == "--lmms-exe" )
@@ -107,23 +111,50 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
             if ( !lmms_exe_set )
             {
                 lmms_exe = argv[argvpos + 1];
-                std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
                 lmms_exe_set = true;
                 argvpos++;
             }
             else
             {
-                std::cout << "LMMS custom executable already set. Executable ignored.\n";
+                std::cerr << "LMMS custom executable already set. Executable ignored.\n";
             }
+        }
+        else if ( opt == "--verbose" )
+        {
+            verbose = true;
         }
         else
         {
-            std::cout << "Parameter \"" << opt << "\" is ignored.\n";
+            std::cerr << "Parameter \"" << opt << "\" is ignored.\n";
         }
         argvpos++;
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, zip, lmms_dirs, lmms_exe };
+    if ( !sf2_export && verbose )
+    {
+        std::cout << "-- Ignore Soundfont2 files\n";
+    }
+
+    if ( !zip  && verbose )
+    {
+        std::cout << "-- The destination package will not be zipped\n";
+    }
+
+    if ( lmms_exe_set && verbose )
+    {
+        std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
+    }
+
+    if ( !lmms_dirs.empty() && verbose )
+    {
+        std::cout << "-- The following LMMS directories have been set: \n";
+        for ( const std::string& dir : lmms_dirs )
+        {
+            std::cout << "*  " << dir << "\n";
+        }
+    }
+
+    return Options{ op, project_file, destination_directory, sf2_export, zip, verbose, lmms_dirs, lmms_exe };
 
 }
 
@@ -171,7 +202,17 @@ const Options retrieveArguments( const int argc, const char * argv[] )
     }
     else if ( op == OperationType::Check || op == OperationType::Info )
     {
-        return Options{ op, argv[2] };
+        bool verbose = false;
+        for ( int i = 0; i < argc; i++ )
+        {
+            const std::string& option_str = argv[i];
+            if ( option_str == "--verbose" )
+            {
+                verbose = true;
+            }
+        }
+
+        return Options{ op, argv[2], "", false, false, verbose, {}, "" };
     }
     else
     {

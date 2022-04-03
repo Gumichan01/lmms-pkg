@@ -21,6 +21,7 @@
 #include "options.hpp"
 #include "mmpz.hpp"
 #include "xml.hpp"
+#include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 
 #include <iostream>
@@ -38,6 +39,7 @@ const std::string pack( const options::Options& options )
 
     const fsys::path lmms_file( project_file );
     const fsys::path package_directory( destination_directory );
+    Program::Printer print = Program::getPrinter();
 
     if ( !fsys::exists( lmms_file ) )
     {
@@ -46,6 +48,7 @@ const std::string pack( const options::Options& options )
 
     if ( !fsys::exists( package_directory ) )
     {
+        print << "-- Creating path: " << package_directory.string() << "\n";
         fsys::create_directories( package_directory );
     }
 
@@ -61,27 +64,29 @@ const std::string pack( const options::Options& options )
                                        + "\". Packaging aborted.\n" );
     }
 
+    print << "-- Retrieving files to copy...\n";
     const std::vector<fsys::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
     const std::vector<std::string>& dup_files = getDuplicatedFilenames( files );
 
-    std::cout << "\n-- This project has " << files.size() << " file(s) that can be copied.\n\n";
+    print << "\n-- This project has " << files.size() << " file(s) that can be copied.\n\n";
 
     if ( !files.empty() )
     {
         const fsys::path sample_directory( destination_directory + "resources/" );
         if ( !fsys::exists( sample_directory ) )
         {
+            print << "-- Creating resource path: " << sample_directory.string() << "\n";
             fsys::create_directories( sample_directory );
         }
 
         const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), dup_files, options );
-        std::cout << "-- " << copied_files.size() << " file(s) copied.\n\n";
+        print << "-- " << copied_files.size() << " file(s) copied.\n\n";
         configureProjectFileInPackage( project_filepath, copied_files );
         return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ) : package_directory.string());
     }
     else
     {
-        std::cout << "-- \"" << project_filepath.filename().string() << "\" has no external sample or soundfont file to export.\n"
+        std::cerr << "-- \"" << project_filepath.filename().string() << "\" has no external sample or soundfont file to export.\n"
                   << "-- So it does not make sense to export this project.\n"
                   << "-- No package file will be generated, but the generated directory containing the project file is created: \""
                   << package_directory.string() + "\".\n";
@@ -94,6 +99,7 @@ const std::string unpack( const options::Options& options )
 {
     const fsys::path package( options.project_file );
     const fsys::path destination_directory( options.destination_directory );
+    Program::Printer print = Program::getPrinter();
 
     if ( !fsys::exists( package ) )
     {
@@ -102,18 +108,18 @@ const std::string unpack( const options::Options& options )
 
     if ( lmms::checkZipFile( package.string() ) )
     {
-        std::cout << "Package is OK.\n\n";
+        print << "-- Package is OK.\n\n";
         if ( !fsys::exists( destination_directory ) )
         {
             fsys::create_directories( destination_directory );
         }
 
         const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );
-        std::cout << "Package extracted into \"" << ghc::filesystem::normalize( destination_directory.string() ) << "\".\n";
+        print << "-- Package extracted into \"" << ghc::filesystem::normalize( destination_directory.string() ) << "\".\n";
 
         const fsys::path backup_file( project_file.string() + ".backup" );
         fsys::copy( project_file, backup_file );
-        std::cout << "Backup file created: \"" << ghc::filesystem::normalize( backup_file.string() ) << "\"\n\n";
+        print << "-- Backup file created: \"" << ghc::filesystem::normalize( backup_file.string() ) << "\"\n\n";
 
         configureProject( project_file, getProjectResourcePaths( destination_directory ) );
         return ghc::filesystem::normalize(project_file.parent_path().string() + "/");
