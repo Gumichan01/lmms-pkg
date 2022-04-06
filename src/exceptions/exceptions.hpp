@@ -72,13 +72,24 @@ public:
     virtual const char * what() const noexcept;
 };
 
-class PackageImportException: public std::system_error
+class PackageImportException: public std::exception
 {
     const std::string msg;
 
 public:
     explicit PackageImportException( const std::string& what_arg );
     explicit PackageImportException( const char * what_arg );
+
+    virtual const char * what() const noexcept;
+};
+
+class PackageExportException: public std::exception
+{
+    const std::string msg;
+
+public:
+    explicit PackageExportException( const std::string& what_arg );
+    explicit PackageExportException( const char * what_arg );
 
     virtual const char * what() const noexcept;
 };

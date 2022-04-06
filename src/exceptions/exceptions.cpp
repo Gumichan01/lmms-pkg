@@ -71,14 +71,27 @@ const char * InvalidXmlFileException::what() const noexcept
 
 
 PackageImportException::PackageImportException( const std::string& what_arg )
-    : std::system_error(), msg( what_arg ) {}
+    : std::exception(), msg( what_arg ) {}
 
 PackageImportException::PackageImportException( const char * what_arg )
-    : std::system_error(), msg( what_arg ) {}
+    : std::exception(), msg( what_arg ) {}
 
 const char * PackageImportException::what() const noexcept
 {
     return msg.c_str();
 }
+
+
+PackageExportException::PackageExportException( const std::string& what_arg )
+    : std::exception(), msg( what_arg ) {}
+
+PackageExportException::PackageExportException( const char * what_arg )
+    : std::exception(), msg( what_arg ) {}
+
+const char * PackageExportException::what() const noexcept
+{
+    return msg.c_str();
+}
+
 
 }

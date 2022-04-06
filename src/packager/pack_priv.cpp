@@ -227,8 +227,8 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
     tinyxml2::XMLError code = doc.SaveFile( project_file.string().c_str() );
     if ( code != tinyxml2::XMLError::XML_SUCCESS )
     {
-        throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +
-                                      std::string( doc.ErrorStr() ) );
+        throw PackageExportException( "ERROR: Export failed : cannot save updated configuration into the project" +
+                                       std::string( doc.ErrorStr() ) );
     }
 }
 
