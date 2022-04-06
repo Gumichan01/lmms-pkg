@@ -206,7 +206,7 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
     if ( root == nullptr )
     {
         /// At this point, this part must not be reachable
-        throw PackageImportException( "Fatal error: The exported project file is invalid." );
+        throw PackageImportException( "FATAL ERROR: The exported project file is invalid." );
     }
 
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
@@ -260,7 +260,7 @@ void configureProject( const fsys::path& project_file, const std::vector<fsys::p
     if ( root == nullptr )
     {
         /// At this point, this part must not be reachable
-        throw PackageImportException( "The imported project file is invalid." );
+        throw PackageImportException( "ERROR:The imported project file is invalid." );
     }
 
     const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };

@@ -27,8 +27,7 @@ namespace Program
 
 void usage ( const std::string& progname )
 {
-    std::cerr << "Invalid number of arguments\n"
-              << "usage: " << ghc::filesystem::path( progname ).filename().string()
+    std::cerr << "Usage: " << ghc::filesystem::path( progname ).filename().string()
               << " --import|--export|--check|--info <name>.mmp(z) <destination/path>"
               << " [--no-sf2] [--no-zip] [--verbose] [--lmms-dir <path/to/lmms/data>]"
               << " [--lmms-exe <path/to/lmms/exe>] \n\n";
@@ -73,14 +72,13 @@ int program( const int argc, const char * argv[] )
             if ( !Packager::packageInfo( options ) )
             {
                 // This could happen with an invalid package
-                std::cerr << "Error during information extraction.\n";
                 return EXIT_FAILURE;
             }
         }
     }
     catch ( std::invalid_argument& e )
     {
-        std::cerr << e.what() << "\n";
+        std::cerr << "ERROR: Invalid Argument:" << e.what() << "\n";
         usage( argv[0] );
         return EXIT_FAILURE;
     }

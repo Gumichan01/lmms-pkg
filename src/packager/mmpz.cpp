@@ -233,7 +233,7 @@ bool projectInfo(const std::unique_ptr<char []>& buffer, const unsigned int bufs
     }
     else
     {
-        std::cerr << "The project file is not a valid LMMS project file.\n";
+        std::cerr << "ERROR: The project file is not a valid LMMS project file.\n";
         return false;
     }
 
