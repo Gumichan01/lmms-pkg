@@ -52,25 +52,25 @@ const std::string pack( const options::Options& options )
         fsys::create_directories( package_directory );
     }
 
-    const fsys::path& project_filepath = generateProjectFileInPackage( lmms_file, options );
-    if ( !fsys::exists( project_filepath ) )
+    const fsys::path& dest_project_file = generateProjectFileInPackage( lmms_file, options );
+    if ( !fsys::exists( dest_project_file ) )
     {
-        throw NonExistingFileException( "ERROR: \"" + project_filepath.string() + "\" does not exist. Packaging aborted.\n" );
+        throw NonExistingFileException( "ERROR: \"" + dest_project_file.string() + "\" does not exist. Packaging aborted.\n" );
     }
 
-    if ( !xml::isXmlFile( project_filepath.string() ) )
+    if ( !xml::isXmlFile( dest_project_file.string() ) )
     {
-        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + ghc::filesystem::normalize( project_filepath.string() )
+        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + ghc::filesystem::normalize( dest_project_file.string() )
                                        + "\". Packaging aborted.\n" );
     }
 
     print << "-- Retrieving files to copy...\n";
-    const std::vector<fsys::path>& files = retrieveResourcesFromXmlFile( project_filepath.string() );
-    const std::vector<std::string>& dup_files = getDuplicatedFilenames( files );
+    const std::vector<fsys::path>& sound_files = retrieveResourcesFromXmlFile( dest_project_file.string() );
+    const std::vector<std::string>& dup_files = getDuplicatedFilenames( sound_files );
 
-    print << "\n-- This project has " << files.size() << " file(s) that can be copied.\n\n";
+    print << "\n-- This project has " << sound_files.size() << " file(s) that can be copied.\n\n";
 
-    if ( !files.empty() )
+    if ( !sound_files.empty() )
     {
         const fsys::path sample_directory( destination_directory + "resources/" );
         if ( !fsys::exists( sample_directory ) )
@@ -79,14 +79,14 @@ const std::string pack( const options::Options& options )
             fsys::create_directories( sample_directory );
         }
 
-        const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( files, sample_directory.string(), dup_files, options );
+        const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( sound_files, sample_directory.string(), dup_files, options );
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
-        configureProjectFileInPackage( project_filepath, copied_files );
+        configureProjectFileInPackage( dest_project_file, copied_files );
         return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ) : package_directory.string());
     }
     else
     {
-        std::cerr << "-- \"" << project_filepath.filename().string() << "\" has no external sample or soundfont file to export.\n"
+        std::cerr << "-- \"" << dest_project_file.filename().string() << "\" has no external sample or soundfont file to export.\n"
                   << "-- So it does not make sense to export this project.\n"
                   << "-- No package file will be generated, but the generated directory containing the project file is created: \""
                   << package_directory.string() + "\".\n";

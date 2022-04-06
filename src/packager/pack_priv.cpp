@@ -160,19 +160,19 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
     }
     else
     {
-        const fsys::path filepath( destination_directory + lmms_file.filename().string() );
+        const fsys::path dest_file( destination_directory + lmms_file.filename().string() );
 
-        if ( fsys::exists( filepath ) )
+        if ( fsys::exists( dest_file ) )
         {
-            throw AlreadyExistingFileException( "ERROR: \"" + ghc::filesystem::normalize( filepath.string() ) +
+            throw AlreadyExistingFileException( "ERROR: \"" + ghc::filesystem::normalize( dest_file.string() ) +
                                                 "\" Already exists. You need to export to a fresh directory.\n" );
         }
 
         print << "-- Copying \"" << ghc::filesystem::normalize( lmms_file.string() )
-              << "\" -> \"" << ghc::filesystem::normalize( filepath.string() ) << "\"...";
-        fsys::copy_file( lmms_file, filepath );
+              << "\" -> \"" << ghc::filesystem::normalize( dest_file.string() ) << "\"...";
+        fsys::copy_file( lmms_file, dest_file );
         print << "DONE\n";
-        return filepath;
+        return dest_file;
     }
 }
 
@@ -215,7 +215,6 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
     for ( tinyxml2::XMLElement * e : elements )
     {
         const std::string source( e->Attribute( "src" ) );
-        const std::string& filename = fsys::path( source ).filename().string();
         auto element = resources.find( fsys::path( source ).string() );
         if ( element != resources.cend() )
         {
