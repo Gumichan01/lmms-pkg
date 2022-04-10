@@ -23,9 +23,9 @@
 #include "xml.hpp"
 #include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
+#include "../external/filesystem/filesystem.hpp"
 
 #include <iostream>
-
 
 using namespace exceptions;
 
@@ -46,20 +46,36 @@ const std::string pack( const options::Options& options )
         throw NonExistingFileException( "ERROR: \"" + lmms_file.string() + "\" does not exist.\n" );
     }
 
+    bool dirtectory_created_by_app = false;
     if ( !fsys::exists( package_directory ) )
     {
         print << "-- Creating path: " << package_directory.string() << "\n";
         fsys::create_directories( package_directory );
+        dirtectory_created_by_app = true;
     }
 
     const fsys::path& dest_project_file = generateProjectFileInPackage( lmms_file, options );
     if ( !fsys::exists( dest_project_file ) )
     {
+        if ( dirtectory_created_by_app )
+        {
+            std::error_code ecdir;
+            fsys::remove( package_directory, ecdir );
+        }
         throw NonExistingFileException( "ERROR: \"" + dest_project_file.string() + "\" does not exist. Packaging aborted.\n" );
     }
 
-    if ( !xml::isXmlFile( dest_project_file.string() ) )
+    if ( !lmms::checkLMMSProjectFile( dest_project_file.string() ) )
     {
+        std::error_code ecfile;
+        fsys::remove( dest_project_file, ecfile );
+
+        if ( dirtectory_created_by_app )
+        {
+            std::error_code ecdir;
+            fsys::remove( package_directory, ecdir );
+        }
+
         throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + ghc::filesystem::normalize( dest_project_file.string() )
                                        + "\". Packaging aborted.\n" );
     }

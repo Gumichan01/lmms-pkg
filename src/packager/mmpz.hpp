@@ -40,6 +40,7 @@ std::string zipFile( const ghc::filesystem::path& package_directory );
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory );
 bool checkZipFile( const std::string& package_file );
 bool zipFileInfo( const std::string& package_file );
+bool checkLMMSProjectFile( const std::string& lmms_file );
 }
 
 #endif // MMPZ_HPP_INCLUDED

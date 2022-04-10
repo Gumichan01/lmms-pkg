@@ -26,6 +26,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
 #include <algorithm>
 #include <system_error>
 
@@ -174,6 +177,24 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
 
     return valid_project;
 }
+
+bool checkLMMSProjectFile( const std::string& lmms_file )
+{
+    std::ifstream infile( lmms_file );
+    if ( infile )
+    {
+        std::stringstream ss;
+        ss << infile.rdbuf();
+        infile.close();
+
+        const unsigned int BUFSIZE = 4194304; // 4 Mio, that should be enough to cover most project files
+        const std::unique_ptr<char []> buffer = std::make_unique<char []>( BUFSIZE );
+        ss.read( buffer.get(), BUFSIZE );
+        return checkLMMSProjectBuffer( buffer, BUFSIZE );
+    }
+    return false;
+}
+
 
 bool projectInfo(const std::unique_ptr<char []>& buffer, const unsigned int bufsize);
 
