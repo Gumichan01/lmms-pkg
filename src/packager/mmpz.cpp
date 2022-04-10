@@ -449,6 +449,7 @@ bool zipFileInfo( const ghc::filesystem::path& package_file )
                         CloseZip( zip );
                         return false;
                     }
+                    filenames.push_back( filename );
                 }
                 else
                 {
@@ -459,7 +460,7 @@ bool zipFileInfo( const ghc::filesystem::path& package_file )
             }
             else
             {
-                filenames.push_back(filename);
+                filenames.push_back( filename );
             }
         }
 
@@ -468,7 +469,12 @@ bool zipFileInfo( const ghc::filesystem::path& package_file )
         {
             print << "---- " << filename << "\n";
         }
-        print << "-- Total: " << numitems << "\n";
+
+        // The package must have at least two files: the project file and the resources/ directory
+        print << "-- Total:\n"
+              << "---- " << numitems << " items in the zip file.\n"
+              << "---- " << ( numitems >= 2 ? filenames.size() - 2 : filenames.size() )
+              << " audio file(s).\n";
         CloseZip( zip );
         return true;
     }
