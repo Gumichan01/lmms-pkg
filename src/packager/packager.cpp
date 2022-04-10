@@ -20,7 +20,6 @@
 #include "pack_priv.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
-#include "xml.hpp"
 #include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
@@ -77,7 +76,7 @@ const std::string pack( const options::Options& options )
             fsys::remove( package_directory, ecdir );
         }
 
-        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + ghc::filesystem::normalize( dest_project_file.string() )
+        throw InvalidXmlFileException( "ERROR: Invalid XML file: \"" + fsys::normalize( dest_project_file.string() )
                                        + "\". Packaging aborted.\n" );
     }
 
@@ -99,7 +98,7 @@ const std::string pack( const options::Options& options )
         const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( sound_files, sample_directory.string(), dup_files, options );
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
         configureProjectFileInPackage( dest_project_file, copied_files );
-        return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
+        return fsys::normalize(options.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
     }
     else
     {
@@ -107,7 +106,7 @@ const std::string pack( const options::Options& options )
                   << "-- So it does not make sense to export this project.\n"
                   << "-- No package file will be generated, but the generated directory containing the project file is created: \""
                   << package_directory.string() + "\".\n";
-        return ghc::filesystem::normalize(package_directory.string());
+        return fsys::normalize(package_directory.string());
     }
 }
 
@@ -132,18 +131,18 @@ const std::string unpack( const options::Options& options )
         }
 
         const fsys::path project_file( lmms::unzipFile( package, destination_directory ) );
-        print << "-- Package extracted into \"" << ghc::filesystem::normalize( destination_directory.string() ) << "\".\n";
+        print << "-- Package extracted into \"" << fsys::normalize( destination_directory.string() ) << "\".\n";
 
         const fsys::path backup_file( project_file.string() + ".backup" );
         fsys::copy( project_file, backup_file );
-        print << "-- Backup file created: \"" << ghc::filesystem::normalize( backup_file.string() ) << "\"\n\n";
+        print << "-- Backup file created: \"" << fsys::normalize( backup_file.string() ) << "\"\n\n";
 
         configureProject( project_file, getProjectResourcePaths( destination_directory ) );
-        return ghc::filesystem::normalize(project_file.parent_path().string() + "/");
+        return fsys::normalize(project_file.parent_path().string() + "/");
     }
     else
     {
-        throw PackageImportException( "ERROR: Cannot import \"" + ghc::filesystem::normalize( package.string() )
+        throw PackageImportException( "ERROR: Cannot import \"" + fsys::normalize( package.string() )
                                       + "\": invalid package.\n" );
     }
 }

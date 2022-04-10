@@ -48,8 +48,8 @@ const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc
     return paths;
 }
 
-const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<fsys::path>& paths,
-                                                                const fsys::path& directory,
+const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
+                                                                const ghc::filesystem::path& directory,
                                                                 const std::vector<std::string>& duplicated_filenames,
                                                                 const options::Options& options )
 {
@@ -132,7 +132,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
     return copied_files;
 }
 
-fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const options::Options& options )
+ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options )
 {
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
@@ -162,7 +162,7 @@ fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const opti
 }
 
 
-const std::vector<std::string> getDuplicatedFilenames( const std::vector<fsys::path> paths )
+const std::vector<std::string> getDuplicatedFilenames( const std::vector<ghc::filesystem::path> paths )
 {
     std::unordered_set<std::string> names;
     std::vector<std::string> duplicated_names;
@@ -182,7 +182,8 @@ const std::vector<std::string> getDuplicatedFilenames( const std::vector<fsys::p
     return duplicated_names;
 }
 
-void configureProjectFileInPackage( const fsys::path& project_file, const std::unordered_map<std::string, std::string>& resources )
+void configureProjectFileInPackage( const ghc::filesystem::path& project_file,
+                                    const std::unordered_map<std::string, std::string>& resources )
 {
     xml::configureXmlFile( project_file.string(), resources );
 }
@@ -190,7 +191,7 @@ void configureProjectFileInPackage( const fsys::path& project_file, const std::u
 
 /// Import
 
-const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project_directory )
+const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory )
 {
     std::vector<fsys::path> paths;
     for ( auto& file : fsys::recursive_directory_iterator( project_directory ) )
@@ -204,7 +205,7 @@ const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project
     return paths;
 }
 
-void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources )
+void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources )
 {
     std::vector<std::string> files;
     for (const fsys::path& p : resources)
