@@ -25,6 +25,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <unordered_map>
 
 namespace xml
 {
@@ -45,6 +46,17 @@ namespace xml
 */
 bool checkLMMSProjectBuffer( const std::unique_ptr<char []>& buffer, const unsigned int bufsize );
 bool projectInfo( const std::unique_ptr<char []>& buffer, const unsigned int bufsize );
+
+// Export
+
+const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& xml_file );
+void configureXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources );
+
+// Import
+
+void configureProject( const std::string& project_file, const std::vector<std::string>& resources );
+
+// Misc
 
 template<typename T>
 const std::vector<T *> getAllElementsByNames( const tinyxml2::XMLElement * root, const std::vector<std::string>& names );

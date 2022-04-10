@@ -18,8 +18,14 @@
 
 #include "xml.hpp"
 #include "../program/printer.hpp"
+#include "../exceptions/exceptions.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
+#include "../external/filesystem/filesystem.hpp"
 
+#include <unordered_set>
+
+using namespace exceptions;
+namespace fsys = ghc::filesystem;
 
 namespace xml
 {
@@ -153,6 +159,108 @@ bool projectInfo( const std::unique_ptr<char []>& buffer, const unsigned int buf
     }
 
     return true;
+}
+
+const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& xml_file )
+{
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile( xml_file.c_str() );
+
+    const tinyxml2::XMLElement * root = doc.RootElement();
+    if ( root == nullptr )
+    {
+        throw InvalidXmlFileException( "No root element. Are you sure this file contains an XML content?\n" );
+    }
+
+    const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
+    const std::vector<const tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<const tinyxml2::XMLElement>( root, NAMES );
+
+    std::unordered_set<std::string> unique_paths;
+    for ( const tinyxml2::XMLElement * e : elements )
+    {
+        unique_paths.insert( e->Attribute( "src" ) );
+    }
+
+    std::vector<std::string> paths;
+    std::copy( unique_paths.begin(), unique_paths.end(), std::back_inserter(paths) );
+    return paths;
+}
+
+void configureXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources )
+{
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile( project_file.c_str() );
+
+    const tinyxml2::XMLElement * root = doc.RootElement();
+    if ( root == nullptr )
+    {
+        /// At this point, this part must not be reachable
+        throw PackageImportException( "FATAL ERROR: The exported project file is invalid." );
+    }
+
+    const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
+    const std::vector<tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<tinyxml2::XMLElement>( root, NAMES );
+
+    for ( tinyxml2::XMLElement * e : elements )
+    {
+        const std::string source( e->Attribute( "src" ) );
+        auto element = resources.find( source );
+        if ( element != resources.cend() )
+        {
+            const std::string& target = element->second;
+            e->SetAttribute( "src", target.c_str() );
+        }
+    }
+
+    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    if ( code != tinyxml2::XMLError::XML_SUCCESS )
+    {
+        throw PackageExportException( "ERROR: Export failed : cannot save updated configuration into the project" +
+                                       std::string( doc.ErrorStr() ) );
+    }
+}
+
+
+void configureProject( const std::string& project_file, const std::vector<std::string>& resources )
+{
+    Program::Printer print = Program::getPrinter();
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile( project_file.c_str() );
+
+    const tinyxml2::XMLElement * root = doc.RootElement();
+    if ( root == nullptr )
+    {
+        /// At this point, this part must not be reachable
+        throw PackageImportException( "ERROR:The imported project file is invalid." );
+    }
+
+    const std::vector<std::string> NAMES{ "audiofileprocessor", "sf2player", "sampletco" };
+    const std::vector<tinyxml2::XMLElement *>& elements = xml::getAllElementsByNames<tinyxml2::XMLElement>( root, NAMES );
+
+    for ( tinyxml2::XMLElement * e : elements )
+    {
+        const std::string source( e->Attribute( "src" ) );
+        const std::string& filename = fsys::path( source ).filename().string();
+        auto found = std::find_if( resources.cbegin(), resources.cend(), [&filename] ( const std::string& resource )
+        {
+            return fsys::path( resource ).filename().string() == filename;
+        } );
+
+        if ( found != resources.cend() )
+        {
+            print << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project. \n";
+            const std::string& resource_found = fsys::absolute( ( *found ) ).string();
+            print << "-- Set \"" << ghc::filesystem::normalize( resource_found ) << "\" in project file. \n";
+            e->SetAttribute( "src", resource_found.c_str() );
+        }
+    }
+
+    tinyxml2::XMLError code = doc.SaveFile( project_file.c_str() );
+    if ( code != tinyxml2::XMLError::XML_SUCCESS )
+    {
+        throw PackageImportException( "ERROR: Import failed : cannot save updated configuration into the project" +
+                                      std::string( doc.ErrorStr() ) );
+    }
 }
 
 } // xml

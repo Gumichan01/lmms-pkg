@@ -82,7 +82,7 @@ const std::string pack( const options::Options& options )
     }
 
     print << "-- Retrieving files to copy...\n";
-    const std::vector<fsys::path>& sound_files = retrieveResourcesFromXmlFile( dest_project_file.string() );
+    const std::vector<fsys::path>& sound_files = retrieveResourcesFromProject( dest_project_file.string() );
     const std::vector<std::string>& dup_files = getDuplicatedFilenames( sound_files );
 
     print << "\n-- This project has " << sound_files.size() << " file(s) that can be copied.\n\n";

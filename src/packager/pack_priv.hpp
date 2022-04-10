@@ -22,7 +22,6 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
-#include <utility>
 
 namespace options
 {
@@ -32,7 +31,7 @@ struct Options;
 
 namespace Packager
 {
-const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
+const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc::filesystem::path& project_file );
 const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
                                                                 const ghc::filesystem::path& directory,
                                                                 const std::vector<std::string>& duplicated_filenames,
