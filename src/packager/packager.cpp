@@ -28,6 +28,7 @@
 #include <iostream>
 
 using namespace exceptions;
+namespace fsys = ghc::filesystem;
 
 namespace Packager
 {

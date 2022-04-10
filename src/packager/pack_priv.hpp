@@ -29,22 +29,22 @@ namespace options
 struct Options;
 }
 
-namespace fsys = ghc::filesystem;
 
 namespace Packager
 {
-const std::vector<fsys::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
-const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<fsys::path>& paths,
-                                                                                        const fsys::path& directory,
-                                                                                        const std::vector<std::string>& duplicated_filenames,
-                                                                                        const options::Options& options );
+const std::vector<ghc::filesystem::path> retrieveResourcesFromXmlFile( const std::string& xml_file );
+const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
+                                                                const ghc::filesystem::path& directory,
+                                                                const std::vector<std::string>& duplicated_filenames,
+                                                                const options::Options& options );
 
-fsys::path generateProjectFileInPackage( const fsys::path& lmms_file, const options::Options& options );
+ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options );
 
-const std::vector<std::string> getDuplicatedFilenames(const std::vector<fsys::path> paths);
+const std::vector<std::string> getDuplicatedFilenames(const std::vector<ghc::filesystem::path> paths);
 
-void configureProjectFileInPackage( const fsys::path& project_file, const std::unordered_map<std::string, std::string>& resources );
+void configureProjectFileInPackage( const ghc::filesystem::path& project_file,
+                                    const std::unordered_map<std::string, std::string>& resources );
 
-const std::vector<fsys::path> getProjectResourcePaths( const fsys::path& project_directory );
-void configureProject( const fsys::path& project_file, const std::vector<fsys::path>& resources );
+const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory );
+void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources );
 }
