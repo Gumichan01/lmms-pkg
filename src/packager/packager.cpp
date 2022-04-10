@@ -65,7 +65,7 @@ const std::string pack( const options::Options& options )
         throw NonExistingFileException( "ERROR: \"" + dest_project_file.string() + "\" does not exist. Packaging aborted.\n" );
     }
 
-    if ( !lmms::checkLMMSProjectFile( dest_project_file.string() ) )
+    if ( !lmms::checkLMMSProjectFile( dest_project_file ) )
     {
         std::error_code ecfile;
         fsys::remove( dest_project_file, ecfile );
@@ -98,7 +98,7 @@ const std::string pack( const options::Options& options )
         const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( sound_files, sample_directory.string(), dup_files, options );
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
         configureProjectFileInPackage( dest_project_file, copied_files );
-        return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ) : package_directory.string());
+        return ghc::filesystem::normalize(options.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
     }
     else
     {
@@ -149,12 +149,12 @@ const std::string unpack( const options::Options& options )
 
 bool checkPackage( const options::Options& options )
 {
-    return lmms::checkZipFile( options.project_file );
+    return lmms::checkZipFile( fsys::path( options.project_file ) );
 }
 
 bool packageInfo( const options::Options& options )
 {
-    return lmms::zipFileInfo( options.project_file );
+    return lmms::zipFileInfo( fsys::path( options.project_file ) );
 }
 
 }

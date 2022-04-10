@@ -36,11 +36,11 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
                                          const std::string& destination_directory,
                                          const std::string& lmms_command = "lmms" );
 
-std::string zipFile( const ghc::filesystem::path& package_directory );
+const ghc::filesystem::path zipFile( const ghc::filesystem::path& package_directory );
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory );
-bool checkZipFile( const std::string& package_file );
-bool zipFileInfo( const std::string& package_file );
-bool checkLMMSProjectFile( const std::string& lmms_file );
+bool checkZipFile( const ghc::filesystem::path& package_file );
+bool zipFileInfo( const ghc::filesystem::path& package_file );
+bool checkLMMSProjectFile( const ghc::filesystem::path& lmms_file );
 }
 
 #endif // MMPZ_HPP_INCLUDED

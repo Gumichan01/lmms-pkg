@@ -178,9 +178,9 @@ bool checkLMMSProjectBuffer(const std::unique_ptr<char []>& buffer, const unsign
     return valid_project;
 }
 
-bool checkLMMSProjectFile( const std::string& lmms_file )
+bool checkLMMSProjectFile( const ghc::filesystem::path& lmms_file )
 {
-    std::ifstream infile( lmms_file );
+    std::ifstream infile( lmms_file.string() );
     if ( infile )
     {
         std::stringstream ss;
@@ -262,7 +262,7 @@ bool projectInfo(const std::unique_ptr<char []>& buffer, const unsigned int bufs
     return true;
 }
 
-std::string zipFile( const ghc::filesystem::path& package_directory )
+const ghc::filesystem::path zipFile( const ghc::filesystem::path& package_directory )
 {
     const std::string& pkg_dir_txt = package_directory.string();
     const std::string& package_name = ( pkg_dir_txt.back() == '/' || pkg_dir_txt.back() == '\\' ) ?
@@ -270,7 +270,7 @@ std::string zipFile( const ghc::filesystem::path& package_directory )
                                       pkg_dir_txt + PACKAGE_EXTENSION;
 
     compressPackage( pkg_dir_txt, package_name );
-    return package_name;
+    return ghc::filesystem::path( package_name );
 }
 
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
@@ -323,15 +323,15 @@ const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, con
     return project_path;
 }
 
-bool checkZipFile( const std::string& package_file )
+bool checkZipFile( const ghc::filesystem::path& package_file )
 {
     bool valid_project_file = false;
     bool has_resources_dir = false;
     Program::Printer print = Program::getPrinter();
 
-    if ( ghc::filesystem::exists( ghc::filesystem::path( package_file ) ) )
+    if ( ghc::filesystem::exists( package_file ) )
     {
-        HZIP zip = OpenZip( package_file.c_str(), nullptr );
+        HZIP zip = OpenZip( package_file.string().c_str(), nullptr );
 
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
@@ -404,20 +404,19 @@ bool checkZipFile( const std::string& package_file )
     return false;
 }
 
-bool zipFileInfo( const std::string& package_file )
+bool zipFileInfo( const ghc::filesystem::path& package_file )
 {
-    const ghc::filesystem::path package( package_file );
     Program::Printer print = Program::getPrinter();
 
-    if ( ghc::filesystem::exists( ghc::filesystem::path( package ) ) )
+    if ( ghc::filesystem::exists( package_file ) )
     {
-        if ( !ghc::filesystem::hasExtension( package, ".mmpk" ) )
+        if ( !ghc::filesystem::hasExtension( package_file, ".mmpk" ) )
         {
             std::cerr << "ERROR: This file has not the .mmpk extension.\n";
             return false;
         }
 
-        HZIP zip = OpenZip( package_file.c_str(), nullptr );
+        HZIP zip = OpenZip( package_file.string().c_str(), nullptr );
 
         ZIPENTRY ze;
         GetZipItem( zip, -1, &ze );
