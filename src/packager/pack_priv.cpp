@@ -23,6 +23,7 @@
 
 #include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
+#include "../external/filesystem/filesystem.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -48,10 +49,11 @@ const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc
     return paths;
 }
 
-const std::unordered_map<std::string, std::string> copyFilesTo( const std::vector<ghc::filesystem::path>& paths,
-                                                                const ghc::filesystem::path& directory,
-                                                                const std::vector<std::string>& duplicated_filenames,
-                                                                const options::Options& options )
+// On copied file = a Key/Value pair: ( source path, destination path )
+const std::unordered_map<std::string, std::string> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
+                                                                        const ghc::filesystem::path& directory,
+                                                                        const std::vector<std::string>& duplicated_filenames,
+                                                                        const options::Options& options )
 {
     std::unordered_map<std::string, std::string> copied_files;
     std::unordered_map<std::string, int> name_counter;
@@ -132,7 +134,7 @@ const std::unordered_map<std::string, std::string> copyFilesTo( const std::vecto
     return copied_files;
 }
 
-ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path& lmms_file, const options::Options& options )
+const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesystem::path& lmms_file, const options::Options& options )
 {
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
@@ -162,11 +164,11 @@ ghc::filesystem::path generateProjectFileInPackage( const ghc::filesystem::path&
 }
 
 
-const std::vector<std::string> getDuplicatedFilenames( const std::vector<ghc::filesystem::path> paths )
+const std::vector<std::string> getDuplicatedFilenames( const std::vector<ghc::filesystem::path> paths ) noexcept
 {
     std::unordered_set<std::string> names;
     std::vector<std::string> duplicated_names;
-    for ( fsys::path p : paths )
+    for ( const fsys::path& p : paths )
     {
         const std::string& name = p.stem().string();
 
@@ -182,10 +184,10 @@ const std::vector<std::string> getDuplicatedFilenames( const std::vector<ghc::fi
     return duplicated_names;
 }
 
-void configureProjectFileInPackage( const ghc::filesystem::path& project_file,
-                                    const std::unordered_map<std::string, std::string>& resources )
+void configureExportedProject( const ghc::filesystem::path& project_file,
+                               const std::unordered_map<std::string, std::string>& resources )
 {
-    xml::configureXmlFile( project_file.string(), resources );
+    xml::configureExportedXmlFile( project_file.string(), resources );
 }
 
 
@@ -194,7 +196,7 @@ void configureProjectFileInPackage( const ghc::filesystem::path& project_file,
 const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory )
 {
     std::vector<fsys::path> paths;
-    for ( auto& file : fsys::recursive_directory_iterator( project_directory ) )
+    for ( const auto& file : fsys::recursive_directory_iterator( project_directory ) )
     {
         const fsys::path& filepath = file.path();
         if ( fsys::is_regular_file( filepath ) )
@@ -205,14 +207,14 @@ const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::fil
     return paths;
 }
 
-void configureProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources )
+void configureImportedProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources )
 {
     std::vector<std::string> files;
     for (const fsys::path& p : resources)
     {
         files.push_back( p.string() );
     }
-    xml::configureProject( project_file.string(), files );
+    xml::configureImportedProject( project_file.string(), files );
 }
 
 }

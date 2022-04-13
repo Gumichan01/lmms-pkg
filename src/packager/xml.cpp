@@ -186,7 +186,7 @@ const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& 
     return paths;
 }
 
-void configureXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources )
+void configureExportedXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources )
 {
     tinyxml2::XMLDocument doc;
     doc.LoadFile( project_file.c_str() );
@@ -221,7 +221,7 @@ void configureXmlFile( const std::string& project_file, const std::unordered_map
 }
 
 
-void configureProject( const std::string& project_file, const std::vector<std::string>& resources )
+void configureImportedProject( const std::string& project_file, const std::vector<std::string>& resources )
 {
     Program::Printer print = Program::getPrinter();
     tinyxml2::XMLDocument doc;

@@ -54,7 +54,7 @@ const std::string pack( const options::Options& options )
         dirtectory_created_by_app = true;
     }
 
-    const fsys::path& dest_project_file = generateProjectFileInPackage( lmms_file, options );
+    const fsys::path& dest_project_file = copyProjectToDestinationDirectory( lmms_file, options );
     if ( !fsys::exists( dest_project_file ) )
     {
         if ( dirtectory_created_by_app )
@@ -95,9 +95,10 @@ const std::string pack( const options::Options& options )
             fsys::create_directories( sample_directory );
         }
 
-        const std::unordered_map<std::string, std::string>& copied_files = Packager::copyFilesTo( sound_files, sample_directory.string(), dup_files, options );
+        const auto& copied_files = Packager::copyExportedFilesTo( sound_files, sample_directory.string(), dup_files, options );
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
-        configureProjectFileInPackage( dest_project_file, copied_files );
+
+        configureExportedProject( dest_project_file, copied_files );
         return fsys::normalize(options.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
     }
     else
@@ -137,7 +138,7 @@ const std::string unpack( const options::Options& options )
         fsys::copy( project_file, backup_file );
         print << "-- Backup file created: \"" << fsys::normalize( backup_file.string() ) << "\"\n\n";
 
-        configureProject( project_file, getProjectResourcePaths( destination_directory ) );
+        configureImportedProject( project_file, getProjectResourcePaths( destination_directory ) );
         return fsys::normalize(project_file.parent_path().string() + "/");
     }
     else

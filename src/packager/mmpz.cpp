@@ -73,7 +73,7 @@ void compressPackage( const std::string& package_directory, const std::string& p
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
     Program::Printer print = Program::getPrinter();
 
-    for ( auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
+    for ( const auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
         const std::string& filename = ghc::filesystem::relative( ghc::filesystem::absolute( file.path() ), dir_parent ).string();
         print << "zip: " << ghc::filesystem::normalize(filename) << "\n";
@@ -118,8 +118,8 @@ const ghc::filesystem::path zipFile( const ghc::filesystem::path& package_direct
 {
     const std::string& pkg_dir_txt = package_directory.string();
     const std::string& package_name = ( pkg_dir_txt.back() == '/' || pkg_dir_txt.back() == '\\' ) ?
-                                      pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + PACKAGE_EXTENSION :
-                                      pkg_dir_txt + PACKAGE_EXTENSION;
+                                        pkg_dir_txt.substr( 0, pkg_dir_txt.size() - 1 ) + PACKAGE_EXTENSION :
+                                        pkg_dir_txt + PACKAGE_EXTENSION;
 
     compressPackage( pkg_dir_txt, package_name );
     return ghc::filesystem::path( package_name );

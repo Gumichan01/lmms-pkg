@@ -42,7 +42,11 @@ Printer::~Printer()
 
 // I don't want to bring a printer in every functions call. Too many modifications just for that!
 // I will keep this simple by using this shitty global variable
-Printer printer( false );
+namespace
+{
+    Printer printer( false );
+}
+
 
 bool setVerbose( bool v ) noexcept
 {

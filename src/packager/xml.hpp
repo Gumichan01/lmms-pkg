@@ -50,11 +50,11 @@ bool projectInfo( const std::unique_ptr<char []>& buffer, const unsigned int buf
 // Export
 
 const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& xml_file );
-void configureXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources );
+void configureExportedXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources );
 
 // Import
 
-void configureProject( const std::string& project_file, const std::vector<std::string>& resources );
+void configureImportedProject( const std::string& project_file, const std::vector<std::string>& resources );
 
 // Misc
 
