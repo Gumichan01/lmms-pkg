@@ -29,7 +29,7 @@ void usage ( const std::string& progname )
 {
     std::cerr << "Usage: " << ghc::filesystem::path( progname ).filename().string()
               << " --import|--export|--check|--info <name>.mmp(z) <destination/path>"
-              << " [--no-sf2] [--no-zip] [--verbose] [--lmms-dir <path/to/lmms/data>]"
+              << " [--no-sf2] [--no-zip] [--verbose] [--rsc-dirs <path/to/lmms/data>]"
               << " [--lmms-exe <path/to/lmms/exe>] \n\n";
 }
 

@@ -41,7 +41,7 @@ namespace Packager
 
 const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc::filesystem::path& project_file );
 const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
-                                                                        const ghc::filesystem::path& directory,
+                                                                        const ghc::filesystem::path& resource_directory,
                                                                         const std::vector<std::string>& duplicated_filenames,
                                                                         const options::Options& options );
 

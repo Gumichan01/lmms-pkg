@@ -74,7 +74,8 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
     bool sf2_export = true;
     bool zip = true;
     bool verbose = false;
-    std::vector<std::string> lmms_dirs;
+    bool resources_set = false;
+    std::vector<std::string> resource_dirs;
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
 
@@ -90,20 +91,21 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
         {
             zip = false;
         }
-        else if ( ( opt == "--lmms-dir" ) && ( op == OperationType::Export ) )
+        else if ( ( opt == "--rsc-dirs" ) && ( op == OperationType::Export ) )
         {
-            if ( lmms_dirs.empty() )
+            if ( !resources_set )
             {
                 while ( ((argvpos + 1 ) < argc) && std::string( argv[argvpos + 1] ).find( "--" ) )
                 {
                     std::string directory = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
-                    lmms_dirs.push_back( directory );
+                    resource_dirs.push_back( directory );
                     argvpos++;
                 }
+                resources_set = true;
             }
             else
             {
-                std::cerr << "-- LMMS directory already set. Directory ignored.\n";
+                std::cerr << "-- Resource directories already set. Subsequent uses of the option are ignored.\n";
             }
         }
         else if ( opt == "--lmms-exe" )
@@ -145,16 +147,16 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
         std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
     }
 
-    if ( !lmms_dirs.empty() && verbose )
+    if ( !resource_dirs.empty() && verbose )
     {
         std::cout << "-- The following LMMS directories have been set: \n";
-        for ( const std::string& dir : lmms_dirs )
+        for ( const std::string& dir : resource_dirs )
         {
             std::cout << "*  " << dir << "\n";
         }
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, zip, verbose, lmms_dirs, lmms_exe };
+    return Options{ op, project_file, destination_directory, sf2_export, zip, verbose, resource_dirs, lmms_exe };
 
 }
 

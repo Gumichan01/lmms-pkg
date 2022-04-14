@@ -53,9 +53,9 @@ const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc
 
 
 const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
-                                                                        const ghc::filesystem::path& directory,
-                                                                        const std::vector<std::string>& duplicated_filenames,
-                                                                        const options::Options& options )
+                                                     const ghc::filesystem::path& resource_directory,
+                                                     const std::vector<std::string>& duplicated_filenames,
+                                                     const options::Options& options )
 {
     std::vector<ExportedFile> exported_files;
     std::unordered_map<std::string, int> name_counter;
@@ -83,12 +83,12 @@ const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::file
                         name_counter[src_pathname] = 1;
                     }
 
-                    return fsys::path( directory.string() + source_path.stem().string()
+                    return fsys::path( resource_directory.string() + source_path.stem().string()
                                        + "-" + std::to_string( name_counter[src_pathname] ) + source_path.extension().string() );
                 }
                 else
                 {
-                    return fsys::path( directory.string() + source_path.filename().string() );
+                    return fsys::path( resource_directory.string() + source_path.filename().string() );
                 }
             } ();
 
@@ -103,13 +103,13 @@ const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::file
             else
             {
                 bool found = false;
-                if ( !options.lmms_directories.empty() )
+                if ( !options.resource_directories.empty() )
                 {
                     print << "-- Searching for \"" << ghc::filesystem::normalize( source_path.string() )
-                              << "\" in LMMS directories...\n";
+                              << "\" in resource directories...\n";
                 }
 
-                for ( const std::string& dir : options.lmms_directories )
+                for ( const std::string& dir : options.resource_directories )
                 {
                     // Assuming the source_path is relative to the current directory it is located
                     // (example: in LMMS/ or LMMS_Data/)

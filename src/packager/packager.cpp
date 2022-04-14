@@ -89,14 +89,14 @@ const std::string pack( const options::Options& options )
 
     if ( !sound_files.empty() )
     {
-        const fsys::path sample_directory( destination_directory + "resources/" );
-        if ( !fsys::exists( sample_directory ) )
+        const fsys::path resource_directory( destination_directory + "resources/" );
+        if ( !fsys::exists( resource_directory ) )
         {
-            print << "-- Creating resource path: " << sample_directory.string() << "\n";
-            fsys::create_directories( sample_directory );
+            print << "-- Creating resource path: " << resource_directory.string() << "\n";
+            fsys::create_directories( resource_directory );
         }
 
-        const auto& copied_files = Packager::copyExportedFilesTo( sound_files, sample_directory.string(), dup_files, options );
+        const auto& copied_files = Packager::copyExportedFilesTo( sound_files, resource_directory.string(), dup_files, options );
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
 
         configureExportedProject( dest_project_file, copied_files );
