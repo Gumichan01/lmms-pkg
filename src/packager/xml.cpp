@@ -17,6 +17,7 @@
 */
 
 #include "xml.hpp"
+#include "exported_file.hpp"
 #include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/tinyxml2/tinyxml2.h"
@@ -186,8 +187,9 @@ const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& 
     return paths;
 }
 
-void configureExportedXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources )
+void configureExportedXmlFile( const std::string& project_file, const std::vector<ExportedFile>& exported_files )
 {
+    Program::Printer print = Program::getPrinter();
     tinyxml2::XMLDocument doc;
     doc.LoadFile( project_file.c_str() );
 
@@ -203,11 +205,15 @@ void configureExportedXmlFile( const std::string& project_file, const std::unord
 
     for ( tinyxml2::XMLElement * e : elements )
     {
-        const std::string source( e->Attribute( "src" ) );
-        auto element = resources.find( source );
-        if ( element != resources.cend() )
+        const fsys::path source = std::string( e->Attribute( "src" ) );
+        auto exported_file = std::find_if( exported_files.cbegin(), exported_files.cend(), [&source] ( const ExportedFile& f )
         {
-            const std::string& target = element->second;
+            return f.source == source;
+        });
+        if ( exported_file != exported_files.cend() )
+        {
+            const std::string& target = exported_file->dest.string();
+            print << "-- " << e->Name() << ": \"" << fsys::normalize( target ) << "\".\n";
             e->SetAttribute( "src", target.c_str() );
         }
     }
@@ -250,7 +256,7 @@ void configureImportedProject( const std::string& project_file, const std::vecto
         {
             print << "-- Configure \"" << e->Name() << "\" with \"" << filename << "\" in project. \n";
             const std::string& resource_found = fsys::absolute( ( *found ) ).string();
-            print << "-- Set \"" << ghc::filesystem::normalize( resource_found ) << "\" in project file. \n";
+            print << "-- Set \"" << fsys::normalize( resource_found ) << "\" in project file. \n";
             e->SetAttribute( "src", resource_found.c_str() );
         }
     }

@@ -73,6 +73,7 @@
 		<Unit filename="src/external/zutils/zip.h" />
 		<Unit filename="src/external/zutils/zutils.hpp" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/packager/exported_file.hpp" />
 		<Unit filename="src/packager/mmpz.cpp" />
 		<Unit filename="src/packager/mmpz.hpp" />
 		<Unit filename="src/packager/options.cpp" />

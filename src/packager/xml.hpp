@@ -25,7 +25,8 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#include <unordered_map>
+
+struct ExportedFile;
 
 namespace xml
 {
@@ -50,7 +51,7 @@ bool projectInfo( const std::unique_ptr<char []>& buffer, const unsigned int buf
 // Export
 
 const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& xml_file );
-void configureExportedXmlFile( const std::string& project_file, const std::unordered_map<std::string, std::string>& resources );
+void configureExportedXmlFile( const std::string& project_file, const std::vector<ExportedFile>& exported_files );
 
 // Import
 

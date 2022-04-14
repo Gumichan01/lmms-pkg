@@ -18,8 +18,9 @@
 
 
 #include <vector>
-#include <unordered_map>
 #include <string>
+
+struct ExportedFile;
 
 namespace options
 {
@@ -37,8 +38,9 @@ class path;
 
 namespace Packager
 {
+
 const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc::filesystem::path& project_file );
-const std::unordered_map<std::string, std::string> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
+const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
                                                                         const ghc::filesystem::path& directory,
                                                                         const std::vector<std::string>& duplicated_filenames,
                                                                         const options::Options& options );
@@ -47,7 +49,7 @@ const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesy
 
 const std::vector<std::string> getDuplicatedFilenames(const std::vector<ghc::filesystem::path> paths) noexcept;
 
-void configureExportedProject( const ghc::filesystem::path& project_file, const std::unordered_map<std::string, std::string>& resources );
+void configureExportedProject( const ghc::filesystem::path& project_file, const std::vector<ExportedFile>& exported_files );
 
 const std::vector<ghc::filesystem::path> getProjectResourcePaths( const ghc::filesystem::path& project_directory );
 void configureImportedProject( const ghc::filesystem::path& project_file, const std::vector<ghc::filesystem::path>& resources );

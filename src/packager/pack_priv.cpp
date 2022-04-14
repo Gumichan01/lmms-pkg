@@ -17,6 +17,7 @@
 */
 
 #include "pack_priv.hpp"
+#include "exported_file.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
 #include "xml.hpp"
@@ -28,6 +29,7 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_set>
+#include <unordered_map>
 
 using namespace exceptions;
 namespace fsys = ghc::filesystem;
@@ -49,13 +51,13 @@ const std::vector<ghc::filesystem::path> retrieveResourcesFromProject( const ghc
     return paths;
 }
 
-// On copied file = a Key/Value pair: ( source path, destination path )
-const std::unordered_map<std::string, std::string> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
+
+const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::filesystem::path>& paths,
                                                                         const ghc::filesystem::path& directory,
                                                                         const std::vector<std::string>& duplicated_filenames,
                                                                         const options::Options& options )
 {
-    std::unordered_map<std::string, std::string> copied_files;
+    std::vector<ExportedFile> exported_files;
     std::unordered_map<std::string, int> name_counter;
     Program::Printer print = Program::getPrinter();
 
@@ -95,7 +97,7 @@ const std::unordered_map<std::string, std::string> copyExportedFilesTo( const st
                 print << "-- Copying \"" << ghc::filesystem::normalize( source_path.string() )
                       << "\" -> \"" << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                 fsys::copy_file( source_path, destination_path );
-                copied_files[source_path.string()] = destination_path.filename().string();
+                exported_files.push_back( ExportedFile{ source_path, destination_path.filename() } );
                 print << "DONE\n";
             }
             else
@@ -118,7 +120,7 @@ const std::unordered_map<std::string, std::string> copyExportedFilesTo( const st
                         print << "-- Copying \"" << ghc::filesystem::normalize( lmms_source_file.string() ) << "\" -> \""
                               << ghc::filesystem::normalize( destination_path.string() ) << "\"...";
                         fsys::copy_file( lmms_source_file, destination_path );
-                        copied_files[source_path.string()] = destination_path.filename().string();
+                        exported_files.push_back( ExportedFile{ source_path, destination_path.filename() } );
                         print << "DONE\n";
                         found = true;
                         break;
@@ -131,7 +133,7 @@ const std::unordered_map<std::string, std::string> copyExportedFilesTo( const st
             }
         }
     }
-    return copied_files;
+    return exported_files;
 }
 
 const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesystem::path& lmms_file, const options::Options& options )
@@ -184,10 +186,9 @@ const std::vector<std::string> getDuplicatedFilenames( const std::vector<ghc::fi
     return duplicated_names;
 }
 
-void configureExportedProject( const ghc::filesystem::path& project_file,
-                               const std::unordered_map<std::string, std::string>& resources )
+void configureExportedProject( const ghc::filesystem::path& project_file, const std::vector<ExportedFile>& exported_files )
 {
-    xml::configureExportedXmlFile( project_file.string(), resources );
+    xml::configureExportedXmlFile( project_file.string(), exported_files );
 }
 
 

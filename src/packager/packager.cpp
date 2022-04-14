@@ -20,6 +20,7 @@
 #include "pack_priv.hpp"
 #include "options.hpp"
 #include "mmpz.hpp"
+#include "exported_file.hpp"
 #include "../program/printer.hpp"
 #include "../exceptions/exceptions.hpp"
 #include "../external/filesystem/filesystem.hpp"
