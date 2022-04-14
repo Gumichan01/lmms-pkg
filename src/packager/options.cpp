@@ -75,7 +75,11 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
     bool zip = true;
     bool verbose = false;
     bool resources_set = false;
-    std::vector<std::string> resource_dirs;
+
+    // Some resources can be located in the directory where the project is.
+    // It is possible that the path to the resource is relative to the project directory,
+    // That is why by default the resource directory contains at least the project directory.
+    std::vector<std::string> resource_dirs { fs::path( project_file ).parent_path().string() + "/" };
     std::string lmms_exe = "lmms";
     bool lmms_exe_set = false;
 
@@ -149,7 +153,7 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
 
     if ( !resource_dirs.empty() && verbose )
     {
-        std::cout << "-- The following LMMS directories have been set: \n";
+        std::cout << "-- The following resource directories have been set: \n";
         for ( const std::string& dir : resource_dirs )
         {
             std::cout << "*  " << dir << "\n";
