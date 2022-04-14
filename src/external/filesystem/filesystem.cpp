@@ -26,7 +26,7 @@
 namespace ghc::filesystem
 {
 
-std::string normalize( const std::string& filepath )
+const std::string normalize( const std::string& filepath )
 {
 #if defined(__WIN32__) || defined(__WIN64__)
     const char WIN_SEP = '\\';
