@@ -34,19 +34,21 @@ enum class OperationType
     InvalidOperation
 };
 
+struct ExportOptions
+{
+    const bool sf2_export = true;
+    const bool zip = true;
+    const std::vector<std::string> resource_directories {};
+    const std::string lmms_command = "";     // Very useful if LMMS is not in the $PATH env
+};
+
 struct Options
 {
     const OperationType operation = OperationType::InvalidOperation;
     const std::string project_file = "";
     const std::string destination_directory = "";
-    // Optional
-    const bool sf2_export = true;
-    const bool zip = true;
     const bool verbose = false;
-    const std::vector<std::string> resource_directories {};
-    const std::string lmms_command = "";     // Very useful if LMMS is not in the $PATH env
-
-    ~Options();
+    ExportOptions export_opt;
 };
 
 

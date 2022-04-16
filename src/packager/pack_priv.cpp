@@ -63,7 +63,7 @@ const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::file
 
     for ( const fsys::path& source_path : paths )
     {
-        if ( fsys::hasExtension( source_path, ".sf2" ) && !options.sf2_export )
+        if ( fsys::hasExtension( source_path, ".sf2" ) && !options.export_opt.sf2_export )
         {
             print << "-- Ignore SoundFont file: \"" << ghc::filesystem::normalize( source_path.string() ) << "\".\n";
         }
@@ -103,13 +103,13 @@ const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::file
             else
             {
                 bool found = false;
-                if ( !options.resource_directories.empty() )
+                if ( !options.export_opt.resource_directories.empty() )
                 {
                     print << "-- Searching for \"" << ghc::filesystem::normalize( source_path.string() )
                               << "\" in resource directories...\n";
                 }
 
-                for ( const std::string& dir : options.resource_directories )
+                for ( const std::string& dir : options.export_opt.resource_directories )
                 {
                     // Assuming the source_path is relative to the current directory it is located
                     // (example: in LMMS/ or LMMS_Data/)
@@ -145,7 +145,7 @@ const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesy
     if ( fsys::hasExtension ( lmms_file, ".mmpz" ) )
     {
         print << "-- This is a compressed project. Using LMMS to decompress it...\n";
-        return lmms::decompressProject( project_file, destination_directory, options.lmms_command );
+        return lmms::decompressProject( project_file, destination_directory, options.export_opt.lmms_command );
     }
     else
     {

@@ -39,12 +39,6 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
     return path;
 }
 
-
-Options::~Options()
-{
-    // Empty
-}
-
 const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] );
 
 // TODO use a proper argument parser
@@ -67,7 +61,8 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
         {
             argvpos++;
         };
-        return Options { op, project_file, destination_directory, false, false, (argvpos < argc), {}, "" };
+        bool verbose = (argvpos < argc);
+        return Options { op, project_file, destination_directory, verbose, ExportOptions { false, false, {}, "" } };
     }
 
     // Assuming this is OperationType::Export
@@ -160,7 +155,7 @@ const Options retrieveImportExportArguments( const OperationType& op, const int 
         }
     }
 
-    return Options{ op, project_file, destination_directory, sf2_export, zip, verbose, resource_dirs, lmms_exe };
+    return Options{ op, project_file, destination_directory, verbose, ExportOptions { sf2_export, zip, resource_dirs, lmms_exe } };
 
 }
 
@@ -218,7 +213,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
             }
         }
 
-        return Options{ op, argv[2], "", false, false, verbose, {}, "" };
+        return Options{ op, argv[2], "", verbose, ExportOptions { false, false, {}, "" } };
     }
     else
     {

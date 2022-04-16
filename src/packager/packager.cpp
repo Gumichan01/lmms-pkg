@@ -100,7 +100,7 @@ const std::string pack( const options::Options& options )
         print << "-- " << copied_files.size() << " file(s) copied.\n\n";
 
         configureExportedProject( dest_project_file, copied_files );
-        return fsys::normalize(options.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
+        return fsys::normalize(options.export_opt.zip ? lmms::zipFile( package_directory ).string() : package_directory.string());
     }
     else
     {
