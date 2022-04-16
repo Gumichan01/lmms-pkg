@@ -20,7 +20,10 @@
 
 #include <iostream>
 
-namespace Program
+namespace program
+{
+
+namespace log
 {
 
 Printer::Printer( bool v )
@@ -59,4 +62,6 @@ Printer getPrinter() noexcept
     return printer;
 }
 
-}
+
+} // log
+} // program

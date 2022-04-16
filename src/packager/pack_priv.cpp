@@ -59,7 +59,7 @@ const std::vector<ExportedFile> copyExportedFilesTo( const std::vector<ghc::file
 {
     std::vector<ExportedFile> exported_files;
     std::unordered_map<std::string, int> name_counter;
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     for ( const fsys::path& source_path : paths )
     {
@@ -140,7 +140,7 @@ const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesy
 {
     const std::string& project_file = options.project_file;
     const std::string& destination_directory = options.destination_directory;
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( fsys::hasExtension ( lmms_file, ".mmpz" ) )
     {

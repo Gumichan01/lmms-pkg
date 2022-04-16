@@ -40,7 +40,7 @@ bool checkLMMSProjectBuffer( const std::unique_ptr<char []>& buffer, const unsig
     const std::size_t VSIZE = 3;
     const std::array<std::string, VSIZE> VALID_VERSIONS{"1.2.0", "1.2.1", "1.2.2"};
     const char * VALID_VERSIONS_STR = "{ 1.2.0, 1.2.1, 1.2.2 }";
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     bool valid_project = false;
     tinyxml2::XMLDocument doc;
@@ -189,7 +189,7 @@ const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& 
 
 void configureExportedXmlFile( const std::string& project_file, const std::vector<ExportedFile>& exported_files )
 {
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
     tinyxml2::XMLDocument doc;
     doc.LoadFile( project_file.c_str() );
 
@@ -229,7 +229,7 @@ void configureExportedXmlFile( const std::string& project_file, const std::vecto
 
 void configureImportedProject( const std::string& project_file, const std::vector<std::string>& resources )
 {
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
     tinyxml2::XMLDocument doc;
     doc.LoadFile( project_file.c_str() );
 

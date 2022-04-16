@@ -22,7 +22,7 @@
 #include "../packager/options.hpp"
 #include "../external/filesystem/filesystem.hpp"
 
-namespace Program
+namespace program
 {
 
 void usage ( const std::string& progname )
@@ -34,7 +34,7 @@ void usage ( const std::string& progname )
 }
 
 
-int program( const int argc, const char * argv[] )
+int run( const int argc, const char * argv[] )
 {
     const int MINIMUM_ARGC = 3;
 
@@ -47,7 +47,7 @@ int program( const int argc, const char * argv[] )
     try
     {
         const options::Options& options = options::retrieveArguments( argc, argv );
-        setVerbose( options.verbose );
+        log::setVerbose( options.verbose );
         if ( options.operation == options::OperationType::Export )
         {
             const std::string& package = Packager::pack( options );

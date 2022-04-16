@@ -46,7 +46,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
     const std::string& basename = ghc::filesystem::path( project_file ).filename().string();
     const std::string& xml_file = package_directory + basename.substr( 0, basename.size() - 1 );
     const std::string& command = lmms_command + " -d " + project_file + " > " + xml_file;
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( ghc::filesystem::exists( xml_file ) )
     {
@@ -71,7 +71,7 @@ void compressPackage( const std::string& package_directory, const std::string& p
 {
     const ghc::filesystem::path dir_parent = ghc::filesystem::absolute( package_directory ).parent_path().parent_path();
     HZIP zip = CreateZip( package_name.c_str(), nullptr );
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     for ( const auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
@@ -127,7 +127,7 @@ const ghc::filesystem::path zipFile( const ghc::filesystem::path& package_direct
 
 const ghc::filesystem::path unzipFile( const ghc::filesystem::path& package, const ghc::filesystem::path& directory )
 {
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
     HZIP zip = OpenZip( package.string().c_str(), nullptr );
     ZIPENTRY ze;
     GetZipItem( zip, -1, &ze );
@@ -179,7 +179,7 @@ bool checkZipFile( const ghc::filesystem::path& package_file )
 {
     bool valid_project_file = false;
     bool has_resources_dir = false;
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( ghc::filesystem::exists( package_file ) )
     {
@@ -258,7 +258,7 @@ bool checkZipFile( const ghc::filesystem::path& package_file )
 
 bool zipFileInfo( const ghc::filesystem::path& package_file )
 {
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( ghc::filesystem::exists( package_file ) )
     {

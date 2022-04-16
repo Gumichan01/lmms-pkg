@@ -22,10 +22,10 @@
 
 #include <iostream>
 
-namespace Program
+namespace program
 {
 void usage( const std::string& progname );
-int program( const int argc, const char * argv[] );
+int run( const int argc, const char * argv[] );
 }
 
 #endif // PROGRAM_HPP_INCLUDED

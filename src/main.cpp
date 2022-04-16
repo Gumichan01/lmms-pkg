@@ -20,5 +20,5 @@
 
 int main( int argc, const char * argv[] )
 {
-    return Program::program( argc, argv );
+    return program::run( argc, argv );
 }

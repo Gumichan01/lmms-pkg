@@ -40,7 +40,7 @@ const std::string pack( const options::Options& options )
 
     const fsys::path lmms_file( project_file );
     const fsys::path package_directory( destination_directory );
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( !fsys::exists( lmms_file ) )
     {
@@ -117,7 +117,7 @@ const std::string unpack( const options::Options& options )
 {
     const fsys::path package( options.project_file );
     const fsys::path destination_directory( options.destination_directory );
-    Program::Printer print = Program::getPrinter();
+    program::log::Printer print = program::log::getPrinter();
 
     if ( !fsys::exists( package ) )
     {

@@ -23,7 +23,10 @@
 #include<string>
 #include<iostream>
 
-namespace Program
+namespace program
+{
+
+namespace log
 {
 
 class Printer
@@ -44,6 +47,8 @@ bool setVerbose( bool v ) noexcept;
 Printer getPrinter() noexcept;
 
 #include "printer.tpp"
+
+}
 
 }
 
