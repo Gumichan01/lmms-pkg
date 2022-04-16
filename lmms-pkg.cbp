@@ -87,7 +87,6 @@
 		<Unit filename="src/packager/xml.tpp" />
 		<Unit filename="src/program/printer.cpp" />
 		<Unit filename="src/program/printer.hpp" />
-		<Unit filename="src/program/printer.tpp" />
 		<Unit filename="src/program/program.cpp" />
 		<Unit filename="src/program/program.hpp" />
 		<Extensions>

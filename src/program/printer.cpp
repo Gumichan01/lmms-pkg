@@ -26,40 +26,65 @@ namespace program
 namespace log
 {
 
-Printer::Printer( bool v )
-    : verbose( v )
+// I don't want to bring a printer in every function calls. Too many modifications just for that!
+// I will keep this simple by using those shitty global variables and generate a printer when it is requested
+namespace
 {
-// Empty
+    bool verbose = false;
 }
 
-Printer& Printer::operator =( const Printer& printer ) noexcept
+Printer& Printer::operator <<( const std::string& ) noexcept
 {
-    verbose = printer.verbose;
     return *this;
 }
 
-Printer::~Printer()
+Printer& Printer::operator <<( const long ) noexcept
 {
-    // Empty
+    return *this;
 }
 
-// I don't want to bring a printer in every functions call. Too many modifications just for that!
-// I will keep this simple by using this shitty global variable
-namespace
+// Fake Printer
+
+Printer& FakePrinter::operator <<( const std::string& ) noexcept
 {
-    Printer printer( false );
+    return *this;
 }
 
+Printer& FakePrinter::operator <<( const long ) noexcept
+{
+    return *this;
+}
+
+// Verbose Printer
+
+Printer& VerbosePrinter::operator <<( const std::string& text ) noexcept
+{
+    os << text;
+    return *this;
+}
+
+Printer& VerbosePrinter::operator <<( const long num ) noexcept
+{
+    os << num;
+    return *this;
+}
 
 bool setVerbose( bool v ) noexcept
 {
-    printer = Printer( v );
+    verbose = v;
     return v;
 }
 
 Printer getPrinter() noexcept
 {
-    return printer;
+    if ( verbose )
+    {
+        return VerbosePrinter();
+    }
+    else
+    {
+        return FakePrinter();
+    }
 }
 
 

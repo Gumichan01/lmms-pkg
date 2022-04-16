@@ -76,7 +76,7 @@ void compressPackage( const std::string& package_directory, const std::string& p
     for ( const auto& file : ghc::filesystem::recursive_directory_iterator( package_directory ) )
     {
         const std::string& filename = ghc::filesystem::relative( ghc::filesystem::absolute( file.path() ), dir_parent ).string();
-        print << "zip: " << ghc::filesystem::normalize(filename) << "\n";
+        print << "zip: " << ghc::filesystem::normalize( filename ) << "\n";
 
         if ( ghc::filesystem::is_regular_file( file.path() ) )
         {
