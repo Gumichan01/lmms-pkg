@@ -48,7 +48,7 @@ struct Options
     const std::string project_file = "";
     const std::string destination_directory = "";
     const bool verbose = false;
-    ExportOptions export_opt;
+    const ExportOptions export_opt {};
 };
 
 

@@ -60,6 +60,7 @@
 		</Compiler>
 		<Unit filename="src/exceptions/exceptions.cpp" />
 		<Unit filename="src/exceptions/exceptions.hpp" />
+		<Unit filename="src/external/argparse/argparse.hpp" />
 		<Unit filename="src/external/filesystem/filesystem.cpp" />
 		<Unit filename="src/external/filesystem/filesystem.hpp" />
 		<Unit filename="src/external/ghc/filesystem.hpp" />

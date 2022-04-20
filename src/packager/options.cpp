@@ -18,6 +18,7 @@
 
 #include "options.hpp"
 #include "../external/filesystem/filesystem.hpp"
+#include "../external/argparse/argparse.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -29,6 +30,9 @@ namespace options
 {
 
 std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept;
+argparse::ArgumentParser parse( const std::vector<std::string> argv );
+OperationType getOperationType( argparse::ArgumentParser& parser );
+const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser );
 
 std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 {
@@ -39,187 +43,137 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
     return path;
 }
 
-const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] );
-
-// TODO use a proper argument parser
-const Options retrieveImportExportArguments( const OperationType& op, const int argc, const char * argv[] )
+argparse::ArgumentParser parse( const std::vector<std::string> argv )
 {
-    const int MIN_AGUMENTS_NUMBER = 4;
-    if ( argc < MIN_AGUMENTS_NUMBER )
+    argparse::ArgumentParser parser;
+    parser.addArgument( "--import" );
+    parser.addArgument( "--export" );
+    parser.addArgument( "--check" );
+    parser.addArgument( "--info" );
+    parser.addArgument( "--verbose" );
+    parser.addArgument( "--no-zip" );
+    parser.addArgument( "--sf2" );
+    parser.addArgument( "--lmms-exe", 1 );
+    parser.addArgument( "--rsc-dirs", '+' );
+    parser.addArgument( "-t", "--target", 1 );
+    parser.addFinalArgument( "source", 1 );
+
+    parser.useExceptions( true );
+    parser.parse( argv );
+    return parser;
+}
+
+// Known BUG: If you put several args name among them, the first tested name passes
+OperationType getOperationType( argparse::ArgumentParser& parser )
+{
+    if ( parser.retrieve<bool> ( "check" ) )
     {
-        throw std::invalid_argument( "Not enough arguments to execute the requested operation." );
+        return OperationType::Check;
     }
 
-    const std::string& operation_str = argv[1];
-    const std::string& project_file = fs::normalize( argv[2] );
-    const std::string& destination_directory = addTrailingSlashIfNeeded( fs::normalize( argv[3] ) );
-
-    if ( op == OperationType::Import )
+    if ( parser.retrieve<bool> ( "info" ) )
     {
-        int argvpos = MIN_AGUMENTS_NUMBER;
-        while ( argvpos < argc && std::string( argv[argvpos] ) != "--verbose" )
-        {
-            argvpos++;
-        };
-        bool verbose = (argvpos < argc);
-        return Options { op, project_file, destination_directory, verbose, ExportOptions { false, false, {}, "" } };
+        return OperationType::Info;
     }
 
-    // Assuming this is OperationType::Export
-    bool sf2_export = true;
-    bool zip = true;
-    bool verbose = false;
-    bool resources_set = false;
+    if ( parser.retrieve<bool> ( "export" ) )
+    {
+        return OperationType::Export;
+    }
 
+    if ( parser.retrieve<bool> ( "import" ) )
+    {
+        return OperationType::Import;
+    }
+
+    return OperationType::InvalidOperation;
+}
+
+
+const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser )
+{
+    const bool zip = !parser.retrieve<bool>( "no-zip" );
+    const bool sf2_export = parser.retrieve<bool>( "sf2" );
+    const auto& dirs = parser.retrieve<std::vector<std::string> >( "rsc-dirs" );
+    const auto& exe = parser.retrieve<std::string>( "lmms-exe" );
+    const auto& lmms_exe = ( !exe.empty() ? exe : "lmms" );
+    const bool verbose = parser.retrieve<bool>( "verbose" );
+    const auto& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
     // Some resources can be located in the directory where the project is.
     // It is possible that the path to the resource is relative to the project directory,
     // That is why by default the resource directory contains at least the project directory.
     std::vector<std::string> resource_dirs { fs::path( project_file ).parent_path().string() + "/" };
-    std::string lmms_exe = "lmms";
-    bool lmms_exe_set = false;
 
-    int argvpos = MIN_AGUMENTS_NUMBER;
-    while ( argvpos < argc )
+    for (const auto& dir : dirs)
     {
-        const std::string& opt = argv[argvpos];
-        if ( ( opt == "--no-sf2" ) && ( op == OperationType::Export ) )
-        {
-            sf2_export = false;
-        }
-        else if ( opt == "--no-zip" && op == OperationType::Export )
-        {
-            zip = false;
-        }
-        else if ( ( opt == "--rsc-dirs" ) && ( op == OperationType::Export ) )
-        {
-            if ( !resources_set )
-            {
-                while ( ((argvpos + 1 ) < argc) && std::string( argv[argvpos + 1] ).find( "--" ) )
-                {
-                    std::string directory = addTrailingSlashIfNeeded( fs::normalize( argv[argvpos + 1] ) );
-                    resource_dirs.push_back( directory );
-                    argvpos++;
-                }
-                resources_set = true;
-            }
-            else
-            {
-                std::cerr << "-- Resource directories already set. Subsequent uses of the option are ignored.\n";
-            }
-        }
-        else if ( opt == "--lmms-exe" )
-        {
-            if ( !lmms_exe_set )
-            {
-                lmms_exe = argv[argvpos + 1];
-                lmms_exe_set = true;
-                argvpos++;
-            }
-            else
-            {
-                std::cerr << "LMMS custom executable already set. Executable ignored.\n";
-            }
-        }
-        else if ( opt == "--verbose" )
-        {
-            verbose = true;
-        }
-        else
-        {
-            std::cerr << "Parameter \"" << opt << "\" is ignored.\n";
-        }
-        argvpos++;
+        const auto& directory = addTrailingSlashIfNeeded( fs::normalize( dir ) );
+        resource_dirs.push_back( directory );
     }
 
-    if ( !sf2_export && verbose )
+
+    if ( verbose && !sf2_export )
     {
-        std::cout << "-- Ignore Soundfont2 files\n";
+        std::cout << "-- Ignore Soundfont2 (SF2) files\n";
     }
 
-    if ( !zip  && verbose )
+    if ( !zip && verbose )
     {
         std::cout << "-- The destination package will not be zipped\n";
     }
 
-    if ( lmms_exe_set && verbose )
+    if ( verbose && parser.exists( "lmms-exe" ) )
     {
-        std::cout << "-- An LMMS executable has been set: " << lmms_exe << "\n";
+        std::cout << "-- LMMS executable: " << lmms_exe << "\n";
     }
 
-    if ( !resource_dirs.empty() && verbose )
+    if ( verbose && !resource_dirs.empty() )
     {
         std::cout << "-- The following resource directories have been set: \n";
-        for ( const std::string& dir : resource_dirs )
+        for ( const auto& dir : resource_dirs )
         {
             std::cout << "*  " << dir << "\n";
         }
     }
 
-    return Options{ op, project_file, destination_directory, verbose, ExportOptions { sf2_export, zip, resource_dirs, lmms_exe } };
-
+    return ExportOptions { sf2_export, zip, dirs, lmms_exe };
 }
 
 /*
-    argv[0]: program
-    argv[1]: --export | --import
-    argv[2]: project file
+    Commands:
 
-    // Depending on operation
+    - $lmms-pkg --check [--verbose] <file>
+    - $lmms-pkg --info [--verbose] <file>
+    - $lmms-pkg --export [--no-zip] [--sf2] [--verbose] --target <dir> <file>
+    - $lmms-pkg --import [--verbose] --target <dir> <file>
 
-    Export:
-    argv[3]: destination directory
-    argv[4 -> argc - 1]: optional parameters
-
-    Import:
-    argv[3]: destination directory
 */
 const Options retrieveArguments( const int argc, const char * argv[] )
 {
-    const OperationType op = [&]()
-    {
-        const std::string& operation_str = argv[1];
-        if ( operation_str == "--import" )
-        {
-            return OperationType::Import;
-        }
-        else if ( operation_str == "--export" )
-        {
-            return OperationType::Export;
-        }
-        else if ( operation_str == "--check" )
-        {
-            return OperationType::Check;
-        }
-        else if ( operation_str == "--info" )
-        {
-            return OperationType::Info;
-        }
-        return OperationType::InvalidOperation;
-    } ();
+    argparse::ArgumentParser parser = parse( std::vector<std::string>( argv, argv + argc ) );
+    const OperationType operation = getOperationType( parser );
+    const std::string& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
+    const bool verbose = parser.retrieve<bool>( "verbose" );
 
-    if ( op == OperationType::Import || op == OperationType::Export )
+    if ( operation == OperationType::Check || operation == OperationType::Info )
     {
-        return retrieveImportExportArguments( op, argc, argv );
+        return Options { operation, project_file, "", verbose, ExportOptions() };
     }
-    else if ( op == OperationType::Check || op == OperationType::Info )
-    {
-        bool verbose = false;
-        for ( int i = 0; i < argc; i++ )
-        {
-            const std::string& option_str = argv[i];
-            if ( option_str == "--verbose" )
-            {
-                verbose = true;
-            }
-        }
 
-        return Options{ op, argv[2], "", verbose, ExportOptions { false, false, {}, "" } };
-    }
-    else
+    if ( operation == OperationType::Export )
     {
-        throw std::invalid_argument( "FATAL ERROR: invalid operation selection in this function: "
-                                     + std::string( argv[1] ) );
+        const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+        const ExportOptions& export_opt = retrieveExportInfo( parser );
+        return Options { operation, project_file, destination_directory, verbose, export_opt };
     }
+
+    if ( operation == OperationType::Import )
+    {
+        const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+        return Options { operation, project_file, destination_directory, verbose, ExportOptions() };
+    }
+
+    return Options { OperationType::InvalidOperation };
 }
+
 
 }
