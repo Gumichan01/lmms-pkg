@@ -108,7 +108,8 @@ namespace argparse {
      *  \code
      *    // create a parser and add the options
      *    ArgumentParser parser;
-     *    parser.addArgument("-n", "--name");
+     *    parser.addArgument("-n", "--name", 1);
+     *    parser.addArgument("-v", "--verbose", 0);
      *    parser.addArgument("--inputs", '+');
      *
      *    // parse the command-line arguments
@@ -174,7 +175,7 @@ namespace argparse {
             String canonicalName() const { return (name.empty()) ? short_name : name; }
             String toString(bool named = true) const {
                 std::ostringstream s;
-                String uname = name.empty() ? upper(strip(short_name)) : upper(strip(name));
+                const String& uname = name.empty() ? upper(strip(short_name)) : upper(strip(name));
                 if (named && optional) s << "[";
                 if (named) s << canonicalName();
                 if (fixed) {
@@ -371,9 +372,10 @@ namespace argparse {
         // Retrieve
         // --------------------------------------------------------------------------
         template <typename T>
-        T retrieve(const String& name) const {
-            if (index_.count(delimit(name)) == 0) throw std::out_of_range("Key not found");
-            const size_t N = index_.at(delimit(name));
+        T retrieve(const String& arg_name) const {
+            const auto & dname = delimit(arg_name);
+            if (index_.count(dname) == 0) throw std::out_of_range("Key not found");
+            const size_t N = index_.at(dname);
             return castTo<T>(variables_[N]);
         }
 
@@ -443,11 +445,10 @@ namespace argparse {
             arguments_.clear();
             variables_.clear();
         }
-        bool exists(const String& name) const { return index_.count(delimit(name)) > 0; }
-        bool gotArgument(const String& name) const {
-            // check if the name is an argument
-            if (index_.count(delimit(name)) == 0) return false;
-            const size_t N = index_.at(delimit(name));
+        bool isRegisteredArgument(const String& arg_name) const { return index_.count(delimit(arg_name)) > 0; }
+        bool hasParsedArgument(const String& arg_name) const {
+            if (index_.count(delimit(arg_name)) == 0) return false;
+            const size_t N = index_.at(delimit(arg_name));
             const Argument& arg = arguments_[N];
             return arg.specified;
         }

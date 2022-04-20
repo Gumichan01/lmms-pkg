@@ -121,7 +121,7 @@ const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser )
         std::cout << "-- The destination package will not be zipped\n";
     }
 
-    if ( verbose && parser.exists( "lmms-exe" ) )
+    if ( verbose && parser.hasParsedArgument( "lmms-exe" ) )
     {
         std::cout << "-- LMMS executable: " << lmms_exe << "\n";
     }
