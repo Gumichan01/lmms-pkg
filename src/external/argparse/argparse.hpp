@@ -292,8 +292,8 @@ namespace argparse {
             // iterate over each element of the array
             for (StringVector::const_iterator in = argv.begin() + ignore_first_;
                  in < argv.end() - nfinal; ++in) {
-                String active_name = active.canonicalName();
-                String el = *in;
+                const String& active_name = active.canonicalName();
+                const String& el = *in;
 
                 //  check if the element is a key
                 if (index_.count(el) == 0) {
@@ -342,10 +342,9 @@ namespace argparse {
                 }
             }
 
-            for (StringVector::const_iterator in =
-                     std::max(argv.begin() + ignore_first_, argv.end() - nfinal);
+            for (StringVector::const_iterator in = std::max(argv.begin() + ignore_first_, argv.end() - nfinal);
                  in != argv.end(); ++in) {
-                String el = *in;
+                const String& el = *in;
                 // check if we accidentally find an argument specifier
                 if (index_.count(el))
                     argumentError(String("encountered argument specifier ")
@@ -374,7 +373,7 @@ namespace argparse {
         template <typename T>
         T retrieve(const String& name) const {
             if (index_.count(delimit(name)) == 0) throw std::out_of_range("Key not found");
-            size_t N = index_.at(delimit(name));
+            const size_t N = index_.at(delimit(name));
             return castTo<T>(variables_[N]);
         }
 
@@ -385,16 +384,16 @@ namespace argparse {
             // premable app name
             std::ostringstream help;
             help << "Usage: " << escape(app_name_);
-            size_t indent = help.str().size();
+            const size_t indent = help.str().size();
             size_t linelength = 0;
 
             // get the required arguments
             for (ArgumentVector::const_iterator it = arguments_.begin(); it != arguments_.end(); ++it) {
-                Argument arg = *it;
+                const Argument& arg = *it;
                 if (arg.optional) continue;
                 if (arg.name.compare(final_name_) == 0) continue;
                 help << " ";
-                String argstr = arg.toString();
+                const String& argstr = arg.toString();
                 if (argstr.size() + linelength > 80) {
                     help << "\n" << String(indent, ' ');
                     linelength = 0;
@@ -406,11 +405,11 @@ namespace argparse {
 
             // get the optional arguments
             for (ArgumentVector::const_iterator it = arguments_.begin(); it != arguments_.end(); ++it) {
-                Argument arg = *it;
+                const Argument& arg = *it;
                 if (!arg.optional) continue;
                 if (arg.name.compare(final_name_) == 0) continue;
                 help << " ";
-                String argstr = arg.toString();
+                const String& argstr = arg.toString();
                 if (argstr.size() + linelength > 80) {
                     help << "\n" << String(indent, ' ');
                     linelength = 0;
@@ -422,8 +421,8 @@ namespace argparse {
 
             // get the final argument
             if (!final_name_.empty()) {
-                Argument arg = arguments_.at(index_.at(final_name_));
-                String argstr = arg.toString(false);
+                const Argument& arg = arguments_.at(index_.at(final_name_));
+                const String& argstr = arg.toString(false);
                 if (argstr.size() + linelength > 80) {
                     help << "\n" << String(indent, ' ');
                     linelength = 0;
@@ -447,9 +446,9 @@ namespace argparse {
         bool exists(const String& name) const { return index_.count(delimit(name)) > 0; }
         bool gotArgument(const String& name) const {
             // check if the name is an argument
-            if (index_.count(delimit(name)) == 0) return 0;
-            size_t N = index_.at(delimit(name));
-            Argument arg = arguments_[N];
+            if (index_.count(delimit(name)) == 0) return false;
+            const size_t N = index_.at(delimit(name));
+            const Argument& arg = arguments_[N];
             return arg.specified;
         }
     };
