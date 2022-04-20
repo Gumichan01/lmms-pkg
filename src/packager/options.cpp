@@ -30,9 +30,9 @@ namespace options
 {
 
 std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept;
-argparse::ArgumentParser parse( const std::vector<std::string> argv );
-OperationType getOperationType( argparse::ArgumentParser& parser );
-const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser );
+const argparse::ArgumentParser parse( const std::vector<std::string> argv );
+OperationType getOperationType( const argparse::ArgumentParser& parser );
+const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser );
 
 std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 {
@@ -43,7 +43,7 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
     return path;
 }
 
-argparse::ArgumentParser parse( const std::vector<std::string> argv )
+const argparse::ArgumentParser parse( const std::vector<std::string> argv )
 {
     argparse::ArgumentParser parser;
     parser.addArgument( "--import" );
@@ -64,7 +64,7 @@ argparse::ArgumentParser parse( const std::vector<std::string> argv )
 }
 
 // Known BUG: If you put several args name among them, the first tested name passes
-OperationType getOperationType( argparse::ArgumentParser& parser )
+OperationType getOperationType( const argparse::ArgumentParser& parser )
 {
     if ( parser.retrieve<bool> ( "check" ) )
     {
@@ -90,7 +90,7 @@ OperationType getOperationType( argparse::ArgumentParser& parser )
 }
 
 
-const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser )
+const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser )
 {
     const bool zip = !parser.retrieve<bool>( "no-zip" );
     const bool sf2_export = parser.retrieve<bool>( "sf2" );
@@ -149,7 +149,7 @@ const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser )
 */
 const Options retrieveArguments( const int argc, const char * argv[] )
 {
-    argparse::ArgumentParser parser = parse( std::vector<std::string>( argv, argv + argc ) );
+    const argparse::ArgumentParser& parser = parse( std::vector<std::string>( argv, argv + argc ) );
     const OperationType operation = getOperationType( parser );
     const std::string& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
     const bool verbose = parser.retrieve<bool>( "verbose" );
