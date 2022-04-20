@@ -30,42 +30,29 @@ namespace log
 // I will keep this simple by using those shitty global variables and generate a printer when it is requested
 namespace
 {
-    bool verbose = false;
+bool verbose = false;
 }
 
-Printer& Printer::operator <<( const std::string& ) noexcept
+Printer::Printer( const bool v ): verbose( v )
 {
+    // Empty
+}
+
+Printer& Printer::operator <<( const std::string& text ) noexcept
+{
+    if ( verbose )
+    {
+        std::cout << text;
+    }
     return *this;
 }
 
-Printer& Printer::operator <<( const long ) noexcept
+Printer& Printer::operator <<( const long num ) noexcept
 {
-    return *this;
-}
-
-// Fake Printer
-
-Printer& FakePrinter::operator <<( const std::string& ) noexcept
-{
-    return *this;
-}
-
-Printer& FakePrinter::operator <<( const long ) noexcept
-{
-    return *this;
-}
-
-// Verbose Printer
-
-Printer& VerbosePrinter::operator <<( const std::string& text ) noexcept
-{
-    os << text;
-    return *this;
-}
-
-Printer& VerbosePrinter::operator <<( const long num ) noexcept
-{
-    os << num;
+    if ( verbose )
+    {
+        std::cout << num;
+    }
     return *this;
 }
 
@@ -77,14 +64,7 @@ bool setVerbose( bool v ) noexcept
 
 Printer getPrinter() noexcept
 {
-    if ( verbose )
-    {
-        return VerbosePrinter();
-    }
-    else
-    {
-        return FakePrinter();
-    }
+    return Printer( verbose );
 }
 
 

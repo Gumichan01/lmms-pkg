@@ -29,42 +29,18 @@ namespace program
 namespace log
 {
 
-class Printer
-{
-protected:
-    // Because you cannot manipulate abstract classes by value,
-    // I have to use the Printer as a concrete class but with a protected constructor
-    // Its virtual methods are default methods, but they are never called.
-    Printer() = default;
-    Printer& operator =( const Printer& printer ) = default;
-
-public:
-    virtual Printer& operator <<( const std::string& text ) noexcept;
-    virtual Printer& operator <<( const long num ) noexcept;
-    virtual ~Printer() = default;
-};
-
-class FakePrinter final: public Printer
-{
-public:
-    FakePrinter() = default;
-    FakePrinter& operator =( const FakePrinter& printer ) noexcept;
-    virtual Printer& operator <<( const std::string& text ) noexcept;
-    virtual Printer& operator <<( const long num ) noexcept;
-    virtual ~FakePrinter() = default;
-};
-
-class VerbosePrinter final: public Printer
+class Printer final
 {
 private:
-    static constexpr std::ostream& os = std::cout;
+    bool verbose;
 
 public:
-    VerbosePrinter() = default;
-    VerbosePrinter& operator =( const VerbosePrinter& printer ) noexcept;
-    virtual Printer& operator <<( const std::string& text ) noexcept;
-    virtual Printer& operator <<( const long num ) noexcept;
-    virtual ~VerbosePrinter() = default;
+    Printer() = default;
+    Printer( const bool v );
+    Printer& operator =( const Printer& printer ) = default;
+    Printer& operator <<( const std::string& text ) noexcept;
+    Printer& operator <<( const long num ) noexcept;
+    ~Printer() = default;
 };
 
 bool setVerbose( bool v ) noexcept;
