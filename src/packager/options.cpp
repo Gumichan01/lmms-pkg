@@ -104,7 +104,7 @@ const ExportOptions retrieveExportInfo( argparse::ArgumentParser& parser )
     // That is why by default the resource directory contains at least the project directory.
     std::vector<std::string> resource_dirs { fs::path( project_file ).parent_path().string() + "/" };
 
-    for (const auto& dir : dirs)
+    for ( const auto& dir : dirs )
     {
         const auto& directory = addTrailingSlashIfNeeded( fs::normalize( dir ) );
         resource_dirs.push_back( directory );
@@ -161,15 +161,29 @@ const Options retrieveArguments( const int argc, const char * argv[] )
 
     if ( operation == OperationType::Export )
     {
-        const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
-        const ExportOptions& export_opt = retrieveExportInfo( parser );
-        return Options { operation, project_file, destination_directory, verbose, export_opt };
+        if ( parser.hasParsedArgument( "target" ) )
+        {
+            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+            const ExportOptions& export_opt = retrieveExportInfo( parser );
+            return Options { operation, project_file, destination_directory, verbose, export_opt };
+        }
+        else
+        {
+            throw std::invalid_argument( "ERROR: No target directory provided. Please specify where you want to export the project.\n" );
+        }
     }
 
     if ( operation == OperationType::Import )
     {
-        const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
-        return Options { operation, project_file, destination_directory, verbose, ExportOptions() };
+        if ( parser.hasParsedArgument( "target" ) )
+        {
+            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+            return Options { operation, project_file, destination_directory, verbose, ExportOptions() };
+        }
+        else
+        {
+            throw std::invalid_argument( "ERROR: No target directory provided. Please specify where you want to import the project.\n" );
+        }
     }
 
     return Options { OperationType::InvalidOperation };
