@@ -59,9 +59,29 @@ const argparse::ArgumentParser parse( const std::vector<std::string> argv )
            .addFinalArgument( "source", 1 ).useExceptions( true ).parse( argv );
 }
 
-// Known BUG: If you put several args name among them, the first tested name passes
+
 OperationType getOperationType( const argparse::ArgumentParser& parser )
 {
+    const auto& parsed_args = parser.retrieveParsedArguments();
+
+    unsigned int op_count = 0;
+    for ( const auto& arg: parsed_args )
+    {
+        if ( arg.name == "check" || arg.name == "info" || arg.name == "export" || arg.name == "import" )
+        {
+            op_count++;
+        }
+    }
+
+    if ( op_count > 1 )
+    {
+        throw std::invalid_argument("Too many operation types provided. You must provide only one of { export, import, check, info }.\n");
+    }
+    else if ( op_count == 0 )
+    {
+        throw std::invalid_argument("Missing operation type. You must provide one of { export, import, check, info }.\n");
+    }
+
     if ( parser.retrieve<bool> ( "check" ) )
     {
         return OperationType::Check;
@@ -82,7 +102,8 @@ OperationType getOperationType( const argparse::ArgumentParser& parser )
         return OperationType::Import;
     }
 
-    return OperationType::InvalidOperation;
+
+    throw std::invalid_argument( "Internal error. Please contact a developer." );
 }
 
 
@@ -91,10 +112,10 @@ const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser )
     const bool zip = !parser.retrieve<bool>( "no-zip" );
     const bool sf2_export = parser.retrieve<bool>( "sf2" );
     const auto& dirs = parser.retrieve<std::vector<std::string> >( "rsc-dirs" );
-    const auto& exe = parser.retrieve<std::string>( "lmms-exe" );
-    const auto& lmms_exe = ( !exe.empty() ? exe : "lmms" );
-    const bool verbose = parser.retrieve<bool>( "verbose" );
+    //const auto& exe = parser.retrieve<std::string>( "lmms-exe" );
+    const auto& lmms_exe = ( parser.hasParsedArgument( "lmms-exe" ) ? parser.retrieve<std::string>( "lmms-exe" ) : "lmms" );
     const auto& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
+    const bool verbose = parser.retrieve<bool>( "verbose" );
     // Some resources can be located in the directory where the project is.
     // It is possible that the path to the resource is relative to the project directory,
     // That is why by default the resource directory contains at least the project directory.
@@ -146,8 +167,14 @@ const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser )
 const Options retrieveArguments( const int argc, const char * argv[] )
 {
     const argparse::ArgumentParser& parser = parse( std::vector<std::string>( argv, argv + argc ) );
-    const OperationType operation = getOperationType( parser );
     const std::string& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
+
+    if ( project_file.empty() )
+    {
+        throw std::invalid_argument( "No source project file provided.\n" );
+    }
+
+    const OperationType operation = getOperationType( parser );
     const bool verbose = parser.retrieve<bool>( "verbose" );
 
     if ( operation == OperationType::Check || operation == OperationType::Info )
@@ -165,7 +192,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
         }
         else
         {
-            throw std::invalid_argument( "ERROR: No target directory provided. Please specify where you want to export the project.\n" );
+            throw std::invalid_argument( "No target directory provided. Please specify where you want to export the project.\n" );
         }
     }
 
@@ -178,11 +205,12 @@ const Options retrieveArguments( const int argc, const char * argv[] )
         }
         else
         {
-            throw std::invalid_argument( "ERROR: No target directory provided. Please specify where you want to import the project.\n" );
+            throw std::invalid_argument( "No target directory provided. Please specify where you want to import the project.\n" );
         }
     }
 
-    return Options { OperationType::InvalidOperation };
+    // Normally, this line must be unreachable
+    throw std::invalid_argument( "Invalid Operation. Internal error. Please contact a developer.\n" );
 }
 
 

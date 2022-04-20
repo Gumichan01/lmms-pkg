@@ -78,7 +78,7 @@ int run( const int argc, const char * argv[] )
     }
     catch ( std::invalid_argument& e )
     {
-        std::cerr << "ERROR: Invalid Argument:" << e.what() << "\n";
+        std::cerr << "ERROR: Invalid Argument: " << e.what() << "\n";
         usage( argv[0] );
         return EXIT_FAILURE;
     }
