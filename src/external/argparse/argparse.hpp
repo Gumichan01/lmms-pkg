@@ -98,6 +98,13 @@ namespace argparse {
         str.erase(str.begin() + last_bracket);
     }
 
+    /// It stores the argument provided by the user and parsed by the application
+    struct ParsedArgument {
+        const std::string short_name = "";  // example: '-v'
+        const std::string long_name = "";   // example: '-verbose'
+        const std::string name = "";        // example: 'verbose'
+    };
+
     /*! @class ArgumentParser
      *  @brief A simple command-line argument parser based on the design of
      *  python's parser of the same name.
@@ -392,6 +399,16 @@ namespace argparse {
             if (index_.count(dname) == 0) throw std::out_of_range("Key not found");
             const size_t N = index_.at(dname);
             return castTo<T>(variables_[N]);
+        }
+
+        const std::vector<ParsedArgument> retrieveParsedArguments() const {
+            std::vector<ParsedArgument> args;
+            for (const Argument& arg: arguments_) {
+                if (arg.specified) {
+                    args.push_back(ParsedArgument{arg.short_name, arg.name, strip(arg.name)});
+                }
+            }
+            return args;
         }
 
         // --------------------------------------------------------------------------
