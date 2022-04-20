@@ -216,8 +216,8 @@ namespace argparse {
         // --------------------------------------------------------------------------
         void argumentError(const std::string& msg, bool show_usage = false) {
             if (use_exceptions_) throw std::invalid_argument(msg);
-            std::cerr << "ArgumentParser error: " << msg << std::endl;
-            if (show_usage) std::cerr << usage() << std::endl;
+            std::cerr << "ArgumentParser error: " << msg << "\n";
+            if (show_usage) std::cerr << usage() << "\n";
             exit(-5);
         }
 
