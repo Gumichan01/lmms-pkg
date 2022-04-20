@@ -195,7 +195,7 @@ namespace argparse {
             }
         };
 
-        void insertArgument(const Argument& arg) {
+        ArgumentParser& insertArgument(const Argument& arg) {
             size_t N = arguments_.size();
             arguments_.push_back(arg);
             if (arg.fixed && arg.fixed_nargs <= 1) {
@@ -207,9 +207,19 @@ namespace argparse {
             } else {
                 variables_.push_back(String());
             }
-            if (!arg.short_name.empty()) index_[arg.short_name] = N;
-            if (!arg.name.empty()) index_[arg.name] = N;
-            if (!arg.optional) required_++;
+            if (!arg.short_name.empty()) {
+                    index_[arg.short_name] = N;
+            }
+
+            if (!arg.name.empty()) {
+                    index_[arg.name] = N;
+            }
+
+            if (!arg.optional) {
+                    required_++;
+            }
+
+            return *this;
         }
 
         // --------------------------------------------------------------------------
@@ -240,26 +250,29 @@ namespace argparse {
         // addArgument
         // --------------------------------------------------------------------------
         void appName(const String& name) { app_name_ = name; }
-        void addArgument(const String& name, char nargs = 0, bool optional = true) {
+        ArgumentParser& addArgument(const String& name, char nargs = 0, bool optional = true) {
             if (name.size() > 2) {
                 Argument arg("", verify(name), optional, nargs);
-                insertArgument(arg);
+                return insertArgument(arg);
             } else {
                 Argument arg(verify(name), "", optional, nargs);
-                insertArgument(arg);
+                return insertArgument(arg);
             }
         }
-        void addArgument(const String& short_name, const String& name, char nargs = 0,
+        ArgumentParser& addArgument(const String& short_name, const String& name, char nargs = 0,
                          bool optional = true) {
             Argument arg(verify(short_name), verify(name), optional, nargs);
-            insertArgument(arg);
+            return insertArgument(arg);
         }
-        void addFinalArgument(const String& name, char nargs = 1, bool optional = false) {
+        ArgumentParser& addFinalArgument(const String& name, char nargs = 1, bool optional = false) {
             final_name_ = delimit(name);
             Argument arg("", final_name_, optional, nargs);
-            insertArgument(arg);
+            return insertArgument(arg);
         }
-        void ignoreFirstArgument(bool ignore_first) { ignore_first_ = ignore_first; }
+        ArgumentParser& ignoreFirstArgument(bool ignore_first) {
+            ignore_first_ = ignore_first;
+            return *this;
+        }
         String verify(const String& name) {
             if (name.empty()) argumentError("argument names must be non-empty");
             if ((name.size() == 2 && name[0] != '-') || name.size() == 3)
@@ -278,7 +291,7 @@ namespace argparse {
         // --------------------------------------------------------------------------
         void parse(size_t argc, const char** argv) { parse(StringVector(argv, argv + argc)); }
 
-        void parse(const StringVector& argv) {
+        ArgumentParser& parse(const StringVector& argv) {
             // check if the app is named
             if (app_name_.empty() && ignore_first_ && !argv.empty()) app_name_ = argv[0];
 
@@ -364,8 +377,10 @@ namespace argparse {
             }
 
             // check that all of the required arguments have been encountered
-            if (nrequired > 0 || nfinal > 0)
+            if (nrequired > 0 || nfinal > 0) {
                 argumentError(String("too few required arguments passed to ").append(app_name_), true);
+            }
+            return *this;
         }
 
         // --------------------------------------------------------------------------
@@ -436,7 +451,10 @@ namespace argparse {
 
             return help.str();
         }
-        void useExceptions(bool state) { use_exceptions_ = state; }
+        ArgumentParser& useExceptions(bool state) {
+            use_exceptions_ = state;
+            return *this;
+        }
         bool empty() const { return index_.empty(); }
         void clear() {
             ignore_first_ = true;

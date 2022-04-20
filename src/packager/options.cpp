@@ -45,22 +45,18 @@ std::string addTrailingSlashIfNeeded( const std::string& path ) noexcept
 
 const argparse::ArgumentParser parse( const std::vector<std::string> argv )
 {
-    argparse::ArgumentParser parser;
-    parser.addArgument( "--import" );
-    parser.addArgument( "--export" );
-    parser.addArgument( "--check" );
-    parser.addArgument( "--info" );
-    parser.addArgument( "--verbose" );
-    parser.addArgument( "--no-zip" );
-    parser.addArgument( "--sf2" );
-    parser.addArgument( "--lmms-exe", 1 );
-    parser.addArgument( "--rsc-dirs", '+' );
-    parser.addArgument( "-t", "--target", 1 );
-    parser.addFinalArgument( "source", 1 );
-
-    parser.useExceptions( true );
-    parser.parse( argv );
-    return parser;
+    return argparse::ArgumentParser()
+           .addArgument( "--import" )
+           .addArgument( "--export" )
+           .addArgument( "--check" )
+           .addArgument( "--info" )
+           .addArgument( "--verbose" )
+           .addArgument( "--no-zip" )
+           .addArgument( "--sf2" )
+           .addArgument( "--lmms-exe", 1 )
+           .addArgument( "--rsc-dirs", '+' )
+           .addArgument( "-t", "--target", 1 )
+           .addFinalArgument( "source", 1 ).useExceptions( true ).parse( argv );
 }
 
 // Known BUG: If you put several args name among them, the first tested name passes
