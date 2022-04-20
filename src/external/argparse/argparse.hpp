@@ -130,7 +130,7 @@ namespace argparse {
         // --------------------------------------------------------------------------
         // Argument
         // --------------------------------------------------------------------------
-        static String delimit(const String& name) {
+        static String delimit(const String& name) noexcept {
             return String(std::min(name.size(), (size_t)2), '-').append(name);
         }
         static String strip(const String& name) {
@@ -372,16 +372,16 @@ namespace argparse {
         // Retrieve
         // --------------------------------------------------------------------------
         template <typename T>
-        T retrieve(const String& name) {
+        T retrieve(const String& name) const {
             if (index_.count(delimit(name)) == 0) throw std::out_of_range("Key not found");
-            size_t N = index_[delimit(name)];
+            size_t N = index_.at(delimit(name));
             return castTo<T>(variables_[N]);
         }
 
         // --------------------------------------------------------------------------
         // Properties
         // --------------------------------------------------------------------------
-        String usage() {
+        String usage() const {
             // premable app name
             std::ostringstream help;
             help << "Usage: " << escape(app_name_);
@@ -422,7 +422,7 @@ namespace argparse {
 
             // get the final argument
             if (!final_name_.empty()) {
-                Argument arg = arguments_[index_[final_name_]];
+                Argument arg = arguments_.at(index_.at(final_name_));
                 String argstr = arg.toString(false);
                 if (argstr.size() + linelength > 80) {
                     help << "\n" << String(indent, ' ');
@@ -445,10 +445,10 @@ namespace argparse {
             variables_.clear();
         }
         bool exists(const String& name) const { return index_.count(delimit(name)) > 0; }
-        bool gotArgument(const String& name) {
+        bool gotArgument(const String& name) const {
             // check if the name is an argument
             if (index_.count(delimit(name)) == 0) return 0;
-            size_t N = index_[delimit(name)];
+            size_t N = index_.at(delimit(name));
             Argument arg = arguments_[N];
             return arg.specified;
         }
