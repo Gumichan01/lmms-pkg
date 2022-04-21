@@ -25,6 +25,18 @@
 namespace program
 {
 
+namespace
+{
+
+const std::string VERSION  = "0.3.0-dev";
+
+inline bool isHelp ( const std::string& s ) noexcept
+{
+    return s == "--help" || s == "-h";
+}
+
+}
+
 void usage ( const std::string& progname )
 {
     std::cerr << "Usage: " << ghc::filesystem::path( progname ).filename().string()
@@ -49,7 +61,8 @@ void help ( const std::string& progname )
               << "--export     " << "Package the file\n"
               << "--info       " << "Get information about the file\n"
               << "--import     " << "Unpack the package and import the project\n"
-              << "--help       " << "Display the manual\n\n"
+              << "--help       " << "Display the manual\n"
+              << "--version    " << "Get the version of the program\n\n"
               << "Options:\n"
               << "--target     " << "(Mandatory for import and export) Set the destination directory\n"
               << "--no-zip     " << "Do not compress the destination directory (Export)\n"
@@ -59,15 +72,6 @@ void help ( const std::string& progname )
 
 }
 
-namespace
-{
-
-inline bool isHelp ( const std::string& s )
-{
-    return s == "--help" || s == "-h";
-}
-
-}
 
 int run( const int argc, const char * argv[] )
 {
@@ -75,10 +79,20 @@ int run( const int argc, const char * argv[] )
 
     if ( argc < MINIMUM_ARGC )
     {
-        if ( argc == 2 && isHelp( std::string( argv[1] ) ) )
+        if ( argc == 2 )
         {
-            help( argv[1] );
-            return EXIT_SUCCESS;
+            const std::string& arg = std::string( argv[1] );
+            if ( isHelp( arg ) )
+            {
+                help( arg );
+                return EXIT_SUCCESS;
+            }
+
+            if ( arg == "--version" )
+            {
+                std::cerr << "lmms-pkg (LMMS Project Packager) " << VERSION << "\n";
+                return EXIT_SUCCESS;
+            }
         }
 
         usage( argv[0] );

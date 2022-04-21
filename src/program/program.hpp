@@ -25,7 +25,7 @@
 namespace program
 {
 void usage( const std::string& progname );
-void help ( const std::string& progname );
+void help( const std::string& progname );
 int run( const int argc, const char * argv[] );
 }
 
