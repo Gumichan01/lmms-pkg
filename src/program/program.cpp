@@ -28,7 +28,7 @@ namespace program
 namespace
 {
 
-const std::string VERSION  = "0.3.0-dev";
+const std::string VERSION = "0.3.0-dev";
 
 inline bool isHelp ( const std::string& s ) noexcept
 {
@@ -39,36 +39,37 @@ inline bool isHelp ( const std::string& s ) noexcept
 
 void usage ( const std::string& progname )
 {
-    std::cerr << "Usage: " << ghc::filesystem::path( progname ).filename().string()
-              << " $lmms-pkg --check [--verbose] <file>"
-              << " $lmms-pkg --info [--verbose] <file>"
-              << " $lmms-pkg --export [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>"
-              << " $lmms-pkg --import [--verbose] --target <dir> <file>\n\n";
+    const auto& p = ghc::filesystem::path( progname ).filename().string();
+    std::cerr << "Usage: "
+              << p << " --check  [--verbose] <file>\n"
+              << p << " --info   [--verbose] <file>\n"
+              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
+              << p << " --unpack [--verbose] --target <dir> <file>\n\n";
 }
 
 
 void help ( const std::string& progname )
 {
-    const auto& prog = ghc::filesystem::path( progname ).filename().string();
+    const auto& p = ghc::filesystem::path( progname ).filename().string();
     std::cerr << "Usage: \n"
-              << prog << " --check [--verbose] <file>\n"
-              << prog << " --info [--verbose] <file>\n"
-              << prog << " --export [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
-              << prog << " --import [--verbose] --target <dir> <file>\n\n"
+              << p << " --check  [--verbose] <file>\n"
+              << p << " --info   [--verbose] <file>\n"
+              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
+              << p << " --unpack [--verbose] --target <dir> <file>\n\n"
               << "The LMMS package manager\n\n"
               << "Operations:\n"
-              << "--check      " << "Check if the file is valid\n"
-              << "--export     " << "Package the file\n"
-              << "--info       " << "Get information about the file\n"
-              << "--import     " << "Unpack the package and import the project\n"
-              << "--help       " << "Display the manual\n"
-              << "--version    " << "Get the version of the program\n\n"
+              << "-c, --check      " << "Check if the file is valid\n"
+              << "-i, --info       " << "Get information about the file\n"
+              << "-p, --pack       " << "Package the file\n"
+              << "-u, --unpack     " << "Unpack the package and import the project\n"
+              << "-h, --help       " << "Display the manual\n"
+              << "--version        " << "Get the version of the program\n\n"
               << "Options:\n"
-              << "--target     " << "(Mandatory for import and export) Set the destination directory\n"
-              << "--no-zip     " << "Do not compress the destination directory (Export)\n"
-              << "--rsc_dirs   " << "Provide directories where some missing external samples are located (Export)\n"
-              << "--sf2        " << "Include SoundFont2 files in the package at export (Export)\n"
-              << "--verbose    " << "Verbose mode\n\n";
+              << "--target         " << "(Mandatory for import and export) Set the destination directory\n"
+              << "--no-zip         " << "Do not compress the destination directory (Export)\n"
+              << "--rsc_dirs       " << "Provide directories where some missing external samples are located (Export)\n"
+              << "--sf2            " << "Include SoundFont2 files in the package at export (Export)\n"
+              << "-v, --verbose    " << "Verbose mode\n\n";
 
 }
 
@@ -84,7 +85,7 @@ int run( const int argc, const char * argv[] )
             const std::string& arg = std::string( argv[1] );
             if ( isHelp( arg ) )
             {
-                help( arg );
+                help( argv[0] );
                 return EXIT_SUCCESS;
             }
 
