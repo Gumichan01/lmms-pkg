@@ -67,7 +67,7 @@ OperationType getOperationType( const argparse::ArgumentParser& parser )
     unsigned int op_count = 0;
     for ( const auto& arg: parsed_args )
     {
-        if ( arg.name == "check" || arg.name == "info" || arg.name == "export" || arg.name == "import" )
+        if ( arg.name == "check" || arg.name == "info" || arg.name == "pack" || arg.name == "unpack" )
         {
             op_count++;
         }
@@ -75,11 +75,11 @@ OperationType getOperationType( const argparse::ArgumentParser& parser )
 
     if ( op_count > 1 )
     {
-        throw std::invalid_argument("Too many operation types provided. You must provide only one of { export, import, check, info }.\n");
+        throw std::invalid_argument("Too many operation types provided. You must provide only one of { pack, unpack, check, info }.\n");
     }
     else if ( op_count == 0 )
     {
-        throw std::invalid_argument("Missing operation type. You must provide one of { export, import, check, info }.\n");
+        throw std::invalid_argument("Missing operation type. You must provide one of { pack, unpack, check, info }.\n");
     }
 
     if ( parser.retrieve<bool> ( "check" ) )
@@ -92,12 +92,12 @@ OperationType getOperationType( const argparse::ArgumentParser& parser )
         return OperationType::Info;
     }
 
-    if ( parser.retrieve<bool> ( "export" ) )
+    if ( parser.retrieve<bool> ( "pack" ) )
     {
         return OperationType::Export;
     }
 
-    if ( parser.retrieve<bool> ( "import" ) )
+    if ( parser.retrieve<bool> ( "unpack" ) )
     {
         return OperationType::Import;
     }
