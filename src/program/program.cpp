@@ -40,7 +40,7 @@ inline bool isHelp ( const std::string& s ) noexcept
 void usage ( const std::string& progname )
 {
     const auto& p = ghc::filesystem::path( progname ).filename().string();
-    std::cerr << "Usage: "
+    std::cerr << "Usage: \n"
               << p << " --check  [--verbose] <file>\n"
               << p << " --info   [--verbose] <file>\n"
               << p << " --pack   [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
