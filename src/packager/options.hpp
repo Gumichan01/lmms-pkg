@@ -27,8 +27,8 @@ namespace options
 
 enum class OperationType
 {
-    Import,
-    Export,
+    Pack,
+    Unpack,
     Check,
     Info,
     InvalidOperation

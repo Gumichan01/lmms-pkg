@@ -104,12 +104,12 @@ int run( const int argc, const char * argv[] )
     {
         const options::Options& options = options::retrieveArguments( argc, argv );
         log::setVerbose( options.verbose );
-        if ( options.operation == options::OperationType::Export )
+        if ( options.operation == options::OperationType::Pack )
         {
             const std::string& package = Packager::pack( options );
             std::cout << "-- LMMS project exported into \"" << package << "\"\n";
         }
-        else if ( options.operation == options::OperationType::Import )
+        else if ( options.operation == options::OperationType::Unpack )
         {
             const std::string& directory = Packager::unpack( options );
             std::cout << "-- LMMS project imported into \"" << directory << "\"\n";

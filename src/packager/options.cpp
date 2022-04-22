@@ -94,12 +94,12 @@ OperationType getOperationType( const argparse::ArgumentParser& parser )
 
     if ( parser.retrieve<bool> ( "pack" ) )
     {
-        return OperationType::Export;
+        return OperationType::Pack;
     }
 
     if ( parser.retrieve<bool> ( "unpack" ) )
     {
-        return OperationType::Import;
+        return OperationType::Unpack;
     }
 
 
@@ -182,7 +182,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
         return Options { operation, project_file, "", verbose, ExportOptions() };
     }
 
-    if ( operation == OperationType::Export )
+    if ( operation == OperationType::Pack )
     {
         if ( parser.hasParsedArgument( "target" ) )
         {
@@ -196,7 +196,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
         }
     }
 
-    if ( operation == OperationType::Import )
+    if ( operation == OperationType::Unpack )
     {
         if ( parser.hasParsedArgument( "target" ) )
         {
