@@ -22,14 +22,14 @@ WFLAGS=-Wall -Wextra
 ifeq ($(DEBUG),yes)
 
 	# Debug mode
-	CFLAGS=-fPIC $(WFLAGS) -std=c++14 -g -fsanitize=address
+	CFLAGS=-fPIC $(WFLAGS) -std=c++17 -g -fsanitize=address
 	OPTIMIZE=-O0
 	OPT_SIZE=
 
 else
 
 	# Release mode
-	CFLAGS=-w -std=c++14
+	CFLAGS=-w -std=c++17
 	OPTIMIZE=-O3
 	OPT_SIZE=-s
 
