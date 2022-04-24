@@ -256,7 +256,10 @@ namespace argparse {
         // --------------------------------------------------------------------------
         // addArgument
         // --------------------------------------------------------------------------
-        void appName(const String& name) { app_name_ = name; }
+        ArgumentParser& appName(const String& name) {
+            app_name_ = name;
+            return *this;
+        }
         ArgumentParser& addArgument(const String& name, char nargs = 0, bool optional = true) {
             if (name.size() > 2) {
                 Argument arg("", verify(name), optional, nargs);
@@ -296,7 +299,9 @@ namespace argparse {
         // --------------------------------------------------------------------------
         // Parse
         // --------------------------------------------------------------------------
-        void parse(size_t argc, const char** argv) { parse(StringVector(argv, argv + argc)); }
+        ArgumentParser& parse(size_t argc, const char** argv) {
+            return parse(StringVector(argv, argv + argc));
+        }
 
         ArgumentParser& parse(const StringVector& argv) {
             // check if the app is named
@@ -393,6 +398,12 @@ namespace argparse {
         // --------------------------------------------------------------------------
         // Retrieve
         // --------------------------------------------------------------------------
+        String retrieve(const String& arg_name) const {
+            const auto & dname = delimit(arg_name);
+            if (index_.count(dname) == 0) throw std::out_of_range("Key not found");
+            const size_t N = index_.at(dname);
+            return variables_[N];
+        }
         template <typename T>
         T retrieve(const String& arg_name) const {
             const auto & dname = delimit(arg_name);
