@@ -112,9 +112,8 @@ const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser )
     const bool zip = !parser.retrieve<bool>( "no-zip" );
     const bool sf2_export = parser.retrieve<bool>( "sf2" );
     const auto& dirs = parser.retrieve<std::vector<std::string> >( "rsc-dirs" );
-    //const auto& exe = parser.retrieve<std::string>( "lmms-exe" );
-    const auto& lmms_exe = ( parser.hasParsedArgument( "lmms-exe" ) ? parser.retrieve<std::string>( "lmms-exe" ) : "lmms" );
-    const auto& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
+    const auto& lmms_exe = ( parser.hasParsedArgument( "lmms-exe" ) ? parser.retrieve( "lmms-exe" ) : "lmms" );
+    const auto& project_file = fs::normalize( parser.retrieve( "source" ) );
     const bool verbose = parser.retrieve<bool>( "verbose" );
     // Some resources can be located in the directory where the project is.
     // It is possible that the path to the resource is relative to the project directory,
@@ -167,7 +166,7 @@ const ExportOptions retrieveExportInfo( const argparse::ArgumentParser& parser )
 const Options retrieveArguments( const int argc, const char * argv[] )
 {
     const argparse::ArgumentParser& parser = parse( std::vector<std::string>( argv, argv + argc ) );
-    const std::string& project_file = fs::normalize( parser.retrieve<std::string>( "source" ) );
+    const std::string& project_file = fs::normalize( parser.retrieve( "source" ) );
 
     if ( project_file.empty() )
     {
@@ -186,7 +185,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
     {
         if ( parser.hasParsedArgument( "target" ) )
         {
-            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve( "target" ) );
             const ExportOptions& export_opt = retrieveExportInfo( parser );
             return Options { operation, project_file, destination_directory, verbose, export_opt };
         }
@@ -200,7 +199,7 @@ const Options retrieveArguments( const int argc, const char * argv[] )
     {
         if ( parser.hasParsedArgument( "target" ) )
         {
-            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve<std::string>( "target" ) );
+            const std::string& destination_directory = addTrailingSlashIfNeeded( parser.retrieve( "target" ) );
             return Options { operation, project_file, destination_directory, verbose, ExportOptions() };
         }
         else
@@ -212,6 +211,5 @@ const Options retrieveArguments( const int argc, const char * argv[] )
     // Normally, this line must be unreachable
     throw std::invalid_argument( "Invalid Operation. Internal error. Please contact a developer.\n" );
 }
-
 
 }
