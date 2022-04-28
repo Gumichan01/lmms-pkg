@@ -43,7 +43,7 @@ void usage ( const std::string& progname )
     std::cerr << "Usage: \n"
               << p << " --check  [--verbose] <file>\n"
               << p << " --info   [--verbose] <file>\n"
-              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
+              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--lmms-exe <exe_file>] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
               << p << " --unpack [--verbose] --target <dir> <file>\n\n";
 }
 
@@ -54,7 +54,7 @@ void help ( const std::string& progname )
     std::cerr << "Usage: \n"
               << p << " --check  [--verbose] <file>\n"
               << p << " --info   [--verbose] <file>\n"
-              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
+              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--lmms-exe <exe_file>] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
               << p << " --unpack [--verbose] --target <dir> <file>\n\n"
               << "The LMMS package manager\n\n"
               << "Operations:\n"
@@ -65,8 +65,9 @@ void help ( const std::string& progname )
               << "-h, --help       " << "Display the manual\n"
               << "--version        " << "Get the version of the program\n\n"
               << "Options:\n"
-              << "--target         " << "(Mandatory for import and export) Set the destination directory\n"
+              << "-t, --target     " << "(Mandatory for import and export) Set the destination directory\n"
               << "--no-zip         " << "Do not compress the destination directory (Export)\n"
+              << "--lmms-exe       " << "Specify the executable file to use to in order to decompress the project\n"
               << "--rsc_dirs       " << "Provide directories where some missing external samples are located (Export)\n"
               << "--sf2            " << "Include SoundFont2 files in the package at export (Export)\n"
               << "-v, --verbose    " << "Verbose mode\n\n";
