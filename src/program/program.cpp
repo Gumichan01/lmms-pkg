@@ -50,13 +50,8 @@ void usage ( const std::string& progname )
 
 void help ( const std::string& progname )
 {
-    const auto& p = ghc::filesystem::path( progname ).filename().string();
-    std::cerr << "Usage: \n"
-              << p << " --check  [--verbose] <file>\n"
-              << p << " --info   [--verbose] <file>\n"
-              << p << " --pack   [--no-zip] [--sf2] [--verbose] [--lmms-exe <exe_file>] [--rsc-dirs <path/to/data>] --target <dir> <file>\n"
-              << p << " --unpack [--verbose] --target <dir> <file>\n\n"
-              << "The LMMS package manager\n\n"
+    usage( progname );
+    std::cerr << "The LMMS package manager\n\n"
               << "Operations:\n"
               << "-c, --check      " << "Check if the file is valid\n"
               << "-i, --info       " << "Get information about the file\n"
