@@ -92,6 +92,7 @@ int run( const int argc, const char * argv[] )
             }
         }
 
+        std::cerr << "\nInvalid arguments\n\n";
         usage( argv[0] );
         return EXIT_FAILURE;
     }
