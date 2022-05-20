@@ -183,7 +183,8 @@ const std::vector<std::string> retrieveResourcesFromXmlFile( const std::string& 
     }
 
     std::vector<std::string> paths;
-    std::copy( unique_paths.begin(), unique_paths.end(), std::back_inserter(paths) );
+    std::copy_if( unique_paths.begin(), unique_paths.end(), std::back_inserter( paths ),
+                  [] ( const std::string& p ) { return !p.empty(); } );
     return paths;
 }
 
