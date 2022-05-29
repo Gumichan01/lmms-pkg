@@ -154,7 +154,7 @@ const ghc::filesystem::path copyProjectToDestinationDirectory( const ghc::filesy
         if ( fsys::exists( dest_file ) )
         {
             throw AlreadyExistingFileException( "ERROR: \"" + ghc::filesystem::normalize( dest_file.string() ) +
-                                                "\" Already exists. You need to export to a fresh directory.\n" );
+                                                "\" already exists. You need to export to a fresh directory.\n" );
         }
 
         print << "-- Copying \"" << ghc::filesystem::normalize( lmms_file.string() )

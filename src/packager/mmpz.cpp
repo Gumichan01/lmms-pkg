@@ -51,7 +51,7 @@ ghc::filesystem::path decompressProject( const std::string& project_file,
     if ( ghc::filesystem::exists( xml_file ) )
     {
         throw AlreadyExistingFileException( "ERROR: \"" + xml_file +
-                                            "\" Already exists. You need to export to a fresh directory.\n" );
+                                            "\" already exists. You need to export to a fresh directory.\n" );
     }
 
     print << "-- " << command << "\n";
