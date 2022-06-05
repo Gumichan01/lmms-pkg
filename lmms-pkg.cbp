@@ -56,7 +56,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++14" />
+			<Add option="-std=c++17" />
 		</Compiler>
 		<Unit filename="src/exceptions/exceptions.cpp" />
 		<Unit filename="src/exceptions/exceptions.hpp" />
