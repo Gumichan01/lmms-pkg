@@ -28,7 +28,7 @@ namespace program
 namespace
 {
 
-const std::string VERSION = "0.3.0-dev";
+const std::string VERSION = "0.3.0-stable";
 
 inline bool isHelp ( const std::string& s ) noexcept
 {
