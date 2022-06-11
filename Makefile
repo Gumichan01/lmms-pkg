@@ -42,8 +42,8 @@ SRCS=$(wildcard */*.cpp) $(wildcard */*/*.cpp) $(wildcard */*/*/*.cpp)
 OBJS=$(SRCS:.cpp=.o)
 
 %.o: %.cpp
-	@echo $@" - Compiling "$<
-	$(CC) -c $< -o $@
+	@echo "Compile "$<
+	@$(CC) -c $< -o $@
 
 $(LMMS_PKG): $(OBJS)
 	@echo "Create "$@
