@@ -29,13 +29,13 @@ It can also extract the package, and configure the project file.
 This is how you export it.
 
 ```
-$ lmms-pkg --export my-project.mmp package-directory/	# It also works with *.mmpz* files
+$ lmms-pkg --pack my-project.mmp package-directory/	# It also works with *.mmpz* files
 ```
 
 This is how you import your project.
 
 ```
-$ lmms-pkg --import my-package.mmpk import-directory/
+$ lmms-pkg --unpack my-package.mmpk import-directory/
 ```
 
 
